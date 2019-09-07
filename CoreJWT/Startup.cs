@@ -59,7 +59,7 @@ namespace CoreJWT
                     Title = $"{ApiName} 接口文档",
                     Description = $"{ApiName} HTTP API ",
                     TermsOfService = "None",
-                    Contact = new Contact { Name = "corejwt", Email = "im.jp@outlook.com", Url = "https://github.com/jinjupeng/CoreJwt" }
+                    Contact = new Contact { Name = "corejwt", Email = "im.jp@outlook.com", Url = "https://github.com/jinjupeng/CoreJWT" }
                 });
             });
             #endregion

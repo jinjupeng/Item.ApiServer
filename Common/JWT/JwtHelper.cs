@@ -19,14 +19,16 @@ namespace Common.JWT
         {
             // 这里就是声明我们的claim
             var claims = new Claim[] {
+                    #region token添加自定义参数
                     new Claim(ClaimTypes.Name, tokenModel.Name),
                     // new Claim(ClaimTypes.Role, tokenModel.Role),
                     // new Claim(ClaimTypes.Sid,tokenModel.ToString()),
+                    #endregion
                     new Claim(JwtRegisteredClaimNames.Jti, tokenModel.Sid.ToString()),
                     new Claim(JwtRegisteredClaimNames.Iat, $"{new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds()}"),
                     new Claim(JwtRegisteredClaimNames.Nbf,$"{new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds()}") ,
-                    // 这个就是过期时间，目前是过期1000秒，可自定义，注意JWT有自己的缓冲过期时间
-                    new Claim (JwtRegisteredClaimNames.Exp,$"{new DateTimeOffset(DateTime.Now.AddSeconds(1000)).ToUnixTimeSeconds()}"),
+                    // 这个就是过期时间，目前是过期60秒，可自定义，注意JWT有自己的缓冲过期时间
+                    new Claim (JwtRegisteredClaimNames.Exp,$"{new DateTimeOffset(DateTime.Now.AddSeconds(60)).ToUnixTimeSeconds()}"),
                     new Claim(JwtRegisteredClaimNames.Iss,settings.Issuer),
                     new Claim(JwtRegisteredClaimNames.Aud,settings.Audience),
                 };
