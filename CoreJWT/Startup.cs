@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using Serilog;
 using Swashbuckle.AspNetCore.Swagger;
 using System.Text;
 using System.Threading.Tasks;
@@ -106,6 +107,11 @@ namespace CoreJWT
             {
                 app.UseDeveloperExceptionPage();
             }
+            else
+            {
+                app.UseExceptionHandler("/Home/Error");
+            }
+            app.UseSerilogRequestLogging(); // Add this line
 
             #region Swagger
             app.UseSwagger();
