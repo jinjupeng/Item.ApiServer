@@ -1,6 +1,6 @@
 # ASP.NET Core 集成JWT
 
-> JWT的小Demo
+> JWT的学习Demo
 
 学习JWT
 
@@ -11,18 +11,23 @@
 1. ASP.NET Core 2.2
 2. VS 2017 / VS 2019
 
-
-
-### 使用示例
+### 示例
 
 给出更多使用演示和截图，并贴出相应代码。
 
-
-
 ## 版本历史
 
-- 0.0.1 
-  - create progress
+- 0.0.1
+  - 初始化项目
+
+## TODO
+
+- [X] ASP.NET Core集成JWT
+- [X] 集成Swagger UI
+- [X] 基于策略模式的权限分配
+- [ ] 添加日志
+- [ ] 性能分析
+- [ ] 配置缓存
 
 ## 关于作者
 
@@ -30,8 +35,6 @@
 
 - 微信公众号（程序猿知多少）![微信公众号](https://some-images.oss-cn-hangzhou.aliyuncs.com/images/qrcode_for_gh_7a3c5972baba_258.jpg)
 
-  
+## License
 
-## 授权协议
-
-MIT 协议， 请点击 [LICENSE.md](https://gist.github.com/wangyan/LICENSE.md) 了解更多细节。
+MIT

@@ -1,6 +1,7 @@
-﻿using Common;
-using Common.JWT;
+﻿using CoreJWT;
+using CoreJWT.JWT;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -9,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Swashbuckle.AspNetCore.Swagger;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace CoreJWT
 {
@@ -32,8 +34,17 @@ namespace CoreJWT
             JwtHelper.Settings = setting;
             #endregion
 
-            #region JWT认证
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            #region 基于策略模式的授权
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("Permission", policy => policy.Requirements.Add(new PermissionRequirement()));
+
+            })
+
+            #region JWT认证，core自带官方jwt认证
+            // 开启Bearer认证
+            .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            // 添加JwtBearer服务：
             .AddJwtBearer(config =>
             {
                 config.TokenValidationParameters = new TokenValidationParameters
@@ -46,8 +57,27 @@ namespace CoreJWT
                     ValidIssuer = setting.Issuer,// Issuer，这两项和前面签发jwt的设置一致
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(setting.SecretKey))// 拿到SecurityKey
                 };
+                config.Events = new JwtBearerEvents
+                {
+                    OnAuthenticationFailed = context =>
+                    {
+                        // 如果过期，则把<是否过期>添加到返回头信息中
+                        if(context.Exception.GetType() == typeof(SecurityTokenExpiredException))
+                        {
+                            context.Response.Headers.Add("Token-Expired", "true");
+                        }
+                        return Task.CompletedTask;
+                    }
+                };
             });
             #endregion
+
+
+
+            #endregion
+
+            // 注入权限处理器
+            services.AddSingleton<IAuthorizationHandler, PermissionHandler>();
 
             #region Swagger UI
             services.AddSwaggerGen(c =>
