@@ -25,7 +25,7 @@
 - [X] ASP.NET Core集成JWT
 - [X] 集成Swagger UI
 - [X] 基于策略模式的权限分配
-- [ ] 添加日志
+- [X] 添加Serilog日志
 - [ ] 性能分析
 - [ ] 配置缓存
 
