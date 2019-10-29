@@ -12,6 +12,8 @@ using Serilog;
 using Swashbuckle.AspNetCore.Swagger;
 using System.Text;
 using System.Threading.Tasks;
+using CoreJWT.Exception;
+using Serilog.Extensions.Logging;
 
 namespace CoreJWT
 {
@@ -26,6 +28,7 @@ namespace CoreJWT
         private const string ApiName = "CoreJwt";
 
         // This method gets called by the runtime. Use this method to add services to the container.
+        // 使用DI将服务注入到容器中
         public void ConfigureServices(IServiceCollection services)
         {
             #region JwtSetting类注入
@@ -63,7 +66,7 @@ namespace CoreJWT
                     OnAuthenticationFailed = context =>
                     {
                         // 如果过期，则把<是否过期>添加到返回头信息中
-                        if(context.Exception.GetType() == typeof(SecurityTokenExpiredException))
+                        if (context.Exception.GetType() == typeof(SecurityTokenExpiredException))
                         {
                             context.Response.Headers.Add("Token-Expired", "true");
                         }
@@ -94,10 +97,16 @@ namespace CoreJWT
                 });
             });
             #endregion
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
+            services.AddMvc(options =>
+            {
+                // 注册全局过滤器
+                options.Filters.Add<GlobalExceptionFilter>();
+            }).SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        // 配置HTTP请求管道
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             // 添加jwt验证
@@ -111,7 +120,8 @@ namespace CoreJWT
             {
                 app.UseExceptionHandler("/Home/Error");
             }
-            app.UseSerilogRequestLogging(); // Add this line
+            // 添加请求日志中间件
+            app.UseSerilogRequestLogging();
 
             #region Swagger
             app.UseSwagger();
@@ -121,6 +131,7 @@ namespace CoreJWT
                 c.RoutePrefix = ""; //路径配置，设置为空，表示直接在根域名（localhost:8001）访问该文件,注意localhost:8001/swagger是访问不到的，去launchSettings.json把launchUrl去掉
             });
             #endregion
+
             app.UseMvc();
         }
     }

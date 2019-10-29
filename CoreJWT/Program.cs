@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.AspNetCore;
+﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Serilog;
@@ -17,8 +16,8 @@ namespace CoreJWT
 
             Log.Logger = new LoggerConfiguration()
                 .ReadFrom.Configuration(configuration)
-                //.MinimumLevel.Debug()
-                //.MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+                .MinimumLevel.Debug() // 配置日志输出到控制台
+                .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
                 //.Enrich.FromLogContext()
                 .WriteTo.Console()
                 .CreateLogger();
@@ -29,7 +28,7 @@ namespace CoreJWT
                 CreateWebHostBuilder(args).Build().Run();
                 return 0;
             }
-            catch (Exception ex)
+            catch (System.Exception ex)
             {
                 Log.Fatal(ex, "Host terminated unexpectedly");
                 return 1;
@@ -43,6 +42,7 @@ namespace CoreJWT
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
                 .UseStartup<Startup>()
+                // 将Serilog设置为日志提供程序
                 .UseSerilog(); // Add this line;
     }
 }

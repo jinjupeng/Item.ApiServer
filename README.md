@@ -26,8 +26,12 @@
 - [X] 集成Swagger UI
 - [X] 基于策略模式的权限分配
 - [X] 添加Serilog日志
+- [X] 配置全局异常过滤ExceptionFilter
+- [ ] Token平滑刷新
+- [ ] 添加SqlSugar ORM框架
 - [ ] 性能分析
 - [ ] 配置缓存
+- [ ] 新增分支，升级到Core 3.0
 
 ## 关于作者
 

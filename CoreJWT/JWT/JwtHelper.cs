@@ -61,7 +61,7 @@ namespace CoreJWT.JWT
             {
                 jwtToken.Payload.TryGetValue(ClaimTypes.Role, out role);
             }
-            catch (Exception e)
+            catch (System.Exception e)
             {
                 Console.WriteLine(e);
                 throw;
