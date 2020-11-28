@@ -1,19 +1,18 @@
-﻿using CoreJWT;
-using CoreJWT.JWT;
+﻿using CoreJWT.JWT;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
-using Swashbuckle.AspNetCore.Swagger;
 using System.Text;
 using System.Threading.Tasks;
 using CoreJWT.Exception;
-using Serilog.Extensions.Logging;
+using Microsoft.Extensions.Hosting;
+using System.IO;
+using Microsoft.OpenApi.Models;
 
 namespace CoreJWT
 {
@@ -83,18 +82,16 @@ namespace CoreJWT
             // 注入权限处理器
             services.AddSingleton<IAuthorizationHandler, PermissionHandler>();
 
+            services.AddMvc();
+
             #region Swagger UI
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new Info
-                {
-                    // {ApiName} 定义成全局变量，方便修改
-                    Version = "v1",
-                    Title = $"{ApiName} 接口文档",
-                    Description = $"{ApiName} HTTP API ",
-                    TermsOfService = "None",
-                    Contact = new Contact { Name = "corejwt", Email = "im.jp@outlook.com", Url = "https://github.com/jinjupeng/CoreJWT" }
-                });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API171", Version = "v1" });
+                //获取应用程序所在目录（绝对，不受工作目录影响，建议采用此方法获取路径）
+                var basePath = Path.GetDirectoryName(typeof(Program).Assembly.Location);
+                var xmlPath = Path.Combine(basePath, "CoreJWT.xml");
+                c.IncludeXmlComments(xmlPath);
             });
             #endregion
 
@@ -102,16 +99,13 @@ namespace CoreJWT
             {
                 // 注册全局过滤器
                 options.Filters.Add<GlobalExceptionFilter>();
-            }).SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         // 配置HTTP请求管道
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            // 添加jwt验证
-            app.UseAuthentication();
-
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -120,6 +114,13 @@ namespace CoreJWT
             {
                 app.UseExceptionHandler("/Home/Error");
             }
+
+            app.UseRouting();
+
+            // 添加jwt验证
+            app.UseAuthentication();
+
+            
             // 添加请求日志中间件
             app.UseSerilogRequestLogging();
 
@@ -127,12 +128,17 @@ namespace CoreJWT
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint($"/swagger/v1/swagger.json", $"{ApiName} v1");
-                c.RoutePrefix = ""; //路径配置，设置为空，表示直接在根域名（localhost:8001）访问该文件,注意localhost:8001/swagger是访问不到的，去launchSettings.json把launchUrl去掉
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+                //要在应用的根(http://localhost:<port>/) 处提供 Swagger UI，请将 RoutePrefix 属性设置为空字符串
+                c.RoutePrefix = string.Empty;
+                //swagger集成auth验证
             });
             #endregion
 
-            app.UseMvc();
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
         }
     }
 }

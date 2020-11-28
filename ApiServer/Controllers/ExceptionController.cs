@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 namespace CoreJWT.Controllers
 {
     [ApiController]
-    public class ExceptionController: Controller
+    public class ExceptionController: ControllerBase
     {
         private readonly ILogger _logger;
 
