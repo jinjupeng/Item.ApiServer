@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>CoreJWT.xml</DocumentationFile>
+    <DocumentationFile>ApiServer.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

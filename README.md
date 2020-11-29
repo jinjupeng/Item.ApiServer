@@ -8,8 +8,8 @@
 
 ### 运行条件
 
-1. ASP.NET Core 2.2
-2. VS 2017 / VS 2019
+1. ASP.NET Core 3.1
+2. VS 2019
 
 ### 示例
 
@@ -18,20 +18,24 @@
 ## 版本历史
 
 - 0.0.1
+
   - 初始化项目
+- 1.0.1
+  - 升级到3.1版本
+
 
 ## TODO
 
 - [X] ASP.NET Core集成JWT
 - [X] 集成Swagger UI
-- [X] 基于策略模式的权限分配
+- [ ] 基于策略模式的权限分配
 - [X] 添加Serilog日志
 - [X] 配置全局异常过滤ExceptionFilter
 - [ ] Token平滑刷新
-- [ ] 添加SqlSugar ORM框架
+- [ ] 添加EntityFrameworkCore ORM框架
 - [ ] 性能分析
 - [ ] 配置缓存
-- [ ] 新增分支，升级到Core 3.0
+- [x] 升级到Core 3.1
 
 ## 关于作者
 

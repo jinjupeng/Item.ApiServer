@@ -24,7 +24,6 @@ namespace CoreJWT
         }
 
         public IConfiguration Configuration { get; }
-        private const string ApiName = "CoreJwt";
 
         // This method gets called by the runtime. Use this method to add services to the container.
         // 使用DI将服务注入到容器中
@@ -90,7 +89,7 @@ namespace CoreJWT
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API171", Version = "v1" });
                 //获取应用程序所在目录（绝对，不受工作目录影响，建议采用此方法获取路径）
                 var basePath = Path.GetDirectoryName(typeof(Program).Assembly.Location);
-                var xmlPath = Path.Combine(basePath, "CoreJWT.xml");
+                var xmlPath = Path.Combine(basePath, "ApiServer.xml");
                 c.IncludeXmlComments(xmlPath);
             });
             #endregion
