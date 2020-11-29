@@ -4,7 +4,7 @@ using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 
-namespace CoreJWT.JWT
+namespace ApiServer.JWT
 {
     /// <summary>
     /// 必要参数类，类似一个订单信息

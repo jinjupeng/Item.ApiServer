@@ -2,13 +2,20 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-namespace CoreJWT.Controllers
+namespace ApiServer.Controllers
 {
+    /// <summary>
+    /// 异常
+    /// </summary>
     [ApiController]
     public class ExceptionController: ControllerBase
     {
         private readonly ILogger _logger;
 
+        /// <summary>
+        /// 构造函数
+        /// </summary>
+        /// <param name="logger"></param>
         public ExceptionController(ILogger<ExceptionController> logger)
         {
             _logger = logger;

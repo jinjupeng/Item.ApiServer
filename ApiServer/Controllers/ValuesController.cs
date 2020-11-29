@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace CoreJWT.Controllers
+namespace ApiServer.Controllers
 {
     [ApiController]
     public class ValuesController : ControllerBase

@@ -1,4 +1,4 @@
-﻿namespace CoreJWT
+﻿namespace ApiServer
 {
     public class JwtSettings
     {

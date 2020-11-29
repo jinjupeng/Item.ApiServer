@@ -1,5 +1,4 @@
-﻿using CoreJWT.JWT;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -9,12 +8,13 @@ using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using System.Text;
 using System.Threading.Tasks;
-using CoreJWT.Exception;
+using ApiServer.Exception;
 using Microsoft.Extensions.Hosting;
 using System.IO;
 using Microsoft.OpenApi.Models;
+using ApiServer.JWT;
 
-namespace CoreJWT
+namespace ApiServer
 {
     public class Startup
     {

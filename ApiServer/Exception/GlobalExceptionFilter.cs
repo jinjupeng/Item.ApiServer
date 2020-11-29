@@ -2,9 +2,10 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace CoreJWT.Exception
+namespace ApiServer.Exception
 {
     /// <summary>
     /// 自定义全局异常过滤器：当程序发生异常时，处理系统出现的未捕获的异常
@@ -14,9 +15,14 @@ namespace CoreJWT.Exception
     {
         #region 属性注入
         private readonly ILogger _logger;
-        private readonly IHostingEnvironment _env;
+        private readonly IWebHostEnvironment _env;
 
-        public GlobalExceptionFilter(ILogger<GlobalExceptionFilter> logger, IHostingEnvironment env)
+        /// <summary>
+        /// 构造函数
+        /// </summary>
+        /// <param name="logger"></param>
+        /// <param name="env"></param>
+        public GlobalExceptionFilter(ILogger<GlobalExceptionFilter> logger, IWebHostEnvironment env)
         {
             _logger = logger;
             _env = env;
@@ -63,7 +69,10 @@ namespace CoreJWT.Exception
                 StatusCode = StatusCodes.Status500InternalServerError;
             }
         }
-        //返回错误信息
+
+        /// <summary>
+        /// 返回错误信息
+        /// </summary>
         public class JsonErrorResponse
         {
             /// <summary>

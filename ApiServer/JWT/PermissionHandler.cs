@@ -3,7 +3,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
-namespace CoreJWT.JWT
+namespace ApiServer.JWT
 {
     /// <summary>
     /// 权限授权处理器

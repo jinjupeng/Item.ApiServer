@@ -5,7 +5,7 @@ using Microsoft.Extensions.Hosting;
 using Serilog;
 using Serilog.Events;
 
-namespace CoreJWT
+namespace ApiServer
 {
     public class Program
     {

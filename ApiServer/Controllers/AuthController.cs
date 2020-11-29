@@ -1,9 +1,12 @@
-﻿using CoreJWT.JWT;
+﻿using ApiServer.JWT;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace CoreJWT.Controllers
+namespace ApiServer.Controllers
 {
+    /// <summary>
+    /// 
+    /// </summary>
     [ApiController]
     public class AuthController : ControllerBase
     {
