@@ -31,4 +31,10 @@
     </Content>
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="ApiServer.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

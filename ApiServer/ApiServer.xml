@@ -174,20 +174,5 @@
             加密字符串
             </summary>
         </member>
-        <member name="T:CoreJWT.SwaggerHelper.CustomApiVersion.ApiVersions">
-            <summary>
-            Api接口版本 自定义
-            </summary>
-        </member>
-        <member name="F:CoreJWT.SwaggerHelper.CustomApiVersion.ApiVersions.V1">
-            <summary>
-            V1 版本
-            </summary>
-        </member>
-        <member name="F:CoreJWT.SwaggerHelper.CustomApiVersion.ApiVersions.V2">
-            <summary>
-            V2 版本
-            </summary>
-        </member>
     </members>
 </doc>
