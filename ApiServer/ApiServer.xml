@@ -4,7 +4,12 @@
         <name>ApiServer</name>
     </assembly>
     <members>
-        <member name="M:CoreJWT.Controllers.AuthController.CheckAccount(System.String,System.String,System.String@)">
+        <member name="T:ApiServer.Controllers.AuthController">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:ApiServer.Controllers.AuthController.CheckAccount(System.String,System.String,System.String@)">
             <summary>
             模拟登陆校验，因为是模拟，所以逻辑很‘模拟’
             </summary>
@@ -13,13 +18,31 @@
             <param name="role"></param>
             <returns></returns>
         </member>
-        <member name="T:CoreJWT.Exception.GlobalExceptionFilter">
+        <member name="T:ApiServer.Controllers.ExceptionController">
+            <summary>
+            异常
+            </summary>
+        </member>
+        <member name="M:ApiServer.Controllers.ExceptionController.#ctor(Microsoft.Extensions.Logging.ILogger{ApiServer.Controllers.ExceptionController})">
+            <summary>
+            构造函数
+            </summary>
+            <param name="logger"></param>
+        </member>
+        <member name="T:ApiServer.Exception.GlobalExceptionFilter">
             <summary>
             自定义全局异常过滤器：当程序发生异常时，处理系统出现的未捕获的异常
             自定义一个全局异常过滤器需要实现IExceptionFilter接口
             </summary>
         </member>
-        <member name="M:CoreJWT.Exception.GlobalExceptionFilter.OnException(Microsoft.AspNetCore.Mvc.Filters.ExceptionContext)">
+        <member name="M:ApiServer.Exception.GlobalExceptionFilter.#ctor(Microsoft.Extensions.Logging.ILogger{ApiServer.Exception.GlobalExceptionFilter},Microsoft.AspNetCore.Hosting.IWebHostEnvironment)">
+            <summary>
+            构造函数
+            </summary>
+            <param name="logger"></param>
+            <param name="env"></param>
+        </member>
+        <member name="M:ApiServer.Exception.GlobalExceptionFilter.OnException(Microsoft.AspNetCore.Mvc.Filters.ExceptionContext)">
             <summary>
             IExceptionFilter接口会要求实现OnException方法，当系统发生未捕获异常时就会触发这个方法。
             OnException方法有一个ExceptionContext异常上下文，其中包含了具体的异常信息，HttpContext及mvc路由信息。
@@ -27,7 +50,7 @@
             </summary>
             <param name="context"></param>
         </member>
-        <member name="M:CoreJWT.Exception.GlobalExceptionFilter.WriteLog(System.String,System.Exception)">
+        <member name="M:ApiServer.Exception.GlobalExceptionFilter.WriteLog(System.String,System.Exception)">
             <summary>
             自定义返回格式
             </summary>
@@ -35,119 +58,124 @@
             <param name="ex"></param>
             <returns></returns>
         </member>
-        <member name="P:CoreJWT.Exception.GlobalExceptionFilter.JsonErrorResponse.Message">
+        <member name="T:ApiServer.Exception.GlobalExceptionFilter.JsonErrorResponse">
+            <summary>
+            返回错误信息
+            </summary>
+        </member>
+        <member name="P:ApiServer.Exception.GlobalExceptionFilter.JsonErrorResponse.Message">
             <summary>
             生产环境的消息
             </summary>
         </member>
-        <member name="P:CoreJWT.Exception.GlobalExceptionFilter.JsonErrorResponse.DevelopmentMessage">
+        <member name="P:ApiServer.Exception.GlobalExceptionFilter.JsonErrorResponse.DevelopmentMessage">
             <summary>
             开发环境的消息
             </summary>
         </member>
-        <member name="M:CoreJWT.JWT.JwtHelper.IssueJwt(CoreJWT.JWT.TokenModelJwt)">
+        <member name="M:ApiServer.JWT.JwtHelper.IssueJwt(ApiServer.JWT.TokenModelJwt)">
             <summary>
             颁发JWT字符串
             </summary>
             <param name="user"></param>
             <returns></returns>
         </member>
-        <member name="M:CoreJWT.JWT.JwtHelper.SerializeJwt(System.String)">
+        <member name="M:ApiServer.JWT.JwtHelper.SerializeJwt(System.String)">
             <summary>
             解析token
             </summary>
             <param name="token"></param>
             <returns></returns>
         </member>
-        <member name="T:CoreJWT.JWT.TokenModelJwt">
+        <member name="T:ApiServer.JWT.TokenModelJwt">
             <summary>
             令牌
             </summary>
         </member>
-        <member name="P:CoreJWT.JWT.TokenModelJwt.Sid">
+        <member name="P:ApiServer.JWT.TokenModelJwt.Sid">
             <summary>
             Sid
             </summary>
         </member>
-        <member name="P:CoreJWT.JWT.TokenModelJwt.Role">
+        <member name="P:ApiServer.JWT.TokenModelJwt.Role">
             <summary>
             角色
             </summary>
         </member>
-        <member name="P:CoreJWT.JWT.TokenModelJwt.Name">
+        <member name="P:ApiServer.JWT.TokenModelJwt.Name">
             <summary>
             
             </summary>
         </member>
-        <member name="T:CoreJWT.JWT.PermissionHandler">
+        <member name="T:ApiServer.JWT.PermissionHandler">
             <summary>
             权限授权处理器
             </summary>
         </member>
-        <member name="T:CoreJWT.JWT.PermissionItem">
+        <member name="T:ApiServer.JWT.PermissionItem">
             <summary>
             用户或角色或其他凭据实体
             </summary>
         </member>
-        <member name="P:CoreJWT.JWT.PermissionItem.Role">
+        <member name="P:ApiServer.JWT.PermissionItem.Role">
             <summary>
             用户或角色或其他凭据名称
             </summary>
         </member>
-        <member name="P:CoreJWT.JWT.PermissionItem.Url">
+        <member name="P:ApiServer.JWT.PermissionItem.Url">
             <summary>
             请求Url
             </summary>
         </member>
-        <member name="T:CoreJWT.JWT.PermissionRequirement">
+        <member name="T:ApiServer.JWT.PermissionRequirement">
             <summary>
             必要参数类，类似一个订单信息
             继承 IAuthorizationRequirement，用于设计自定义权限处理器PermissionHandler
             因为AuthorizationHandler 中的泛型参数 TRequirement 必须继承 IAuthorizationRequirement
             </summary>
         </member>
-        <member name="P:CoreJWT.JWT.PermissionRequirement.Permissions">
+        <member name="P:ApiServer.JWT.PermissionRequirement.Permissions">
             <summary>
             用户权限集合，一个订单包含了很多详情，
             同理，一个网站的认证发行中，也有很多权限详情(这里是Role和URL的关系)
             </summary>
         </member>
-        <member name="P:CoreJWT.JWT.PermissionRequirement.DeniedAction">
+        <member name="P:ApiServer.JWT.PermissionRequirement.DeniedAction">
             <summary>
             无权限action
             </summary>
         </member>
-        <member name="P:CoreJWT.JWT.PermissionRequirement.ClaimType">
+        <member name="P:ApiServer.JWT.PermissionRequirement.ClaimType">
             <summary>
             认证授权类型
             </summary>
         </member>
-        <member name="P:CoreJWT.JWT.PermissionRequirement.LoginPath">
+        <member name="P:ApiServer.JWT.PermissionRequirement.LoginPath">
             <summary>
             请求路径
             </summary>
         </member>
-        <member name="P:CoreJWT.JWT.PermissionRequirement.Issuer">
+        <member name="P:ApiServer.JWT.PermissionRequirement.Issuer">
             <summary>
             发行人
             </summary>
         </member>
-        <member name="P:CoreJWT.JWT.PermissionRequirement.Audience">
+        <member name="P:ApiServer.JWT.PermissionRequirement.Audience">
             <summary>
             订阅人
             </summary>
         </member>
-        <member name="P:CoreJWT.JWT.PermissionRequirement.Expiration">
+        <member name="P:ApiServer.JWT.PermissionRequirement.Expiration">
             <summary>
             过期时间
             </summary>
         </member>
-        <member name="P:CoreJWT.JWT.PermissionRequirement.SigningCredentials">
+        <member name="P:ApiServer.JWT.PermissionRequirement.SigningCredentials">
             <summary>
             签名验证
             </summary>
         </member>
-        <member name="M:CoreJWT.JWT.PermissionRequirement.#ctor(System.String,System.Collections.Generic.List{CoreJWT.JWT.PermissionItem},System.String,System.String,System.String,Microsoft.IdentityModel.Tokens.SigningCredentials,System.TimeSpan)">
+        <member name="M:ApiServer.JWT.PermissionRequirement.#ctor(System.String,System.Collections.Generic.List{ApiServer.JWT.PermissionItem},System.String,System.String,System.String,Microsoft.IdentityModel.Tokens.SigningCredentials,System.TimeSpan)">
             <summary>
             构造
             </summary>
@@ -159,20 +187,38 @@
             <param name="signingCredentials">签名验证实体</param>
             <param name="expiration">过期时间</param>
         </member>
-        <member name="P:CoreJWT.JwtSettings.Issuer">
+        <member name="P:ApiServer.JwtSettings.Issuer">
             <summary>
             证书颁发者
             </summary>
         </member>
-        <member name="P:CoreJWT.JwtSettings.Audience">
+        <member name="P:ApiServer.JwtSettings.Audience">
             <summary>
             允许使用的角色
             </summary>
         </member>
-        <member name="P:CoreJWT.JwtSettings.SecretKey">
+        <member name="P:ApiServer.JwtSettings.SecretKey">
             <summary>
             加密字符串
             </summary>
+        </member>
+        <member name="T:ApiServer.Middleware.RefererMiddleware">
+            <summary>
+            对请求头Referer判断过滤
+            </summary>
+        </member>
+        <member name="M:ApiServer.Middleware.RefererMiddleware.#ctor(Microsoft.AspNetCore.Http.RequestDelegate)">
+            <summary>
+            构造函数
+            </summary>
+            <param name="next"></param>
+        </member>
+        <member name="M:ApiServer.Middleware.RefererMiddleware.InvokeAsync(Microsoft.AspNetCore.Http.HttpContext)">
+            <summary>
+            对referer来源判断
+            </summary>
+            <param name="httpContext"></param>
+            <returns></returns>
         </member>
     </members>
 </doc>

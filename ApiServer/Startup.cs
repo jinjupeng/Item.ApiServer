@@ -13,6 +13,7 @@ using Microsoft.Extensions.Hosting;
 using System.IO;
 using Microsoft.OpenApi.Models;
 using ApiServer.JWT;
+using ApiServer.Middleware;
 
 namespace ApiServer
 {
@@ -114,6 +115,8 @@ namespace ApiServer
                 app.UseExceptionHandler("/Home/Error");
             }
 
+            app.UseMiddleware<RefererMiddleware>(); // 判断Referer请求来源是否合法
+            app.UseMiddleware<ExceptionMiddleware>(); // 全局异常过滤
             app.UseRouting();
 
             // 添加jwt验证
