@@ -14,6 +14,9 @@ using System.IO;
 using Microsoft.OpenApi.Models;
 using ApiServer.JWT;
 using ApiServer.Middleware;
+using Autofac;
+using Item.ApiServer.BLL.BLLModule;
+using Item.ApiServer.DAL.DALModule;
 
 namespace ApiServer
 {
@@ -25,6 +28,7 @@ namespace ApiServer
         }
 
         public IConfiguration Configuration { get; }
+        public IContainer Container { get; private set; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         // 使用DI将服务注入到容器中
@@ -141,6 +145,17 @@ namespace ApiServer
             {
                 endpoints.MapControllers();
             });
+        }
+
+        /// <summary>
+        /// 自动注册
+        /// </summary>
+        /// <param name="builder"></param>
+        public void ConfigureContainer(ContainerBuilder builder)
+        {
+            builder.RegisterModule<BllModule>();
+            builder.RegisterModule<DalModule>();
+
         }
     }
 }

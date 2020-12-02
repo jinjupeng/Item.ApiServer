@@ -202,6 +202,25 @@
             加密字符串
             </summary>
         </member>
+        <member name="T:ApiServer.Middleware.ExceptionMiddleware">
+            <summary>
+            统一异常处理
+            </summary>
+        </member>
+        <member name="M:ApiServer.Middleware.ExceptionMiddleware.#ctor(Microsoft.AspNetCore.Http.RequestDelegate,Microsoft.AspNetCore.Hosting.IWebHostEnvironment)">
+            <summary>
+            构造函数
+            </summary>
+            <param name="next"></param>
+            <param name="environment"></param>
+        </member>
+        <member name="M:ApiServer.Middleware.ExceptionMiddleware.InvokeAsync(Microsoft.AspNetCore.Http.HttpContext)">
+            <summary>
+            异常处理
+            </summary>
+            <param name="context"></param>
+            <returns></returns>
+        </member>
         <member name="T:ApiServer.Middleware.RefererMiddleware">
             <summary>
             对请求头Referer判断过滤
@@ -219,6 +238,12 @@
             </summary>
             <param name="httpContext"></param>
             <returns></returns>
+        </member>
+        <member name="M:ApiServer.Startup.ConfigureContainer(Autofac.ContainerBuilder)">
+            <summary>
+            自动注册
+            </summary>
+            <param name="builder"></param>
         </member>
     </members>
 </doc>
