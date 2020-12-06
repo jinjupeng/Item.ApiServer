@@ -36,6 +36,11 @@ namespace Item.ApiServer.DAL.DAL
             DbContext.Set<T>().UpdateRange(t);
         }
 
+        public IQueryable<T> ExecSql(string sql)
+        {
+            return DbContext.Set<T>().FromSqlRaw(sql).AsNoTracking().AsQueryable();
+        }
+
         public int CountAll()
         {
             return DbContext.Set<T>().AsNoTracking().Count();
@@ -46,6 +51,8 @@ namespace Item.ApiServer.DAL.DAL
         {
             return whereLambda != null ? DbContext.Set<T>().AsNoTracking().AsEnumerable().Where(whereLambda).AsQueryable().AsNoTracking() : DbContext.Set<T>().AsNoTracking().AsQueryable();
         }
+
+
 
         public bool SaveChanges()
         {

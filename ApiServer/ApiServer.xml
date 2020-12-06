@@ -18,6 +18,14 @@
             <param name="role"></param>
             <returns></returns>
         </member>
+        <member name="M:ApiServer.Controllers.BlogController.List(System.String,System.String)">
+            <summary>
+            我的所有文章首页
+            </summary>
+            <param name="author">用户名</param>
+            <param name="keyword">关键词</param>
+            <returns></returns>
+        </member>
         <member name="T:ApiServer.Controllers.ExceptionController">
             <summary>
             异常
@@ -28,6 +36,25 @@
             构造函数
             </summary>
             <param name="logger"></param>
+        </member>
+        <member name="M:ApiServer.Controllers.SysUserController.Login(Microsoft.AspNetCore.Http.IFormCollection)">
+            <summary>
+            登录
+            </summary>
+            <param name="data"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiServer.Controllers.SysUserController.Exit">
+            <summary>
+            退出
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ApiServer.Controllers.SysUserController.LoginCheck">
+            <summary>
+            登录验证
+            </summary>
+            <returns></returns>
         </member>
         <member name="T:ApiServer.Exception.GlobalExceptionFilter">
             <summary>

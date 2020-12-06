@@ -12,6 +12,7 @@ namespace Item.ApiServer.DAL.IDAL
         void DeleteRange(params T[] t);
         void UpdateRange(IEnumerable<T> t);
         void UpdateRange(params T[] t);
+        IQueryable<T> ExecSql(string sql);
         int CountAll();
 
         IQueryable<T> GetModels(Func<T, bool> whereLambda);
