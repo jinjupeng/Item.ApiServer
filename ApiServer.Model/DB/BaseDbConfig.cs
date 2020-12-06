@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ApiServer.Common.DB
+﻿namespace ApiServer.Model.DB
 {
     public class BaseDbConfig
     {

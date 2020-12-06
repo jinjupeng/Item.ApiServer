@@ -15,5 +15,7 @@ namespace Item.ApiServer.DAL.IDAL
         int CountAll();
 
         IQueryable<T> GetModels(Func<T, bool> whereLambda);
+
+        bool SaveChanges();
     }
 }

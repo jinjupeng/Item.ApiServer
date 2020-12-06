@@ -1,6 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using ApiServer.Common;
+using ApiServer.Model.DB;
+using Microsoft.EntityFrameworkCore;
 
-namespace ApiServer.Common.DB
+namespace ApiServer.Model.Entity
 {
     public class ContextProvider
     {
@@ -16,7 +18,7 @@ namespace ApiServer.Common.DB
             //若为SqlServer，返回SqlServer的Context
             if (connTypeStr == ((int)DatabaseType.SqlServer).ToString())
             {
-                return new ContextSqlserver();
+                return new ContextSqlServer();
             }
             //若为Mysql，返回Mysql的Context
             else if (connTypeStr == ((int)DatabaseType.MySql).ToString())
@@ -32,7 +34,7 @@ namespace ApiServer.Common.DB
             //其他情况，返回Mysql的Context
             else
             {
-                return new ContextMysql();
+                return new ContextMySql();
             }
 
         }

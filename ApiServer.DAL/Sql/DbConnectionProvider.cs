@@ -1,9 +1,10 @@
-﻿using MySql.Data.MySqlClient;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using ApiServer.Common;
+using ApiServer.Model.DB;
+using MySql.Data.MySqlClient;
+using Oracle.ManagedDataAccess.Client;
+using System.Data.SqlClient;
 
-namespace ApiServer.Common.DB
+namespace ApiServer.DAL.Sql
 {
     //提供数据库的DbConnect类
     public static class DbConnectionProvider
@@ -14,7 +15,7 @@ namespace ApiServer.Common.DB
         public static readonly BaseDbConfig Connection = new BaseDbConfig
         {
             ConnectionString = ConfigTool.Configuration["Setting:Conn"],
-            DbType = (DatabaseType)int.Parse(Common.ConfigTool.Configuration["Setting:ConnType"].ToString())
+            DbType = (DatabaseType)int.Parse(ConfigTool.Configuration["Setting:ConnType"].ToString())
         };
 
 

@@ -1,4 +1,9 @@
-﻿using Item.ApiServer.DAL.IDAL;
+﻿using ApiServer.Model.Entity;
+using Item.ApiServer.DAL.IDAL;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Item.ApiServer.DAL.DAL
 {
@@ -40,6 +45,11 @@ namespace Item.ApiServer.DAL.DAL
         public IQueryable<T> GetModels(Func<T, bool> whereLambda)
         {
             return whereLambda != null ? DbContext.Set<T>().AsNoTracking().AsEnumerable().Where(whereLambda).AsQueryable().AsNoTracking() : DbContext.Set<T>().AsNoTracking().AsQueryable();
+        }
+
+        public bool SaveChanges()
+        {
+            return DbContext.SaveChangesAsync().Result > 0;
         }
     }
 }
