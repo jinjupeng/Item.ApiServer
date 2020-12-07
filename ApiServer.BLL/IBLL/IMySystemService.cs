@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace ApiServer.BLL.IBLL
 {
-    public interface IMySystemService<T>
+    public interface IMySystemService
     {
         List<Sys_Org> SelectOrgTree(long rootOrgId, string orgNameLike, bool orgStatus);
 

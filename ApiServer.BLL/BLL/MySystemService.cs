@@ -1,17 +1,18 @@
 ﻿using ApiServer.BLL.IBLL;
+using ApiServer.DAL.IDAL;
 using ApiServer.Model.Entity;
 using Item.ApiServer.DAL.IDAL;
 using System.Collections.Generic;
 
 namespace ApiServer.BLL.BLL
 {
-    public class MySystemService<T> : IMySystemService<T> where T : class
+    public class MySystemService : IMySystemService
     {
-        private readonly IBaseDal<T> _baseDal;
+        private readonly IMySystemDal _mySystemDal;
 
-        public MySystemService(IBaseDal<T> baseDal)
+        public MySystemService(IMySystemDal mySystemDal)
         {
-            _baseDal = baseDal;
+            _mySystemDal = mySystemDal;
         }
 
         public List<string> GetCheckedRoleIds(long userId)
