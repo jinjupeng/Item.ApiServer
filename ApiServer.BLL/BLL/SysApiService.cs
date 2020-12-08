@@ -1,4 +1,5 @@
 ﻿using ApiServer.BLL.IBLL;
+using ApiServer.Model;
 using ApiServer.Model.Entity;
 using ApiServer.Model.Model;
 using Item.ApiServer.BLL.IBLL;
@@ -10,12 +11,14 @@ namespace ApiServer.BLL.BLL
     public class SysApiService : ISysApiService
     {
         private readonly IBaseService<Sys_Api> _baseService;
+        private readonly IBaseService<Sys_Role_Api> _baseSysRoleApiService;
         private readonly IMySystemService _mySystemService;
 
-        public SysApiService(IBaseService<Sys_Api> baseService, IMySystemService mySystemService)
+        public SysApiService(IBaseService<Sys_Api> baseService, IMySystemService mySystemService, IBaseService<Sys_Role_Api> baseSysRoleApiService)
         {
             _baseService = baseService;
             _mySystemService = mySystemService;
+            _baseSysRoleApiService = baseSysRoleApiService;
         }
 
         public List<SysApiNode> GetApiTreeById(string apiNameLike, bool apiStatus)
@@ -27,9 +30,36 @@ namespace ApiServer.BLL.BLL
                 long rootApiId = rootSysApi.id;
                 List<Sys_Api> sysApis = _mySystemService.SelectApiTree(rootApiId, apiNameLike, apiStatus);
 
-                List<SysApiNode> sysApiNodes = sysApis
-                    // TODO：这里有问题
+                List<SysApiNode> sysApiNodes = new List<SysApiNode>();
+                foreach(Sys_Api sys_Api in sysApis)
+                {
+                    SysApiNode sysApiNode = new SysApiNode
+                    {
+                        id = sys_Api.id,
+                        api_pid = sys_Api.id,
+                        api_pids = sys_Api.api_pids,
+                        is_leaf = sys_Api.is_leaf,
+                        api_name = sys_Api.api_name,
+                        url = sys_Api.url,
+                        sort = sys_Api.sort,
+                        level = sys_Api.level,
+                        status = sys_Api.status
+                    };
+                    sysApiNodes.Add(sysApiNode);
+                }
+
+                if (string.IsNullOrEmpty(apiNameLike))
+                {
+                    //根据api名称等查询会破坏树形结构，返回平面列表
+                    return sysApiNodes;
+                }
+                else
+                {
+                    //否则返回树型结构列表
+                    return DataTreeUtil<SysApiNode, long>.BuildTree(sysApiNodes, rootApiId);
+                }
             }
+            return null;
         }
 
         public void UpdateApi(Sys_Api sys_Api)
@@ -119,7 +149,8 @@ namespace ApiServer.BLL.BLL
         public void SaveCheckedKeys(long roleId, List<long> checkedIds)
         {
             // 保存之前先删除
-            // TODO：先查询到所有的根据roleId，之后再一次删除查询到的
+            var sysRoleApiList = _baseSysRoleApiService.GetModels(a => a.role_id == roleId);
+            _baseSysRoleApiService.DeleteRange(sysRoleApiList);
             _mySystemService.InsertRoleApiIds(roleId, checkedIds);
         }
 
