@@ -32,7 +32,7 @@
 - [X] 添加Serilog日志
 - [X] 配置全局异常过滤ExceptionFilter
 - [ ] Token平滑刷新
-- [ ] 添加EntityFrameworkCore ORM框架
+- [X] 添加EntityFrameworkCore ORM框架
 - [ ] 性能分析
 - [ ] 配置缓存
 - [x] 升级到Core 3.1
