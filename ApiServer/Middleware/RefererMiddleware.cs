@@ -1,6 +1,6 @@
-﻿using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
+using System.Threading.Tasks;
 
 namespace ApiServer.Middleware
 {

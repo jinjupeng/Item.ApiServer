@@ -1,14 +1,13 @@
 ﻿using ApiServer.BLL.IBLL;
 using ApiServer.Model.Entity;
+using Item.ApiServer.BLL.BLL;
 using Item.ApiServer.BLL.IBLL;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace ApiServer.BLL.BLL
 {
-    public class SysDictService : ISysDictService
+    public class SysDictService : BaseService<Sys_Dict>, ISysDictService
     {
         private readonly IBaseService<Sys_Dict> _baseSysDictService;
 

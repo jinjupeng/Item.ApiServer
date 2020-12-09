@@ -1,22 +1,22 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IdentityModel.Tokens;
-using Serilog;
-using System.Text;
-using System.Threading.Tasks;
-using ApiServer.Exception;
-using Microsoft.Extensions.Hosting;
-using System.IO;
-using Microsoft.OpenApi.Models;
+﻿using ApiServer.Exception;
 using ApiServer.JWT;
 using ApiServer.Middleware;
 using Autofac;
 using Item.ApiServer.BLL.BLLModule;
 using Item.ApiServer.DAL.DALModule;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using Serilog;
+using System.IO;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace ApiServer
 {
@@ -126,7 +126,7 @@ namespace ApiServer
             // 添加jwt验证
             app.UseAuthentication();
 
-            
+
             // 添加请求日志中间件
             app.UseSerilogRequestLogging();
 

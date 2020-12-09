@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ApiServer.JWT
+﻿namespace ApiServer.JWT
 {
     /// <summary>
     /// 用户或角色或其他凭据实体

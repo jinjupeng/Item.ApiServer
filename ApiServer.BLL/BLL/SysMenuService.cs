@@ -2,15 +2,14 @@
 using ApiServer.Model;
 using ApiServer.Model.Entity;
 using ApiServer.Model.Model;
+using Item.ApiServer.BLL.BLL;
 using Item.ApiServer.BLL.IBLL;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace ApiServer.BLL.BLL
 {
-    public class SysMenuService : ISysMenuService
+    public class SysMenuService : BaseService<Sys_Menu>, ISysMenuService
     {
         private readonly IBaseService<Sys_Menu> _baseSysMenuService;
         private readonly IMySystemService _mySystemService;

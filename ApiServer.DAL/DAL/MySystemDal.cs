@@ -1,11 +1,9 @@
 ﻿using ApiServer.DAL.IDAL;
 using ApiServer.Model.Entity;
-using Item.ApiServer.DAL.DAL;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace ApiServer.DAL.DAL
 {
@@ -18,7 +16,7 @@ namespace ApiServer.DAL.DAL
         {
             FormattableString sql = $"SELECT distinct role_id FROM sys_user_role ra WHERE ra.user_id = {userId};";
             return DbContext.Set<string>().FromSqlInterpolated(sql).AsNoTracking().AsQueryable();
-        
+
         }
 
         public int InsertRoleApiIds(long roleId, List<long> checkedIds)
@@ -97,14 +95,14 @@ namespace ApiServer.DAL.DAL
         {
             string sql = $"SELECT id,menu_pid,menu_pids,is_leaf,menu_name,url,icon,sort,level,status FROM sys_menu o " +
             $"WHERE (menu_pids like CONCAT('%[',{rootMenuId},']%') OR id = {rootMenuId}) ";
-            if(menuNameLike != null && menuNameLike != "")
+            if (menuNameLike != null && menuNameLike != "")
             {
                 sql += $"AND menu_name like CONCAT('%',{menuNameLike},'%') ";
             }
 
             sql += $"AND status = {menuStatus} ";
             sql += $"ORDER BY level,sort";
-            
+
             return DbContext.Set<Sys_Menu>().FromSqlRaw(sql).AsNoTracking().AsQueryable();
 
         }

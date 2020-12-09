@@ -1,7 +1,7 @@
-﻿using ApiServer.Model.Entity;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 
 namespace Item.ApiServer.BLL.IBLL
 {
@@ -20,6 +20,6 @@ namespace Item.ApiServer.BLL.IBLL
         /// </summary>
         /// <param name="whereLambda"></param>
         /// <returns></returns>
-        IQueryable<T> GetModels(Func<T, bool> whereLambda);
+        IQueryable<T> GetModels(Expression<Func<T, bool>> whereLambda);
     }
 }

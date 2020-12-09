@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
 
 namespace ApiServer.Controllers
 {
@@ -8,7 +8,7 @@ namespace ApiServer.Controllers
     /// 异常
     /// </summary>
     [ApiController]
-    public class ExceptionController: ControllerBase
+    public class ExceptionController : ControllerBase
     {
         private readonly ILogger _logger;
 
@@ -26,7 +26,7 @@ namespace ApiServer.Controllers
         {
             _logger.LogError("全局异常过滤测试");
             throw new System.Exception("自定义全局异常过滤抛出测试");
-            
+
         }
     }
 }

@@ -1,7 +1,5 @@
 ﻿using ApiServer.Model.Model;
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace ApiServer.Model
 {
@@ -14,12 +12,12 @@ namespace ApiServer.Model
             foreach (T node in paramList)
             {
                 //从2级节点开始构造
-                if(node.GetParentId().Equals(rootNodeId))
+                if (node.GetParentId().Equals(rootNodeId))
                 {
                     returnList.Add(node);
                 }
             }
-            foreach(T entry in paramList)
+            foreach (T entry in paramList)
             {
                 ToTreeChildren(returnList, entry);
             }
@@ -36,7 +34,7 @@ namespace ApiServer.Model
         {
             List<T> returnList = new List<T>();
             // 查找根节点
-            foreach(T node in paramList)
+            foreach (T node in paramList)
             {
                 //从1级节点开始构造
                 if (node.GetId().Equals(rootNodeId))
@@ -44,7 +42,7 @@ namespace ApiServer.Model
                     returnList.Add(node);
                 }
             }
-            foreach(T entry in paramList)
+            foreach (T entry in paramList)
             {
                 ToTreeChildren(returnList, entry);
             }
@@ -53,17 +51,17 @@ namespace ApiServer.Model
 
         private static void ToTreeChildren(List<T> returnList, T entry)
         {
-            foreach(T node in returnList)
+            foreach (T node in returnList)
             {
                 if (entry.GetParentId().Equals(node.GetId()))
                 {
-                    if(node.Children == null)
+                    if (node.Children == null)
                     {
                         node.Children = new List<T>();
                     }
                     node.Children.Add(entry);
                 }
-                if(node.Children != null)
+                if (node.Children != null)
                 {
                     ToTreeChildren(node.Children, entry);
                 }

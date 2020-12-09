@@ -1,14 +1,13 @@
 ﻿using ApiServer.BLL.IBLL;
 using ApiServer.Model.Entity;
+using Item.ApiServer.BLL.BLL;
 using Item.ApiServer.BLL.IBLL;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace ApiServer.BLL.BLL
 {
-    public class SysConfigService : ISysConfigService
+    public class SysConfigService : BaseService<Sys_Config>, ISysConfigService
     {
         private readonly IMySystemService _mySystemService;
         private readonly IBaseService<Sys_Config> _baseSysConfigService;

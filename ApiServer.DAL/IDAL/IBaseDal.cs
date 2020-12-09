@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 
 namespace Item.ApiServer.DAL.IDAL
 {
@@ -15,7 +16,7 @@ namespace Item.ApiServer.DAL.IDAL
         IQueryable<T> ExecSql(string sql);
         int CountAll();
 
-        IQueryable<T> GetModels(Func<T, bool> whereLambda);
+        IQueryable<T> GetModels(Expression<Func<T, bool>> whereLambda);
 
         bool SaveChanges();
     }

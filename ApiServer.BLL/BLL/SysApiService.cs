@@ -2,13 +2,14 @@
 using ApiServer.Model;
 using ApiServer.Model.Entity;
 using ApiServer.Model.Model;
+using Item.ApiServer.BLL.BLL;
 using Item.ApiServer.BLL.IBLL;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace ApiServer.BLL.BLL
 {
-    public class SysApiService : ISysApiService
+    public class SysApiService : BaseService<Sys_Api>, ISysApiService
     {
         private readonly IBaseService<Sys_Api> _baseService;
         private readonly IBaseService<Sys_Role_Api> _baseSysRoleApiService;
@@ -25,13 +26,13 @@ namespace ApiServer.BLL.BLL
         {
             //查找level=1的API节点，即：根节点
             Sys_Api rootSysApi = _baseService.GetModels(s => s.level == 1).Single();
-            if(rootSysApi != null)
+            if (rootSysApi != null)
             {
                 long rootApiId = rootSysApi.id;
                 List<Sys_Api> sysApis = _mySystemService.SelectApiTree(rootApiId, apiNameLike, apiStatus);
 
                 List<SysApiNode> sysApiNodes = new List<SysApiNode>();
-                foreach(Sys_Api sys_Api in sysApis)
+                foreach (Sys_Api sys_Api in sysApis)
                 {
                     SysApiNode sysApiNode = new SysApiNode
                     {
@@ -83,14 +84,14 @@ namespace ApiServer.BLL.BLL
         {
             // 查找被删除节点的子节点
             List<Sys_Api> myChild = _baseService.GetModels(s => s.api_pids.Contains("[" + sys_Api.id + "]")).ToList();
-            if(myChild.Count > 0)
+            if (myChild.Count > 0)
             {
                 // "不能删除含有下级API接口的节点"
             }
             //查找被删除节点的父节点
             List<Sys_Api> myFatherChild = _baseService.GetModels(s => s.api_pids.Contains("[" + sys_Api.api_pid + "]")).ToList();
             //我的父节点只有我这一个子节点，而我还要被删除，更新父节点为叶子节点。
-            if(myFatherChild.Count == 1)
+            if (myFatherChild.Count == 1)
             {
                 Sys_Api parent = new Sys_Api();
                 parent.id = sys_Api.api_pid;
@@ -109,10 +110,10 @@ namespace ApiServer.BLL.BLL
         private void SetApiIdsAndLevel(Sys_Api child)
         {
             List<Sys_Api> allApis = _baseService.GetModels(null).ToList();
-            foreach(var sysApi in allApis)
+            foreach (var sysApi in allApis)
             {
                 // 从组织列表中找到自己的直接父亲
-                if(sysApi.id == child.api_pid)
+                if (sysApi.id == child.api_pid)
                 {
                     //直接父亲的所有祖辈id + 直接父id = 当前子节点的所有祖辈id
                     //爸爸的所有祖辈 + 爸爸 = 孩子的所有祖辈

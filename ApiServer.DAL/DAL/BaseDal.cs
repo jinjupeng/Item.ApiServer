@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 
 namespace Item.ApiServer.DAL.DAL
 {
@@ -47,9 +48,9 @@ namespace Item.ApiServer.DAL.DAL
         }
 
 
-        public IQueryable<T> GetModels(Func<T, bool> whereLambda)
+        public IQueryable<T> GetModels(Expression<Func<T, bool>> whereLambda)
         {
-            return whereLambda != null ? DbContext.Set<T>().AsNoTracking().AsEnumerable().Where(whereLambda).AsQueryable().AsNoTracking() : DbContext.Set<T>().AsNoTracking().AsQueryable();
+            return whereLambda != null ? DbContext.Set<T>().AsNoTracking().Where(whereLambda) : DbContext.Set<T>().AsNoTracking();
         }
 
 

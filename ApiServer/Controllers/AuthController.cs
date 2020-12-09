@@ -16,7 +16,7 @@ namespace ApiServer.Controllers
         public IActionResult Get(string userName, string pwd)
         {
             TokenModelJwt tokenModel = new TokenModelJwt();
-            
+
             if (CheckAccount(userName, pwd, out string role))
             {
                 tokenModel.Name = userName;

@@ -1,9 +1,9 @@
-﻿using ApiServer.Model.Entity;
-using Item.ApiServer.BLL.IBLL;
+﻿using Item.ApiServer.BLL.IBLL;
 using Item.ApiServer.DAL.IDAL;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 
 namespace Item.ApiServer.BLL.BLL
 {
@@ -11,10 +11,12 @@ namespace Item.ApiServer.BLL.BLL
     {
         private readonly IBaseDal<T> _baseDal;
 
+        public BaseService() { }
         public BaseService(IBaseDal<T> baseDal)
         {
             _baseDal = baseDal;
         }
+
 
 
         public bool AddRange(IEnumerable<T> t)
@@ -60,7 +62,7 @@ namespace Item.ApiServer.BLL.BLL
             return _baseDal.CountAll();
         }
 
-        public IQueryable<T> GetModels(Func<T, bool> whereLambda)
+        public IQueryable<T> GetModels(Expression<Func<T, bool>> whereLambda)
         {
             return _baseDal.GetModels(whereLambda);
         }
