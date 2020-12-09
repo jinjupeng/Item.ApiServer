@@ -24,7 +24,7 @@ namespace ApiServer.BLL.BLL
         public List<SysApiNode> GetApiTreeById(string apiNameLike, bool apiStatus)
         {
             //查找level=1的API节点，即：根节点
-            Sys_Api rootSysApi = _baseService.GetModels(s => s.level == 1).FirstOrDefault();
+            Sys_Api rootSysApi = _baseService.GetModels(s => s.level == 1).Single();
             if(rootSysApi != null)
             {
                 long rootApiId = rootSysApi.id;
@@ -48,7 +48,7 @@ namespace ApiServer.BLL.BLL
                     sysApiNodes.Add(sysApiNode);
                 }
 
-                if (string.IsNullOrEmpty(apiNameLike))
+                if (!string.IsNullOrEmpty(apiNameLike))
                 {
                     //根据api名称等查询会破坏树形结构，返回平面列表
                     return sysApiNodes;
