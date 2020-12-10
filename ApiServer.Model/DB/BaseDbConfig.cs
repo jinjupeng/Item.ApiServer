@@ -10,9 +10,6 @@
     {
         SqlServer = 0,
         MySql = 1,
-        Oracle = 2,
-        Dm = 3,
-        HighGo = 4,
-        KingBase = 5,
+        Oracle = 2
     }
 }

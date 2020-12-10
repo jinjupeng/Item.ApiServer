@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace ApiServer.BLL.BLL
 {
-    public class SysOrgService : BaseService<Sys_Org>, ISysOrgService
+    public class SysOrgService : ISysOrgService
     {
         private readonly IBaseService<Sys_Org> _baseSysOrgService;
         private readonly IMySystemService _mySystemService;

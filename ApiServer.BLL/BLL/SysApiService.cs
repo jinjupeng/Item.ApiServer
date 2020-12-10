@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace ApiServer.BLL.BLL
 {
-    public class SysApiService : BaseService<Sys_Api>, ISysApiService
+    public class SysApiService : ISysApiService
     {
         private readonly IBaseService<Sys_Api> _baseService;
         private readonly IBaseService<Sys_Role_Api> _baseSysRoleApiService;

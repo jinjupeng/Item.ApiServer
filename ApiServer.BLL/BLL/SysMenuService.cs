@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace ApiServer.BLL.BLL
 {
-    public class SysMenuService : BaseService<Sys_Menu>, ISysMenuService
+    public class SysMenuService : ISysMenuService
     {
         private readonly IBaseService<Sys_Menu> _baseSysMenuService;
         private readonly IMySystemService _mySystemService;

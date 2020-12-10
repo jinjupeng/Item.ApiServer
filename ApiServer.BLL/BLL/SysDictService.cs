@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace ApiServer.BLL.BLL
 {
-    public class SysDictService : BaseService<Sys_Dict>, ISysDictService
+    public class SysDictService : ISysDictService
     {
         private readonly IBaseService<Sys_Dict> _baseSysDictService;
 

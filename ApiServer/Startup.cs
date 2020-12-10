@@ -153,8 +153,8 @@ namespace ApiServer
         /// <param name="builder"></param>
         public void ConfigureContainer(ContainerBuilder builder)
         {
-            builder.RegisterModule<BllModule>();
-            builder.RegisterModule<DalModule>();
+            builder.RegisterModule(new BllModule());
+            builder.RegisterModule(new DalModule());
 
         }
     }

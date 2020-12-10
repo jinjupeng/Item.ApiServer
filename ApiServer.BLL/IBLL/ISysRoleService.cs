@@ -2,7 +2,7 @@
 
 namespace ApiServer.BLL.IBLL
 {
-    public interface ISysRoleService : IBaseService<Sys_Role>
+    public interface ISysRoleService
     {
     }
 }

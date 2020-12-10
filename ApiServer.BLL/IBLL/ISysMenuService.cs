@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace ApiServer.BLL.IBLL
 {
-    public interface ISysMenuService : IBaseService<Sys_Menu>
+    public interface ISysMenuService
     {
         List<SysMenuNode> GetMenuTree(string menuNameLike, bool menuStatus);
         void UpdateMenu(Sys_Menu sys_Menu);

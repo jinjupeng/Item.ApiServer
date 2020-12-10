@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace ApiServer.BLL.BLL
 {
-    public class SysConfigService : BaseService<Sys_Config>, ISysConfigService
+    public class SysConfigService : ISysConfigService
     {
         private readonly IMySystemService _mySystemService;
         private readonly IBaseService<Sys_Config> _baseSysConfigService;

@@ -2,6 +2,7 @@
 using ApiServer.DAL.IDAL;
 using ApiServer.Model.Entity;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ApiServer.BLL.BLL
 {
@@ -16,62 +17,62 @@ namespace ApiServer.BLL.BLL
 
         public List<string> GetCheckedRoleIds(long userId)
         {
-            throw new System.NotImplementedException();
+            return _mySystemDal.GetCheckedRoleIds(userId).ToList();
         }
 
         public int InsertRoleApiIds(long roleId, List<long> checkedIds)
         {
-            throw new System.NotImplementedException();
+            return _mySystemDal.InsertRoleApiIds(roleId, checkedIds);
         }
 
         public int InsertRoleMenuIds(long roleId, List<long> checkedIds)
         {
-            throw new System.NotImplementedException();
+            return _mySystemDal.InsertRoleMenuIds(roleId, checkedIds);
         }
 
         public long InsertUserRoleIds(long userId, List<long> checkedIds)
         {
-            throw new System.NotImplementedException();
+            return _mySystemDal.InsertUserRoleIds(userId, checkedIds);
         }
 
         public List<string> SelectApiCheckedKeys(long roleId)
         {
-            throw new System.NotImplementedException();
+            return _mySystemDal.SelectApiCheckedKeys(roleId).ToList();
         }
 
         public List<string> SelectApiExpandedKeys()
         {
-            throw new System.NotImplementedException();
+            return _mySystemDal.SelectApiExpandedKeys().ToList();
         }
 
         public List<Sys_Api> SelectApiTree(long rootApiId, string apiNameLike, bool apiStatus)
         {
-            throw new System.NotImplementedException();
+            return _mySystemDal.SelectApiTree(rootApiId, apiNameLike, apiStatus).ToList();
         }
 
         public List<Sys_Menu> SelectMenuByUserName(string userName)
         {
-            throw new System.NotImplementedException();
+            return _mySystemDal.SelectMenuByUserName(userName).ToList();
         }
 
         public List<string> SelectMenuCheckedKeys(long roleId)
         {
-            throw new System.NotImplementedException();
+            return _mySystemDal.SelectMenuCheckedKeys(roleId).ToList();
         }
 
         public List<string> SelectMenuExpandedKeys()
         {
-            throw new System.NotImplementedException();
+            return _mySystemDal.SelectMenuExpandedKeys().ToList();
         }
 
         public List<Sys_Menu> SelectMenuTree(long rootMenuId, string menuNameLike, bool menuStatus)
         {
-            throw new System.NotImplementedException();
+            return _mySystemDal.SelectMenuTree(rootMenuId, menuNameLike, menuStatus).ToList();
         }
 
         public List<Sys_Org> SelectOrgTree(long rootOrgId, string orgNameLike, bool orgStatus)
         {
-            throw new System.NotImplementedException();
+            return _mySystemDal.SelectOrgTree(rootOrgId, orgNameLike, orgStatus).ToList();
         }
     }
 }

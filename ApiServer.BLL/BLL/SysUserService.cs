@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace ApiServer.BLL.BLL
 {
-    public class SysUserService : BaseService<Sys_User>, ISysUserService
+    public class SysUserService : ISysUserService
     {
         private readonly IBaseService<Sys_User> _baseSysUserService;
         private readonly IMySystemService _mySystemService;
