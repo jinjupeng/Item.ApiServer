@@ -45,6 +45,7 @@ namespace ApiServer
             .ConfigureWebHostDefaults(webBuilder =>
             {
                 webBuilder
+                .ConfigureServices(services => services.AddAutofac())
                 .UseKestrel(serverOptions =>
                 {
                     serverOptions.Limits.MaxConcurrentConnections = 100;

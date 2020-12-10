@@ -37,23 +37,62 @@
             </summary>
             <param name="logger"></param>
         </member>
-        <member name="M:ApiServer.Controllers.SysUserController.Login(Microsoft.AspNetCore.Http.IFormCollection)">
+        <member name="M:ApiServer.Controllers.SysMenuController.Tree(System.String,System.Boolean)">
             <summary>
-            登录
+            菜单管理：查询
             </summary>
-            <param name="data"></param>
+            <param name="menuNameLike"></param>
+            <param name="menuStatus"></param>
             <returns></returns>
         </member>
-        <member name="M:ApiServer.Controllers.SysUserController.Exit">
+        <member name="M:ApiServer.Controllers.SysMenuController.Update(ApiServer.Model.Entity.Sys_Menu)">
             <summary>
-            退出
+            菜单管理：修改
             </summary>
+            <param name="sys_Menu"></param>
             <returns></returns>
         </member>
-        <member name="M:ApiServer.Controllers.SysUserController.LoginCheck">
+        <member name="M:ApiServer.Controllers.SysMenuController.Add(ApiServer.Model.Entity.Sys_Menu)">
             <summary>
-            登录验证
+            菜单管理：新增
             </summary>
+            <param name="sys_Menu"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiServer.Controllers.SysMenuController.Delete(ApiServer.Model.Entity.Sys_Menu)">
+            <summary>
+            菜单管理：新增
+            </summary>
+            <param name="sys_Menu"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiServer.Controllers.SysMenuController.CheckTree(System.Int64)">
+            <summary>
+            角色管理:菜单树展示（勾选项、展开项）
+            </summary>
+            <param name="roleId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiServer.Controllers.SysMenuController.SaveKeys(ApiServer.Model.Model.RoleCheckedIds)">
+            <summary>
+            角色管理：保存菜单勾选结果
+            </summary>
+            <param name="roleCheckedIds"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiServer.Controllers.SysMenuController.UserTree(System.String)">
+            <summary>
+            系统左侧菜单栏加载，根据登录用户名加载它可以访问的菜单项
+            </summary>
+            <param name="userName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiServer.Controllers.SysMenuController.Update(System.Int64,System.Boolean)">
+            <summary>
+            菜单管理：更新菜单禁用状态
+            </summary>
+            <param name="menuId"></param>
+            <param name="status"></param>
             <returns></returns>
         </member>
         <member name="T:ApiServer.Exception.GlobalExceptionFilter">

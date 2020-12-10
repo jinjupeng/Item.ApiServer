@@ -1,8 +1,6 @@
-﻿using ApiServer.Model.Entity;
-using Item.ApiServer.BLL.IBLL;
-using Microsoft.AspNetCore.Http;
+﻿using ApiServer.BLL.IBLL;
+using ApiServer.Model.Entity;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 
 namespace ApiServer.Controllers
 {
@@ -15,37 +13,6 @@ namespace ApiServer.Controllers
         public SysUserController(IBaseService<Sys_User> baseService)
         {
             _baseService = baseService;
-        }
-        /// <summary>
-        /// 登录
-        /// </summary>
-        /// <param name="data"></param>
-        /// <returns></returns>
-        [HttpPost]
-        public async Task<IActionResult> Login([FromForm] IFormCollection data)
-        {
-            // return Ok(await Task.FromResult());
-            return Ok();
-        }
-
-        /// <summary>
-        /// 退出
-        /// </summary>
-        /// <returns></returns>
-        [HttpGet]
-        public async Task<IActionResult> Exit()
-        {
-            return Ok();
-        }
-
-        /// <summary>
-        /// 登录验证
-        /// </summary>
-        /// <returns></returns>
-        [HttpGet]
-        public async Task<IActionResult> LoginCheck()
-        {
-            return Ok();
         }
     }
 }

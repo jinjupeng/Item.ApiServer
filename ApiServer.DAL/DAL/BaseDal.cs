@@ -1,12 +1,12 @@
-﻿using ApiServer.Model.Entity;
-using Item.ApiServer.DAL.IDAL;
+﻿using ApiServer.DAL.IDAL;
+using ApiServer.Model.Entity;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 
-namespace Item.ApiServer.DAL.DAL
+namespace ApiServer.DAL.DAL
 {
     public class BaseDal<T> : IBaseDal<T> where T : class
     {

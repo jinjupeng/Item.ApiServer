@@ -1,6 +1,6 @@
-﻿using Autofac;
-using Item.ApiServer.DAL.DAL;
-using Item.ApiServer.DAL.IDAL;
+﻿using ApiServer.DAL.DAL;
+using ApiServer.DAL.IDAL;
+using Autofac;
 
 namespace Item.ApiServer.DAL.DALModule
 {
@@ -10,8 +10,8 @@ namespace Item.ApiServer.DAL.DALModule
         {
             builder.RegisterGeneric(typeof(BaseDal<>)).As(typeof(IBaseDal<>)).InstancePerDependency();
             //  builder.RegisterType<DapperHelper>().InstancePerLifetimeScope();
-            builder.RegisterAssemblyTypes(this.ThisAssembly).InNamespace("Item.ApiServer.DAL.DAL")
-                .Where(a => a.Name.EndsWith("DAL"))
+            builder.RegisterAssemblyTypes(this.ThisAssembly).InNamespace("ApiServer.DAL.DAL")
+                .Where(a => a.Name.EndsWith("Dal"))
                 .AsImplementedInterfaces()
                 .InstancePerLifetimeScope();
 

@@ -1,6 +1,6 @@
-﻿using Autofac;
-using Item.ApiServer.BLL.BLL;
-using Item.ApiServer.BLL.IBLL;
+﻿using ApiServer.BLL.BLL;
+using ApiServer.BLL.IBLL;
+using Autofac;
 
 namespace Item.ApiServer.BLL.BLLModule
 {
@@ -10,7 +10,7 @@ namespace Item.ApiServer.BLL.BLLModule
         {
             builder.RegisterGeneric(typeof(BaseService<>)).As(typeof(IBaseService<>)).InstancePerDependency();
             //builder.RegisterType(typeof(CommonAuthorizeHandler)).InstancePerRequest();
-            builder.RegisterAssemblyTypes(this.ThisAssembly).InNamespace("Item.ApiServer.BLL.BLL")
+            builder.RegisterAssemblyTypes(this.ThisAssembly).InNamespace("ApiServer.BLL.BLL")
                 .Where(a => a.Name.EndsWith("Service"))
                 .AsImplementedInterfaces()
                 .InstancePerLifetimeScope();

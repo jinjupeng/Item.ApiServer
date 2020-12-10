@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 
-namespace Item.ApiServer.DAL.IDAL
+namespace ApiServer.DAL.IDAL
 {
     public interface IBaseDal<T> where T : class
     {

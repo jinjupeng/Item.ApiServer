@@ -1,11 +1,11 @@
-﻿using Item.ApiServer.BLL.IBLL;
-using Item.ApiServer.DAL.IDAL;
+﻿using ApiServer.BLL.IBLL;
+using ApiServer.DAL.IDAL;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 
-namespace Item.ApiServer.BLL.BLL
+namespace ApiServer.BLL.BLL
 {
     public class BaseService<T> : IBaseService<T> where T : class
     {
