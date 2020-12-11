@@ -37,6 +37,17 @@
             </summary>
             <param name="logger"></param>
         </member>
+        <member name="T:ApiServer.Controllers.SysMenuController">
+            <summary>
+            菜单管理
+            </summary>
+        </member>
+        <member name="M:ApiServer.Controllers.SysMenuController.#ctor(ApiServer.BLL.IBLL.ISysMenuService)">
+            <summary>
+            
+            </summary>
+            <param name="sysMenuService"></param>
+        </member>
         <member name="M:ApiServer.Controllers.SysMenuController.Tree(System.String,System.Boolean)">
             <summary>
             菜单管理：查询

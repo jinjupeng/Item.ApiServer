@@ -39,7 +39,7 @@ namespace ApiServer.BLL.BLL
                     SysMenuNode sysMenuNode = new SysMenuNode
                     {
                         id = sys_Menu.id,
-                        menu_pid = sys_Menu.id,
+                        menu_pid = sys_Menu.menu_pid,
                         menu_pids = sys_Menu.menu_pids,
                         is_leaf = sys_Menu.is_leaf,
                         menu_name = sys_Menu.menu_name,
@@ -180,7 +180,7 @@ namespace ApiServer.BLL.BLL
                     SysMenuNode sysMenuNode = new SysMenuNode
                     {
                         id = sys_Menu.id,
-                        menu_pid = sys_Menu.id,
+                        menu_pid = sys_Menu.menu_pid,
                         menu_pids = sys_Menu.menu_pids,
                         is_leaf = sys_Menu.is_leaf,
                         menu_name = sys_Menu.menu_name,

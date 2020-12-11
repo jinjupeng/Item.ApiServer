@@ -35,7 +35,7 @@ namespace ApiServer.BLL.BLL
                     SysApiNode sysApiNode = new SysApiNode
                     {
                         id = sys_Api.id,
-                        api_pid = sys_Api.id,
+                        api_pid = sys_Api.api_pid,
                         api_pids = sys_Api.api_pids,
                         is_leaf = sys_Api.is_leaf,
                         api_name = sys_Api.api_name,

@@ -8,12 +8,19 @@ using System.Threading.Tasks;
 
 namespace ApiServer.Controllers
 {
+    /// <summary>
+    /// 菜单管理
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class SysMenuController : ControllerBase
     {
         private readonly ISysMenuService _sysMenuService;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sysMenuService"></param>
         public SysMenuController(ISysMenuService sysMenuService)
         {
             _sysMenuService = sysMenuService;
@@ -27,7 +34,7 @@ namespace ApiServer.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("tree")]
-        public async Task<IActionResult> Tree([FromBody] string menuNameLike, bool menuStatus)
+        public async Task<IActionResult> Tree([FromForm] string menuNameLike, bool menuStatus)
         {
             return Ok(await Task.FromResult(_sysMenuService.GetMenuTree(menuNameLike, menuStatus)));
         }
@@ -96,7 +103,7 @@ namespace ApiServer.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("checkedtree")]
-        public async Task<IActionResult> CheckTree([FromBody] long roleId)
+        public async Task<IActionResult> CheckTree([FromForm] long roleId)
         {
             Dictionary<string, object> dict = new Dictionary<string, object>();
             dict.Add("tree", _sysMenuService.GetMenuTree("", default));
@@ -131,9 +138,9 @@ namespace ApiServer.Controllers
         /// </summary>
         /// <param name="userName"></param>
         /// <returns></returns>
-        [HttpGet]
+        [HttpPost]
         [Route("tree/user")]
-        public async Task<IActionResult> UserTree(string userName)
+        public async Task<IActionResult> UserTree([FromForm] string userName)
         {
             return Ok(await Task.FromResult(_sysMenuService.GetMenuTreeByUsername(userName))); ;
 
@@ -147,7 +154,7 @@ namespace ApiServer.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("status/change")]
-        public async Task<IActionResult> Update([FromBody] long menuId, bool status)
+        public async Task<IActionResult> Update([FromForm] long menuId, bool status)
         {
             MsgModel msg = new MsgModel
             {

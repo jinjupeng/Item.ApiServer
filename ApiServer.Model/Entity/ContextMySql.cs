@@ -30,7 +30,7 @@ namespace ApiServer.Model.Entity
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseMySql("server=192.168.2.155;port=3306;database=ApiServer;uid=root;pwd=123456;allow user variables=True", x => x.ServerVersion("8.0.22-mysql"));
+                optionsBuilder.UseMySql("server=127.0.0.1;port=3306;database=apiserver;uid=root;pwd=123456;allow user variables=True;sslMode=None;", x => x.ServerVersion("8.0.22-mysql"));
             }
         }
 
