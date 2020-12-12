@@ -37,6 +37,57 @@
             </summary>
             <param name="logger"></param>
         </member>
+        <member name="M:ApiServer.Controllers.SysApiController.Tree(System.String,System.Boolean)">
+            <summary>
+            接口管理:查询
+            </summary>
+            <param name="apiNameLike"></param>
+            <param name="apiStatus"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiServer.Controllers.SysApiController.Add(ApiServer.Model.Entity.Sys_Api)">
+            <summary>
+            接口管理:新增
+            </summary>
+            <param name="sys_Api"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiServer.Controllers.SysApiController.Update(ApiServer.Model.Entity.Sys_Api)">
+            <summary>
+            接口管理:修改
+            </summary>
+            <param name="sys_Api"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiServer.Controllers.SysApiController.Delete(ApiServer.Model.Entity.Sys_Api)">
+            <summary>
+            接口管理:删除
+            </summary>
+            <param name="sys_Api"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiServer.Controllers.SysApiController.CheckedTree(System.Int64)">
+            <summary>
+            角色管理：API树展示（勾选项、展开项）
+            </summary>
+            <param name="roleId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiServer.Controllers.SysApiController.SaveKeys(ApiServer.Model.Model.RoleCheckedIds)">
+            <summary>
+            角色管理：保存API权限勾选结果
+            </summary>
+            <param name="roleCheckedIds"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiServer.Controllers.SysApiController.Update(System.Int64,System.Boolean)">
+            <summary>
+            接口管理：更新接口禁用状态
+            </summary>
+            <param name="apiId"></param>
+            <param name="status"></param>
+            <returns></returns>
+        </member>
         <member name="T:ApiServer.Controllers.SysMenuController">
             <summary>
             菜单管理
@@ -77,7 +128,7 @@
             <param name="sys_Menu"></param>
             <returns></returns>
         </member>
-        <member name="M:ApiServer.Controllers.SysMenuController.CheckTree(System.Int64)">
+        <member name="M:ApiServer.Controllers.SysMenuController.CheckedTree(System.Int64)">
             <summary>
             角色管理:菜单树展示（勾选项、展开项）
             </summary>

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using ApiServer.Common;
+using Microsoft.EntityFrameworkCore;
 
 namespace ApiServer.Model.Entity
 {
@@ -30,7 +31,7 @@ namespace ApiServer.Model.Entity
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseMySql("server=127.0.0.1;port=3306;database=apiserver;uid=root;pwd=123456;allow user variables=True;sslMode=None;", x => x.ServerVersion("8.0.22-mysql"));
+                optionsBuilder.UseMySql(ConfigTool.Configuration["Setting:Conn"], x => x.ServerVersion("8.0.22-mysql"));
             }
         }
 
@@ -77,7 +78,7 @@ namespace ApiServer.Model.Entity
 
             modelBuilder.Entity<Sys_Api>(entity =>
             {
-                entity.HasComment("系统Http接口表，配合sys_role_api控制接口访问权限");
+                entity.HasComment("系统Http接口表，配合Sys_Role_api控制接口访问权限");
 
                 entity.Property(e => e.id).ValueGeneratedNever();
 

@@ -103,7 +103,7 @@ namespace ApiServer.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("checkedtree")]
-        public async Task<IActionResult> CheckTree([FromForm] long roleId)
+        public async Task<IActionResult> CheckedTree([FromForm] long roleId)
         {
             Dictionary<string, object> dict = new Dictionary<string, object>();
             dict.Add("tree", _sysMenuService.GetMenuTree("", default));
