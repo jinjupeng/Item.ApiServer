@@ -240,6 +240,58 @@
             <param name="status"></param>
             <returns></returns>
         </member>
+        <member name="M:ApiServer.Controllers.SysUserController.Update(ApiServer.Model.Entity.Sys_User)">
+            <summary>
+            用户管理：更新
+            </summary>
+            <param name="sys_User"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiServer.Controllers.SysUserController.Add(ApiServer.Model.Entity.Sys_User)">
+            <summary>
+            用户管理：新增
+            </summary>
+            <param name="sys_User"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiServer.Controllers.SysUserController.Delete(System.Int64)">
+            <summary>
+            用户管理：删除
+            </summary>
+            <param name="userId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiServer.Controllers.SysUserController.PwdReset(System.Int64)">
+            <summary>
+            用户管理：重置密码
+            </summary>
+            <param name="userId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiServer.Controllers.SysUserController.Isdefault(System.String)">
+            <summary>
+            判断登录用户密码是否是默认密码
+            </summary>
+            <param name="userName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiServer.Controllers.SysUserController.PwdChange(System.String,System.String,System.String)">
+            <summary>
+            修改密码
+            </summary>
+            <param name="userName"></param>
+            <param name="oldPass"></param>
+            <param name="newPass"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiServer.Controllers.SysUserController.Update(System.Int64,System.Boolean)">
+            <summary>
+            用户管理：更新用户激活状态
+            </summary>
+            <param name="userId"></param>
+            <param name="enabled"></param>
+            <returns></returns>
+        </member>
         <member name="T:ApiServer.Exception.GlobalExceptionFilter">
             <summary>
             自定义全局异常过滤器：当程序发生异常时，处理系统出现的未捕获的异常

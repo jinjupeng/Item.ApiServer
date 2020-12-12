@@ -2,11 +2,7 @@
 using ApiServer.Model.Entity;
 using ApiServer.Model.Model;
 using ApiServer.Model.Model.MsgModel;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace ApiServer.Controllers
@@ -29,7 +25,7 @@ namespace ApiServer.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("query")]
-        public async Task<IActionResult> Query([FromForm]string roleLike)
+        public async Task<IActionResult> Query([FromForm] string roleLike)
         {
             return Ok(await Task.FromResult(_sysRoleService.QueryRoles(roleLike)));
         }
@@ -74,7 +70,7 @@ namespace ApiServer.Controllers
 
         [HttpPost]
         [Route("delete")]
-        public async Task<IActionResult> Delete([FromForm]long roleId)
+        public async Task<IActionResult> Delete([FromForm] long roleId)
         {
             MsgModel msg = new MsgModel
             {
@@ -93,7 +89,7 @@ namespace ApiServer.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("checkedroles")]
-        public async Task<IActionResult> CheckedRoles([FromForm]long userId)
+        public async Task<IActionResult> CheckedRoles([FromForm] long userId)
         {
             return Ok(await Task.FromResult(_sysRoleService.GetRolesAndChecked(userId)));
         }

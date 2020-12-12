@@ -2,11 +2,8 @@
 using ApiServer.Model.Entity;
 using ApiServer.Model.Model;
 using ApiServer.Model.Model.MsgModel;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace ApiServer.Controllers
@@ -30,7 +27,7 @@ namespace ApiServer.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("tree")]
-        public async Task<IActionResult> Tree([FromForm]string apiNameLike, bool apiStatus)
+        public async Task<IActionResult> Tree([FromForm] string apiNameLike, bool apiStatus)
         {
             MsgModel msg = new MsgModel
             {
@@ -66,7 +63,7 @@ namespace ApiServer.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("update")]
-        public async Task<IActionResult> Update([FromBody]Sys_Api sys_Api)
+        public async Task<IActionResult> Update([FromBody] Sys_Api sys_Api)
         {
             MsgModel msg = new MsgModel
             {

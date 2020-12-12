@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 
 namespace ApiServer.DAL.DAL
 {
@@ -19,7 +18,7 @@ namespace ApiServer.DAL.DAL
             // var userRoles = DbContext.Set<Sys_User_Role>().FromSqlInterpolated(sql).AsNoTracking().AsQueryable();
             var userRoles = DbContext.Set<Sys_User_Role>().Where(a => a.user_id == userId);
             var list = new List<string>();
-            foreach(var userRole in userRoles)
+            foreach (var userRole in userRoles)
             {
                 list.Add(Convert.ToString(userRole.role_id));
             }
@@ -30,7 +29,7 @@ namespace ApiServer.DAL.DAL
         public int InsertRoleApiIds(long roleId, List<long> checkedIds)
         {
             var roleApis = new List<Sys_Role_Api>();
-            foreach(var checkedId in checkedIds)
+            foreach (var checkedId in checkedIds)
             {
                 var sysRoleApi = new Sys_Role_Api
                 {
@@ -46,7 +45,7 @@ namespace ApiServer.DAL.DAL
         public int InsertRoleMenuIds(long roleId, List<long> checkedIds)
         {
             var roleMenus = new List<Sys_Role_Menu>();
-            foreach(var checkedId in checkedIds)
+            foreach (var checkedId in checkedIds)
             {
                 var sysRoleMenu = new Sys_Role_Menu
                 {
@@ -62,7 +61,7 @@ namespace ApiServer.DAL.DAL
         public long InsertUserRoleIds(long userId, List<long> checkedIds)
         {
             var userRoles = new List<Sys_User_Role>();
-            foreach(var checkedId in checkedIds)
+            foreach (var checkedId in checkedIds)
             {
                 var sysUserRole = new Sys_User_Role
                 {
@@ -81,7 +80,7 @@ namespace ApiServer.DAL.DAL
             // var roleApis = DbContext.Set<Sys_Role_Api>().FromSqlInterpolated(sql).AsNoTracking().AsQueryable();
             var roleApis = DbContext.Set<Sys_Role_Api>().Where(a => a.role_id == roleId);
             var list = new List<string>();
-            foreach(var sysRoleApi in roleApis)
+            foreach (var sysRoleApi in roleApis)
             {
                 list.Add(Convert.ToString(sysRoleApi.api_id));
             }

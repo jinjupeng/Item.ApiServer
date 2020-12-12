@@ -1,11 +1,7 @@
 ﻿using ApiServer.BLL.IBLL;
 using ApiServer.Model.Entity;
 using ApiServer.Model.Model.MsgModel;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace ApiServer.Controllers
@@ -42,7 +38,7 @@ namespace ApiServer.Controllers
         /// <returns>数据字典项列表</returns>
         [HttpPost]
         [Route("query")]
-        public async Task<IActionResult> Query([FromForm]string groupName, string groupCode)
+        public async Task<IActionResult> Query([FromForm] string groupName, string groupCode)
         {
             return Ok(await Task.FromResult(_sysDictService.Query(groupName, groupCode)));
         }

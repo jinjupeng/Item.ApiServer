@@ -26,6 +26,11 @@ namespace ApiServer.BLL.BLL
             return configList;
         }
 
+        public Sys_Config GetConfig(string paramKey)
+        {
+            return _baseSysConfigService.GetModels(a => a.param_key == paramKey).ToList().SingleOrDefault();
+        }
+
         public void UpdateConfig(Sys_Config sys_Config)
         {
             _baseSysConfigService.UpdateRange(sys_Config);
