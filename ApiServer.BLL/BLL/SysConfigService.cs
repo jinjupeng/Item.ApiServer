@@ -17,11 +17,12 @@ namespace ApiServer.BLL.BLL
 
         public List<Sys_Config> QueryConfigs(string configLik)
         {
+            List<Sys_Config> configList = new List<Sys_Config>();
             if (string.IsNullOrEmpty(configLik))
             {
-                return null;
+                return configList;
             }
-            List<Sys_Config> configList = _baseSysConfigService.GetModels(a => a.param_name == configLik || a.param_key == configLik).ToList();
+            configList = _baseSysConfigService.GetModels(a => a.param_name.Contains(configLik) || a.param_key.Contains(configLik)).ToList();
             return configList;
         }
 

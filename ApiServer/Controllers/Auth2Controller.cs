@@ -8,7 +8,7 @@ using System.Security.Claims;
 namespace ApiServer.Controllers
 {
     [ApiController]
-    public class ValuesController : ControllerBase
+    public class Auth2Controller : ControllerBase
     {
         // GET api/values
         [HttpGet]

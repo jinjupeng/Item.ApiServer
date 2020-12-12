@@ -15,6 +15,15 @@ namespace ApiServer.BLL.BLL
         }
 
         /// <summary>
+        /// 查询所有
+        /// </summary>
+        /// <returns></returns>
+        public List<Sys_Dict> All()
+        {
+            return _baseSysDictService.GetModels(null).ToList();
+        }
+
+        /// <summary>
         /// 
         /// </summary>
         /// <param name="groupName">分组名称</param>
@@ -22,7 +31,7 @@ namespace ApiServer.BLL.BLL
         /// <returns></returns>
         public List<Sys_Dict> Query(string groupName, string groupCode)
         {
-            return _baseSysDictService.GetModels(a => a.group_name == groupName && a.group_code == groupCode).ToList();
+            return _baseSysDictService.GetModels(a => a.group_name.Contains(groupName) && a.group_code.Contains(groupCode)).ToList();
 
         }
 

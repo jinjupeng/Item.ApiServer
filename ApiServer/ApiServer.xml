@@ -88,6 +88,46 @@
             <param name="status"></param>
             <returns></returns>
         </member>
+        <member name="T:ApiServer.Controllers.SysDictController">
+            <summary>
+            系统数据字典配置控制层代码
+            </summary>
+        </member>
+        <member name="M:ApiServer.Controllers.SysDictController.All">
+            <summary>
+            查询所有
+            </summary>
+            <returns>所有数据字典项</returns>
+        </member>
+        <member name="M:ApiServer.Controllers.SysDictController.Query(System.String,System.String)">
+            <summary>
+            根据查询参数查询数据字典
+            </summary>
+            <param name="groupName">分组名称</param>
+            <param name="groupCode">分组编码</param>
+            <returns>数据字典项列表</returns>
+        </member>
+        <member name="M:ApiServer.Controllers.SysDictController.Update(ApiServer.Model.Entity.Sys_Dict)">
+            <summary>
+            根据id更新数据数据字典项目
+            </summary>
+            <param name="sys_Dict">更新实体（必须包含id）</param>
+            <returns>更新成功结果</returns>
+        </member>
+        <member name="M:ApiServer.Controllers.SysDictController.Add(ApiServer.Model.Entity.Sys_Dict)">
+            <summary>
+            新增数据字典项
+            </summary>
+            <param name="sys_Dict">新增实体</param>
+            <returns>更新成功结果</returns>
+        </member>
+        <member name="M:ApiServer.Controllers.SysDictController.Delete(System.Int64)">
+            <summary>
+            根据id删除数据字典项
+            </summary>
+            <param name="id">删除项id</param>
+            <returns>删除成功结果</returns>
+        </member>
         <member name="T:ApiServer.Controllers.SysMenuController">
             <summary>
             菜单管理
@@ -154,6 +194,49 @@
             菜单管理：更新菜单禁用状态
             </summary>
             <param name="menuId"></param>
+            <param name="status"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiServer.Controllers.SysRoleController.Query(System.String)">
+            <summary>
+            角色管理:查询
+            </summary>
+            <param name="roleLike"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiServer.Controllers.SysRoleController.Update(ApiServer.Model.Entity.Sys_Role)">
+            <summary>
+            角色管理：修改
+            </summary>
+            <param name="sys_Role"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiServer.Controllers.SysRoleController.Add(ApiServer.Model.Entity.Sys_Role)">
+            <summary>
+            角色管理：新增
+            </summary>
+            <param name="sys_Role"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiServer.Controllers.SysRoleController.CheckedRoles(System.Int64)">
+            <summary>
+            用户管理：为用户分配角色，展示角色列表及勾选角色列表
+            </summary>
+            <param name="userId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiServer.Controllers.SysRoleController.Savekeys(ApiServer.Model.Model.UserRoleCheckedIds)">
+            <summary>
+            用户管理：保存用户角色
+            </summary>
+            <param name="userRoleCheckedIds"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiServer.Controllers.SysRoleController.Update(System.Int64,System.Boolean)">
+            <summary>
+            角色管理：更新角色禁用状态
+            </summary>
+            <param name="roleId"></param>
             <param name="status"></param>
             <returns></returns>
         </member>
