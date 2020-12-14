@@ -1,5 +1,6 @@
 ﻿using ApiServer.BLL.IBLL;
 using ApiServer.DAL.IDAL;
+using ApiServer.Model.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -65,6 +66,20 @@ namespace ApiServer.BLL.BLL
         public IQueryable<T> GetModels(Expression<Func<T, bool>> whereLambda)
         {
             return _baseDal.GetModels(whereLambda);
+        }
+
+        public PageModel<T> QueryByPage<TKey>(int pageIndex, int pageSize, Expression<Func<T, bool>> whereLambda, Expression<Func<T, TKey>> orderBy)
+        {
+            PageModel<T> pageModel = new PageModel<T>
+            {
+                PageIndex = pageIndex,
+                PageSize = pageSize,
+                Data = _baseDal.QueryByPage(pageIndex, pageSize, whereLambda, orderBy).ToList()
+            };
+            pageModel.DataCount = pageModel.Data.Count;
+            pageModel.PageCount = pageModel.DataCount % pageSize > 0 ? pageModel.DataCount / pageSize + 1 : pageModel.DataCount / pageSize; 
+
+            return pageModel;
         }
     }
 }

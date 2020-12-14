@@ -1,5 +1,6 @@
 ﻿using ApiServer.DAL.IDAL;
 using ApiServer.Model.Entity;
+using ApiServer.Model.Model;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -191,17 +192,23 @@ namespace ApiServer.DAL.DAL
 
         }
 
-        IQueryable<string> IMySystemDal.GetCheckedRoleIds(long userId)
-        {
-            // FormattableString sql = $"SELECT distinct role_id FROM Sys_User_Role ra WHERE ra.user_id = {userId};";
-            // return DbContext.Set<string>().FromSqlInterpolated(sql).AsNoTracking().AsQueryable();
-            var sysMenus = DbContext.Set<Sys_User_Role>().Where(a => a.user_id == userId);
-            var list = new List<string>();
-            foreach (var sysMenu in sysMenus)
-            {
-                list.Add(Convert.ToString(sysMenu.role_id));
-            }
-            return list.AsQueryable();
-        }
+        //public IQueryable<string> GetCheckedRoleIds(long userId)
+        //{
+        //    // FormattableString sql = $"SELECT distinct role_id FROM Sys_User_Role ra WHERE ra.user_id = {userId};";
+        //    // return DbContext.Set<string>().FromSqlInterpolated(sql).AsNoTracking().AsQueryable();
+        //    var sysMenus = DbContext.Set<Sys_User_Role>().Where(a => a.user_id == userId);
+        //    var list = new List<string>();
+        //    foreach (var sysMenu in sysMenus)
+        //    {
+        //        list.Add(Convert.ToString(sysMenu.role_id));
+        //    }
+        //    return list.AsQueryable();
+        //}
+
+        //public IQueryable<SysUserOrg> SelectUser()
+        //{
+        //    List<Sys_User> sys_Users = new List<Sys_User>();
+        //    var express = sys_Users.Join(Sys_Org, );
+        //}
     }
 }

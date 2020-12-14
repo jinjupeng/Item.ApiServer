@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ApiServer.Model.Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -21,5 +22,7 @@ namespace ApiServer.BLL.IBLL
         /// <param name="whereLambda"></param>
         /// <returns></returns>
         IQueryable<T> GetModels(Expression<Func<T, bool>> whereLambda);
+
+        PageModel<T> QueryByPage<TKey>(int pageIndex, int pageSize, Expression<Func<T, bool>> whereLambda, Expression<Func<T, TKey>> orderBy);
     }
 }

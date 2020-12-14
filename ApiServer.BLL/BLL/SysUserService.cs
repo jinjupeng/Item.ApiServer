@@ -1,6 +1,7 @@
 ﻿using ApiServer.BLL.IBLL;
 using ApiServer.Common;
 using ApiServer.Model.Entity;
+using ApiServer.Model.Model;
 using ApiServer.Model.Model.MsgModel;
 using System;
 using System.Linq;
@@ -36,7 +37,29 @@ namespace ApiServer.BLL.BLL
             return sys_User;
         }
 
-        // TODO：查询
+        ///// <summary>
+        ///// 用户管理：查询
+        ///// </summary>
+        ///// <param name="orgId"></param>
+        ///// <param name="userName"></param>
+        ///// <param name="phone"></param>
+        ///// <param name="email"></param>
+        ///// <param name="enabled"></param>
+        ///// <param name="createStartTime"></param>
+        ///// <param name="createEndTime"></param>
+        ///// <param name="pageNum"></param>
+        ///// <param name="pageSize"></param>
+        ///// <returns></returns>
+        //public PageModel<SysUserOrg> QueryUser(long orgId, string userName, string phone, string email, bool enabled, DateTime createStartTime, DateTime createEndTime, int pageNum, int pageSize)
+        //{
+        //    var where = PredicateBuilder.True<SysUserOrg>();
+        //    where = where.And(e => e.IsEnable);
+        //    where = where.And(e => e.DeadLine >= mindate);
+        //    where = where.And(e => e.DeadLine < maxdate);
+
+        //    var pageList = _baseSysUserService.QueryByPage(pageNum, pageSize, where, p => p.create_time);
+        //    _mySystemService
+        //}
 
 
         /// <summary>

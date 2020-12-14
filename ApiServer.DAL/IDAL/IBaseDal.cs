@@ -17,6 +17,7 @@ namespace ApiServer.DAL.IDAL
         int CountAll();
 
         IQueryable<T> GetModels(Expression<Func<T, bool>> whereLambda);
+        IQueryable<T> QueryByPage<TKey>(int pageIndex, int pageSize, Expression<Func<T, bool>> whereLambda, Expression<Func<T, TKey>> orderBy);
 
         bool SaveChanges();
     }
