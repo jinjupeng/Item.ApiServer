@@ -1,5 +1,6 @@
 ﻿using ApiServer.DAL.IDAL;
 using ApiServer.Model.Entity;
+using ApiServer.Model.Model;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -53,7 +54,10 @@ namespace ApiServer.DAL.DAL
             return whereLambda != null ? DbContext.Set<T>().AsNoTracking().Where(whereLambda) : DbContext.Set<T>().AsNoTracking();
         }
 
-
+        public IQueryable<T> QueryByPage<TKey>(int pageIndex, int pageSize, Expression<Func<T, bool>> whereLambda, Expression<Func<T, TKey>> orderBy)
+        {
+            return DbContext.Set<T>().Where(whereLambda.Compile()).AsQueryable().OrderBy(orderBy).Skip((pageIndex - 1) * pageSize).Take(pageSize);
+        }
 
         public bool SaveChanges()
         {
