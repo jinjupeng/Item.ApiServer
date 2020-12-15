@@ -1,4 +1,5 @@
-﻿using ApiServer.DAL.IDAL;
+﻿using ApiServer.Common;
+using ApiServer.DAL.IDAL;
 using ApiServer.Model.Entity;
 using ApiServer.Model.Model;
 using Microsoft.EntityFrameworkCore;
@@ -128,7 +129,7 @@ namespace ApiServer.DAL.DAL
             WHERE u.username = {userName}
             AND m.status = 0
             ORDER BY level,sort
-";
+            ";
             return DbContext.Set<Sys_Menu>().FromSqlInterpolated(sql).AsNoTracking().AsQueryable();
 
         }
@@ -205,10 +206,69 @@ namespace ApiServer.DAL.DAL
         //    return list.AsQueryable();
         //}
 
-        //public IQueryable<SysUserOrg> SelectUser()
-        //{
-        //    List<Sys_User> sys_Users = new List<Sys_User>();
-        //    var express = sys_Users.Join(Sys_Org, );
-        //}
+        public IQueryable<SysUserOrg> SelectUser(long? orgId,
+                                      string userName,
+                                      string phone,
+                                      string email,
+                                      bool? enabled,
+                                      DateTime? createStartTime,
+                                      DateTime? createEndTime)
+        {
+            // https://www.cnblogs.com/wanghaibin/p/6494309.html
+
+            var userList = DbContext.Set<Sys_User>().AsNoTracking();
+            var orgList = DbContext.Set<Sys_Org>().AsNoTracking();
+            var userOrgList = (from u in userList
+                               join o in orgList on u.org_id equals o.id
+                               where string.IsNullOrEmpty(userName) || u.username.Contains(userName)
+                               where string.IsNullOrEmpty(phone) || u.phone.Contains(phone)
+                               where string.IsNullOrEmpty(email) || u.email.Contains(email)
+                               where enabled == null || u.enabled == enabled
+                               where createStartTime == null || createEndTime == null || u.create_time >= createStartTime && u.create_time <= createEndTime
+                               where orgId == null || o.id == orgId || o.org_pids.Contains("[" + orgId + "]")
+                               select new SysUserOrg
+                               {
+                                   id = u.id,
+                                   username = u.username,
+                                   org_id = u.org_id,
+                                   OrgName = o.org_name,
+                                   enabled = u.enabled,
+                                   phone = u.phone,
+                                   email = u.email,
+                                   create_time = u.create_time
+                               });
+
+            return userOrgList;
+            //string sql = @"SELECT u.id,u.username,u.org_id,o.org_name,u.enabled,u.phone,u.email,u.create_time
+            //            FROM Sys_User u
+            //            LEFT JOIN Sys_Org o ON u.org_id = o.id";
+
+            //var result = DbContext.Set<SysUserOrg>().FromSqlRaw(sql).AsNoTracking().AsQueryable();
+            //if (!string.IsNullOrWhiteSpace(userName))
+            //{
+            //    result = result.Where(a => a.username.Contains(userName));
+            //}
+            //if (!string.IsNullOrWhiteSpace(phone))
+            //{
+            //    result = result.Where(a => a.phone.Contains(phone));
+            //}
+            //if (!string.IsNullOrWhiteSpace(email))
+            //{
+            //    result = result.Where(a => a.email.Contains(email));
+            //}
+            //if (enabled != null)
+            //{
+            //    result = result.Where(a => a.enabled == enabled);
+            //}
+            //if (createStartTime != null && createEndTime != null)
+            //{
+            //    result = result.Where(a => a.create_time >= createStartTime && a.create_time <= createEndTime);
+            //}
+            //if (orgId != null)
+            //{
+            //    result = result.Where(a => a.id == orgId || a.org_pids.Contains("[" + orgId + "]"));
+            //}
+
+        }
     }
 }

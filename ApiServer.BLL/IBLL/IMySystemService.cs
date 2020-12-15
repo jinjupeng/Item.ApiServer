@@ -1,4 +1,6 @@
 ﻿using ApiServer.Model.Entity;
+using ApiServer.Model.Model;
+using System;
 using System.Collections.Generic;
 
 namespace ApiServer.BLL.IBLL
@@ -28,5 +30,6 @@ namespace ApiServer.BLL.IBLL
         long InsertUserRoleIds(long userId, List<long> checkedIds);
 
         List<Sys_Menu> SelectMenuByUserName(string userName);
+        PageModel<SysUserOrg> SelectUser(int pageIndex, int pageSize, long? orgId, string userName, string phone, string email, bool? enabled, DateTime? createStartTime, DateTime? createEndTime);
     }
 }

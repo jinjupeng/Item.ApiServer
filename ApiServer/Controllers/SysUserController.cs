@@ -27,10 +27,10 @@ namespace ApiServer.Controllers
 
         [HttpPost]
         [Route("query")]
-        public async Task<IActionResult> Query([FromForm] long orgId, string userName, string phone, string email, bool enabled, DateTime createStartTime, DateTime createEndTime, int pageNum, int pageSize)
+        public async Task<IActionResult> Query([FromForm] long? orgId, string userName, string phone, string email, bool? enabled, DateTime? createStartTime, DateTime? createEndTime, int pageNum, int pageSize)
         {
-            // TODO：
-            return Ok(await Task.FromResult(1));
+            var result = _sysUserService.QueryUser(orgId, userName, phone, email, enabled, createStartTime, createEndTime, pageNum, pageSize);
+            return Ok(await Task.FromResult(result));
         }
 
         /// <summary>

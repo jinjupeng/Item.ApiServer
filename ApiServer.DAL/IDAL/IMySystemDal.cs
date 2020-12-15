@@ -1,4 +1,6 @@
 ﻿using ApiServer.Model.Entity;
+using ApiServer.Model.Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -29,6 +31,14 @@ namespace ApiServer.DAL.IDAL
         long InsertUserRoleIds(long userId, List<long> checkedIds);
 
         IQueryable<Sys_Menu> SelectMenuByUserName(string userName);
+
+        IQueryable<SysUserOrg> SelectUser(long? orgId,
+                                      string userName,
+                                      string phone,
+                                      string email,
+                                      bool? enabled,
+                                      DateTime? createStartTime,
+                                      DateTime? createEndTime);
 
     }
 }
