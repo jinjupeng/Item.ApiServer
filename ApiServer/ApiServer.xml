@@ -375,6 +375,14 @@
             权限授权处理器
             </summary>
         </member>
+        <member name="M:ApiServer.JWT.PermissionHandler.HandleRequirementAsync(Microsoft.AspNetCore.Authorization.AuthorizationHandlerContext,ApiServer.JWT.PermissionRequirement)">
+            <summary>
+            常用自定义验证策略
+            </summary>
+            <param name="context"></param>
+            <param name="requirement"></param>
+            <returns></returns>
+        </member>
         <member name="T:ApiServer.JWT.PermissionItem">
             <summary>
             用户或角色或其他凭据实体

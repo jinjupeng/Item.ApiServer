@@ -8,11 +8,13 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Newtonsoft.Json;
 using Serilog;
 using System.IO;
 using System.Text;
@@ -34,6 +36,8 @@ namespace ApiServer
         // 使用DI将服务注入到容器中
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
             #region JwtSetting类注入
             services.Configure<JwtSettings>(Configuration.GetSection("JwtSettings"));
             JwtSettings setting = new JwtSettings();
@@ -42,8 +46,10 @@ namespace ApiServer
             #endregion
 
             #region 基于策略模式的授权
+            // jwt服务注入
             services.AddAuthorization(options =>
             {
+                // 增加定义策略
                 options.AddPolicy("Permission", policy => policy.Requirements.Add(new PermissionRequirement()));
 
             })
@@ -66,14 +72,34 @@ namespace ApiServer
                 };
                 config.Events = new JwtBearerEvents
                 {
-                    OnAuthenticationFailed = context =>
+                    //OnAuthenticationFailed = context =>
+                    //{
+                    //    // 如果过期，则把<是否过期>添加到返回头信息中
+                    //    if (context.Exception.GetType() == typeof(SecurityTokenExpiredException))
+                    //    {
+                    //        context.Response.Headers.Add("Token-Expired", "true");
+                    //    }
+                    //    return Task.CompletedTask;
+                    //}
+                    //此处为权限验证失败后触发的事件
+                    OnChallenge = context =>
                     {
-                        // 如果过期，则把<是否过期>添加到返回头信息中
-                        if (context.Exception.GetType() == typeof(SecurityTokenExpiredException))
+                        //此处代码为终止.Net Core默认的返回类型和数据结果，这个很重要哦，必须
+                        context.HandleResponse();
+                        if (!context.Response.HasStarted)
                         {
-                            context.Response.Headers.Add("Token-Expired", "true");
+                            //自定义自己想要返回的数据结果，我这里要返回的是Json对象，通过引用Newtonsoft.Json库进行转换
+                            var payload = JsonConvert.SerializeObject(new { Code = 0, Message = "很抱歉，您无权访问该接口!" });
+                            //自定义返回的数据类型
+                            context.Response.ContentType = "application/json";
+                            //自定义返回状态码，默认为401 我这里改成 200
+                            context.Response.StatusCode = StatusCodes.Status200OK;
+                            //context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                            //输出Json数据结果
+                            context.Response.WriteAsync(payload);
                         }
-                        return Task.CompletedTask;
+
+                        return Task.FromResult(0);
                     }
                 };
             });
@@ -83,7 +109,7 @@ namespace ApiServer
 
             #endregion
 
-            // 注入权限处理器
+            // 注入自定义策略
             services.AddSingleton<IAuthorizationHandler, PermissionHandler>();
 
             services.AddMvc();
@@ -123,6 +149,7 @@ namespace ApiServer
             app.UseMiddleware<ExceptionMiddleware>(); // 全局异常过滤
             app.UseRouting();
 
+            app.UseAuthorization();
             // 添加jwt验证
             app.UseAuthentication();
 

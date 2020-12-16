@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -10,13 +11,27 @@ namespace ApiServer.JWT
     /// </summary>
     public class PermissionHandler : AuthorizationHandler<PermissionRequirement>
     {
+        private readonly IHttpContextAccessor _accessor;
+
+        public PermissionHandler(IHttpContextAccessor accessor)
+        {
+            this._accessor = accessor;
+        }
+
+        /// <summary>
+        /// 常用自定义验证策略
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="requirement"></param>
+        /// <returns></returns>
         protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, PermissionRequirement requirement)
         {
             // 赋值用户权限，也可直接从数据库获取
             var userPermissions = requirement.Permissions;
             // 从AuthorizationHandlerContext转成HttpContext，以便取出表头信息
-            var filterContext = (context.Resource as Microsoft.AspNetCore.Mvc.Filters.AuthorizationFilterContext);
-            var httpContext = (context.Resource as Microsoft.AspNetCore.Mvc.Filters.AuthorizationFilterContext)?.HttpContext;
+            // var filterContext = (context.Resource as Microsoft.AspNetCore.Mvc.Filters.AuthorizationFilterContext);
+            // var httpContext = (context.Resource as Microsoft.AspNetCore.Mvc.Filters.AuthorizationFilterContext)?.HttpContext;
+            var httpContext = _accessor.HttpContext;
             // 请求Url
             var questUrl = httpContext.Request.Path.Value.ToLower();
             // 是否经过验证
