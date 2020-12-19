@@ -1,4 +1,5 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using ApiServer.Model.Model;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -134,28 +135,6 @@ namespace ApiServer.JWT
         /// <returns></returns>
         public static long ToUnixEpochDate(DateTime date) =>
             (long)Math.Round((date.ToUniversalTime() - new DateTimeOffset(1970, 1, 1, 0, 0, 0, TimeSpan.Zero)).TotalSeconds);
-
-    }
-
-
-
-    /// <summary>
-    /// 令牌
-    /// </summary>
-    public class TokenModelJwt
-    {
-        /// <summary>
-        /// Sid
-        /// </summary>
-        public long Sid { get; set; }
-        /// <summary>
-        /// 角色
-        /// </summary>
-        public string Role { get; set; }
-        /// <summary>
-        /// 
-        /// </summary>
-        public string Name { get; set; }
 
     }
 }

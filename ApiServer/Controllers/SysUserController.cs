@@ -18,6 +18,11 @@ namespace ApiServer.Controllers
             _sysUserService = sysUserService;
         }
 
+        /// <summary>
+        /// 获取用户信息接口(个人中心)
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("info")]
         public async Task<IActionResult> Info([FromQuery] string userName)
@@ -25,6 +30,19 @@ namespace ApiServer.Controllers
             return Ok(await Task.FromResult(_sysUserService.GetUserByUserName(userName)));
         }
 
+        /// <summary>
+        /// 用户列表查询接口
+        /// </summary>
+        /// <param name="orgId"></param>
+        /// <param name="userName"></param>
+        /// <param name="phone"></param>
+        /// <param name="email"></param>
+        /// <param name="enabled"></param>
+        /// <param name="createStartTime"></param>
+        /// <param name="createEndTime"></param>
+        /// <param name="pageNum"></param>
+        /// <param name="pageSize"></param>
+        /// <returns></returns>
         [HttpPost]
         [Route("query")]
         public async Task<IActionResult> Query([FromForm] long? orgId, string userName, string phone, string email, bool? enabled, DateTime? createStartTime, DateTime? createEndTime, int pageNum, int pageSize)

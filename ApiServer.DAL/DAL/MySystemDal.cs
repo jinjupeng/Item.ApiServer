@@ -1,5 +1,4 @@
-﻿using ApiServer.Common;
-using ApiServer.DAL.IDAL;
+﻿using ApiServer.DAL.IDAL;
 using ApiServer.Model.Entity;
 using ApiServer.Model.Model;
 using Microsoft.EntityFrameworkCore;

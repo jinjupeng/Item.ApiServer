@@ -28,9 +28,6 @@ namespace ApiServer.JWT
         {
             // 赋值用户权限，也可直接从数据库获取
             var userPermissions = requirement.Permissions;
-            // 从AuthorizationHandlerContext转成HttpContext，以便取出表头信息
-            // var filterContext = (context.Resource as Microsoft.AspNetCore.Mvc.Filters.AuthorizationFilterContext);
-            // var httpContext = (context.Resource as Microsoft.AspNetCore.Mvc.Filters.AuthorizationFilterContext)?.HttpContext;
             var httpContext = _accessor.HttpContext;
             // 请求Url
             var questUrl = httpContext.Request.Path.Value.ToLower();

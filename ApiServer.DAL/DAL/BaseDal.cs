@@ -1,6 +1,5 @@
 ﻿using ApiServer.DAL.IDAL;
 using ApiServer.Model.Entity;
-using ApiServer.Model.Model;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;

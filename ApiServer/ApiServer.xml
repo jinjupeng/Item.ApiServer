@@ -37,6 +37,19 @@
             </summary>
             <param name="logger"></param>
         </member>
+        <member name="M:ApiServer.Controllers.JwtAuthController.Login(System.Collections.Generic.Dictionary{System.String,System.String})">
+            <summary>
+            使用用户名密码来换取jwt令牌
+            </summary>
+            <param name="pairs"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiServer.Controllers.JwtAuthController.RefreshToken">
+            <summary>
+            刷新token
+            </summary>
+            <returns></returns>
+        </member>
         <member name="M:ApiServer.Controllers.SysApiController.Tree(System.String,System.Boolean)">
             <summary>
             接口管理:查询
@@ -240,6 +253,28 @@
             <param name="status"></param>
             <returns></returns>
         </member>
+        <member name="M:ApiServer.Controllers.SysUserController.Info(System.String)">
+            <summary>
+            获取用户信息接口(个人中心)
+            </summary>
+            <param name="userName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiServer.Controllers.SysUserController.Query(System.Nullable{System.Int64},System.String,System.String,System.String,System.Nullable{System.Boolean},System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.Int32,System.Int32)">
+            <summary>
+            用户列表查询接口
+            </summary>
+            <param name="orgId"></param>
+            <param name="userName"></param>
+            <param name="phone"></param>
+            <param name="email"></param>
+            <param name="enabled"></param>
+            <param name="createStartTime"></param>
+            <param name="createEndTime"></param>
+            <param name="pageNum"></param>
+            <param name="pageSize"></param>
+            <returns></returns>
+        </member>
         <member name="M:ApiServer.Controllers.SysUserController.Update(ApiServer.Model.Entity.Sys_User)">
             <summary>
             用户管理：更新
@@ -336,11 +371,16 @@
             开发环境的消息
             </summary>
         </member>
-        <member name="M:ApiServer.JWT.JwtHelper.IssueJwt(ApiServer.JWT.TokenModelJwt)">
+        <member name="F:ApiServer.JWT.JwtHelper.SecurityKey">
+            <summary>
+            秘钥，可以从配置文件中获取
+            </summary>
+        </member>
+        <member name="M:ApiServer.JWT.JwtHelper.IssueJwt(ApiServer.Model.Model.TokenModelJwt)">
             <summary>
             颁发JWT字符串
             </summary>
-            <param name="user"></param>
+            <param name="tokenModel"></param>
             <returns></returns>
         </member>
         <member name="M:ApiServer.JWT.JwtHelper.SerializeJwt(System.String)">
@@ -350,25 +390,28 @@
             <param name="token"></param>
             <returns></returns>
         </member>
-        <member name="T:ApiServer.JWT.TokenModelJwt">
+        <member name="M:ApiServer.JWT.JwtHelper.Validate(System.String)">
             <summary>
-            令牌
+            验证身份 验证签名的有效性,
             </summary>
+            <param name="encodeJwt"></param>
+            例如：payLoad["aud"]?.ToString() == "roberAuddience";
+            例如：验证是否过期 等
+            <returns></returns>
         </member>
-        <member name="P:ApiServer.JWT.TokenModelJwt.Sid">
+        <member name="M:ApiServer.JWT.JwtHelper.GetPayLoad(System.String)">
             <summary>
-            Sid
+            获取jwt中的payload
             </summary>
+            <param name="encodeJwt"></param>
+            <returns></returns>
         </member>
-        <member name="P:ApiServer.JWT.TokenModelJwt.Role">
+        <member name="M:ApiServer.JWT.JwtHelper.ToUnixEpochDate(System.DateTime)">
             <summary>
-            角色
+            datetime转时间戳
             </summary>
-        </member>
-        <member name="P:ApiServer.JWT.TokenModelJwt.Name">
-            <summary>
-            
-            </summary>
+            <param name="date"></param>
+            <returns></returns>
         </member>
         <member name="T:ApiServer.JWT.PermissionHandler">
             <summary>

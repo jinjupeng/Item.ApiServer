@@ -77,7 +77,7 @@ namespace ApiServer.BLL.BLL
                 Data = _baseDal.QueryByPage(pageIndex, pageSize, whereLambda, orderBy).ToList()
             };
             pageModel.DataCount = pageModel.Data.Count;
-            pageModel.PageCount = pageModel.DataCount % pageSize > 0 ? pageModel.DataCount / pageSize + 1 : pageModel.DataCount / pageSize; 
+            pageModel.PageCount = pageModel.DataCount % pageSize > 0 ? pageModel.DataCount / pageSize + 1 : pageModel.DataCount / pageSize;
 
             return pageModel;
         }

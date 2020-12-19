@@ -1,9 +1,10 @@
-﻿using ApiServer.Model.Model.MsgModel;
-using Microsoft.AspNetCore.Http;
+﻿using ApiServer.BLL.IBLL;
+using ApiServer.JWT;
+using ApiServer.Model.Model;
+using ApiServer.Model.Model.MsgModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace ApiServer.Controllers
@@ -12,21 +13,49 @@ namespace ApiServer.Controllers
     [ApiController]
     public class JwtAuthController : ControllerBase
     {
+        private readonly IJwtAuthService _jwtAuthService;
 
-        // 使用用户名密码来换取jwt令牌
+        public JwtAuthController(IJwtAuthService jwtAuthService)
+        {
+            _jwtAuthService = jwtAuthService;
+        }
+
+        /// <summary>
+        /// 使用用户名密码来换取jwt令牌
+        /// </summary>
+        /// <param name="pairs"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
         [HttpPost]
         [Route("authentication")]
-        public async Task<IActionResult> Tree([FromForm]string username, string password)
+        public async Task<IActionResult> Login([FromForm] Dictionary<string, string> pairs)
+        {
+            var username = pairs["username"];
+            var password = pairs["password"];
+            MsgModel msg = _jwtAuthService.Login(username, password);
+            if (msg.isok)
+            {
+                TokenModelJwt tokenModel = new TokenModelJwt();
+                tokenModel.Name = username;
+                tokenModel.Role = "admin";
+                msg.data = JwtHelper.IssueJwt(tokenModel);
+            }
+            return Ok(await Task.FromResult(msg));
+        }
+
+        /// <summary>
+        /// 刷新token
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("refreshtoken")]
+        public async Task<IActionResult> RefreshToken()
         {
             MsgModel msg = new MsgModel
             {
-                message = "登录成功！"
+                isok = true,
+                message = ""
             };
-            if(string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
-            {
-                msg.isok = false;
-                msg.message = "用户名或者密码不能为空";
-            }
             return Ok(await Task.FromResult(msg));
         }
     }
