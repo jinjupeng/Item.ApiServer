@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace ApiServer.Controllers
 {
-    [Route("api/[controller]")]
+    // [Route("api/[controller]")]
     [ApiController]
     public class JwtAuthController : ControllerBase
     {

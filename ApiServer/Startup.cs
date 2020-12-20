@@ -125,6 +125,8 @@ namespace ApiServer
             });
             #endregion
 
+            //允许所有跨域
+            services.AddCors(options => options.AddPolicy("allowAll", p => p.AllowAnyOrigin()));
             services.AddMvc(options =>
             {
                 // 注册全局过滤器
@@ -145,7 +147,9 @@ namespace ApiServer
                 app.UseExceptionHandler("/Home/Error");
             }
 
-            app.UseMiddleware<RefererMiddleware>(); // 判断Referer请求来源是否合法
+            app.UseCors("allowAll");
+
+            // app.UseMiddleware<RefererMiddleware>(); // 判断Referer请求来源是否合法
             app.UseMiddleware<ExceptionMiddleware>(); // 全局异常过滤
             app.UseRouting();
 
