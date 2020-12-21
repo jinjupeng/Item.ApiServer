@@ -16,6 +16,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using Serilog;
+using System;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
@@ -109,6 +110,22 @@ namespace ApiServer
 
             #endregion
 
+            #region Cors 跨域
+            services.AddCors(options =>
+            {
+                // 浏览器会发起2次请求,使用OPTIONS发起预检请求，第二次才是api请求
+                options.AddPolicy("cors", policy =>
+                {
+                    policy
+                    .SetIsOriginAllowed(origin => true)
+                    .SetPreflightMaxAge(new TimeSpan(0, 10, 0))
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .AllowCredentials(); //指定处理cookie
+                });
+            });
+            #endregion
+
             // 注入自定义策略
             services.AddSingleton<IAuthorizationHandler, PermissionHandler>();
 
@@ -125,8 +142,7 @@ namespace ApiServer
             });
             #endregion
 
-            //允许所有跨域
-            services.AddCors(options => options.AddPolicy("allowAll", p => p.AllowAnyOrigin()));
+
             services.AddMvc(options =>
             {
                 // 注册全局过滤器
@@ -147,7 +163,7 @@ namespace ApiServer
                 app.UseExceptionHandler("/Home/Error");
             }
 
-            app.UseCors("allowAll");
+            app.UseCors("cors");
 
             // app.UseMiddleware<RefererMiddleware>(); // 判断Referer请求来源是否合法
             app.UseMiddleware<ExceptionMiddleware>(); // 全局异常过滤

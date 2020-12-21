@@ -5,6 +5,7 @@ namespace ApiServer.BLL.IBLL
 {
     public interface ISysConfigService
     {
+        List<Sys_Config> GetSysConfigList();
         List<Sys_Config> QueryConfigs(string configLik);
 
         Sys_Config GetConfig(string paramKey);

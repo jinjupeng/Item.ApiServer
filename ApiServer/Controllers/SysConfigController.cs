@@ -17,6 +17,20 @@ namespace ApiServer.Controllers
         }
 
         [HttpPost]
+        [Route("all")]
+        public async Task<IActionResult> All()
+        {
+            return Ok(await Task.FromResult(_sysConfigService.GetSysConfigList()));
+        }
+
+        [HttpPost]
+        [Route("refresh")]
+        public async Task<IActionResult> Refresh()
+        {
+            return Ok(await Task.FromResult(_sysConfigService.GetSysConfigList()));
+        }
+
+        [HttpPost]
         [Route("query")]
         public async Task<IActionResult> Query([FromForm] string configLike)
         {

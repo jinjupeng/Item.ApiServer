@@ -15,6 +15,12 @@ namespace ApiServer.BLL.BLL
             _baseSysConfigService = baseSysConfigService;
         }
 
+        public List<Sys_Config> GetSysConfigList()
+        {
+            List<Sys_Config> configList = _baseSysConfigService.GetModels(null).ToList();
+            return configList;
+        }
+
         public List<Sys_Config> QueryConfigs(string configLik)
         {
             List<Sys_Config> configList = new List<Sys_Config>();

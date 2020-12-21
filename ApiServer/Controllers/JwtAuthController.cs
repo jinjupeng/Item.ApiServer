@@ -9,9 +9,8 @@ using System.Threading.Tasks;
 
 namespace ApiServer.Controllers
 {
-    // [Route("api/[controller]")]
-    [ApiController]
-    public class JwtAuthController : ControllerBase
+    [Route("api/[controller]")]
+    public class JwtAuthController : BaseController
     {
         private readonly IJwtAuthService _jwtAuthService;
 
@@ -28,7 +27,7 @@ namespace ApiServer.Controllers
         [AllowAnonymous]
         [HttpPost]
         [Route("authentication")]
-        public async Task<IActionResult> Login([FromForm] Dictionary<string, string> pairs)
+        public async Task<IActionResult> Login([FromBody] Dictionary<string, string> pairs)
         {
             var username = pairs["username"];
             var password = pairs["password"];
@@ -51,10 +50,13 @@ namespace ApiServer.Controllers
         [Route("refreshtoken")]
         public async Task<IActionResult> RefreshToken()
         {
+            TokenModelJwt tokenModel = new TokenModelJwt();
+            tokenModel.Name = "admin";
+            tokenModel.Role = "admin";
             MsgModel msg = new MsgModel
             {
                 isok = true,
-                message = ""
+                data = JwtHelper.IssueJwt(tokenModel)
             };
             return Ok(await Task.FromResult(msg));
         }

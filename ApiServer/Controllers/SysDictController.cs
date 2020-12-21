@@ -10,8 +10,7 @@ namespace ApiServer.Controllers
     /// 系统数据字典配置控制层代码
     /// </summary>
     [Route("api/[controller]")]
-    [ApiController]
-    public class SysDictController : ControllerBase
+    public class SysDictController : BaseController
     {
         private readonly ISysDictService _sysDictService;
         public SysDictController(ISysDictService sysDictService)
