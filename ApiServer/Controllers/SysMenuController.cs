@@ -3,6 +3,7 @@ using ApiServer.Model.Entity;
 using ApiServer.Model.Model;
 using ApiServer.Model.Model.MsgModel;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -33,8 +34,14 @@ namespace ApiServer.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("tree")]
-        public async Task<IActionResult> Tree([FromForm] string menuNameLike, bool menuStatus)
+        public async Task<IActionResult> Tree([FromForm]Dictionary<string, string> pairs)
         {
+            string menuNameLike = (string)pairs["menuNameLike"];
+            bool? menuStatus = null;
+            if (!string.IsNullOrWhiteSpace(pairs["menuStatus"]))
+            {
+                menuStatus = Convert.ToBoolean(pairs["menuStatus"]);
+            }
             return Ok(await Task.FromResult(_sysMenuService.GetMenuTree(menuNameLike, menuStatus)));
         }
 

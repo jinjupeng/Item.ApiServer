@@ -1,11 +1,12 @@
 ﻿using ApiServer.Model.Entity;
+using ApiServer.Model.Model.MsgModel;
 using System.Collections.Generic;
 
 namespace ApiServer.BLL.IBLL
 {
     public interface ISysRoleService
     {
-        List<Sys_Role> QueryRoles(string roleLik);
+        MsgModel QueryRoles(string roleLik);
 
         void UpdateRole(Sys_Role sys_Role);
         void AddRole(Sys_Role sys_Role);

@@ -1,12 +1,13 @@
 ﻿using ApiServer.Model.Entity;
 using ApiServer.Model.Model;
+using ApiServer.Model.Model.MsgModel;
 using System.Collections.Generic;
 
 namespace ApiServer.BLL.IBLL
 {
     public interface ISysOrgService
     {
-        List<SysOrgNode> GetOrgTreeById(long rootOrgId, string orgNameLike, bool orgStatus);
+        MsgModel GetOrgTreeById(long rootOrgId, string orgNameLike, bool? orgStatus);
 
         void UpdateOrg(Sys_Org sys_Org);
 

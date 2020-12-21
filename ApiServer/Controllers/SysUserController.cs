@@ -3,6 +3,7 @@ using ApiServer.Model.Entity;
 using ApiServer.Model.Model.MsgModel;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace ApiServer.Controllers
@@ -44,8 +45,17 @@ namespace ApiServer.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("query")]
-        public async Task<IActionResult> Query([FromForm] long? orgId, string userName, string phone, string email, bool? enabled, DateTime? createStartTime, DateTime? createEndTime, int pageNum, int pageSize)
+        public async Task<IActionResult> Query([FromForm] Dictionary<string, string> pairs)
         {
+            long? orgId = long.TryParse(pairs["orgId"], out long tryOrgId) ? tryOrgId : null;
+            string userName = pairs["username"];
+            string phone = pairs["phone"];
+            string email = pairs["email"];
+            bool? enabled = Convert.ToBoolean(pairs["enabled"]);
+            DateTime? createStartTime = Convert.ToDateTime(pairs["createStartTime"]);
+            DateTime? createEndTime = Convert.ToDateTime(pairs["createEndTime"]);
+            int pageNum = Convert.ToInt32(pairs["pageNum"]);
+            int pageSize = Convert.ToInt32(pairs["pageSize"]);
             var result = _sysUserService.QueryUser(orgId, userName, phone, email, enabled, createStartTime, createEndTime, pageNum, pageSize);
             return Ok(await Task.FromResult(result));
         }

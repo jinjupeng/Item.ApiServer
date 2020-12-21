@@ -1,5 +1,6 @@
 ﻿using ApiServer.BLL.IBLL;
 using ApiServer.Model.Entity;
+using ApiServer.Model.Model.MsgModel;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -18,9 +19,15 @@ namespace ApiServer.BLL.BLL
         /// 查询所有
         /// </summary>
         /// <returns></returns>
-        public List<Sys_Dict> All()
+        public MsgModel All()
         {
-            return _baseSysDictService.GetModels(null).ToList();
+            MsgModel msg = new MsgModel
+            {
+                message = "查询成功！",
+                isok = true
+            };
+            msg.data = _baseSysDictService.GetModels(null).ToList();
+            return msg;
         }
 
         /// <summary>

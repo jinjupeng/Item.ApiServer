@@ -2,6 +2,7 @@
 using ApiServer.Model;
 using ApiServer.Model.Entity;
 using ApiServer.Model.Model;
+using ApiServer.Model.Model.MsgModel;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -25,8 +26,13 @@ namespace ApiServer.BLL.BLL
         /// <param name="orgNameLike">组织名称参数</param>
         /// <param name="orgStatus">组织状态参数</param>
         /// <returns>组织列表</returns>
-        public List<SysOrgNode> GetOrgTreeById(long rootOrgId, string orgNameLike, bool orgStatus)
+        public MsgModel GetOrgTreeById(long rootOrgId, string orgNameLike, bool? orgStatus)
         {
+            MsgModel msg = new MsgModel()
+            {
+                isok = true,
+                message = "查询成功！"
+            };
             List<Sys_Org> sysOrgs = _mySystemService.SelectOrgTree(rootOrgId, orgNameLike, orgStatus);
             List<SysOrgNode> sysOrgNodes = new List<SysOrgNode>();
             foreach (Sys_Org sys_Org in sysOrgs)
@@ -50,12 +56,14 @@ namespace ApiServer.BLL.BLL
             if (!string.IsNullOrEmpty(orgNameLike))
             {
                 //根据组织名称查询，返回平面列表
-                return sysOrgNodes;
+                msg.data = sysOrgNodes;
+                return msg;
             }
             else
             {
                 //否则返回树型结构列表
-                return DataTreeUtil<SysOrgNode, long>.BuildTree(sysOrgNodes, rootOrgId);
+                msg.data = DataTreeUtil<SysOrgNode, long>.BuildTree(sysOrgNodes, rootOrgId);
+                return msg;
             }
 
         }

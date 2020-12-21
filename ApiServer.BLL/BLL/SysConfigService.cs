@@ -1,7 +1,10 @@
 ﻿using ApiServer.BLL.IBLL;
 using ApiServer.Model.Entity;
+using ApiServer.Model.Model.MsgModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 
 namespace ApiServer.BLL.BLL
 {
@@ -15,21 +18,31 @@ namespace ApiServer.BLL.BLL
             _baseSysConfigService = baseSysConfigService;
         }
 
-        public List<Sys_Config> GetSysConfigList()
+        public MsgModel GetSysConfigList()
         {
-            List<Sys_Config> configList = _baseSysConfigService.GetModels(null).ToList();
-            return configList;
+            MsgModel msg = new MsgModel
+            {
+                message = "查询成功！",
+                isok = true
+            };
+            msg.data = _baseSysConfigService.GetModels(null).ToList();
+            return msg;
         }
 
-        public List<Sys_Config> QueryConfigs(string configLik)
+        public MsgModel QueryConfigs(string configLik)
         {
-            List<Sys_Config> configList = new List<Sys_Config>();
-            if (string.IsNullOrEmpty(configLik))
+            MsgModel msg = new MsgModel()
             {
-                return configList;
+                isok = true,
+                message = "查询成功！"
+            };
+            Expression<Func<Sys_Config, bool>> express = null;
+            if (!string.IsNullOrEmpty(configLik))
+            {
+                express = a => a.param_name.Contains(configLik) || a.param_key.Contains(configLik);
             }
-            configList = _baseSysConfigService.GetModels(a => a.param_name.Contains(configLik) || a.param_key.Contains(configLik)).ToList();
-            return configList;
+            msg.data = _baseSysConfigService.GetModels(express).ToList();
+            return msg;
         }
 
         public Sys_Config GetConfig(string paramKey)

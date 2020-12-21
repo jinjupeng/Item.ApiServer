@@ -1,5 +1,6 @@
 ﻿using ApiServer.Model.Entity;
 using ApiServer.Model.Model;
+using ApiServer.Model.Model.MsgModel;
 using System;
 using System.Collections.Generic;
 
@@ -7,9 +8,9 @@ namespace ApiServer.BLL.IBLL
 {
     public interface IMySystemService
     {
-        List<Sys_Org> SelectOrgTree(long rootOrgId, string orgNameLike, bool orgStatus);
+        List<Sys_Org> SelectOrgTree(long rootOrgId, string orgNameLike, bool? orgStatus);
 
-        List<Sys_Menu> SelectMenuTree(long rootMenuId, string menuNameLike, bool menuStatus);
+        List<Sys_Menu> SelectMenuTree(long rootMenuId, string menuNameLike, bool? menuStatus);
 
         List<Sys_Api> SelectApiTree(long rootApiId, string apiNameLike, bool apiStatus);
 
@@ -30,6 +31,6 @@ namespace ApiServer.BLL.IBLL
         long InsertUserRoleIds(long userId, List<long> checkedIds);
 
         List<Sys_Menu> SelectMenuByUserName(string userName);
-        PageModel<SysUserOrg> SelectUser(int pageIndex, int pageSize, long? orgId, string userName, string phone, string email, bool? enabled, DateTime? createStartTime, DateTime? createEndTime);
+        MsgModel SelectUser(int pageIndex, int pageSize, long? orgId, string userName, string phone, string email, bool? enabled, DateTime? createStartTime, DateTime? createEndTime);
     }
 }

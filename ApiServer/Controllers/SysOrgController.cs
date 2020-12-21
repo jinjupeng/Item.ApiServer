@@ -2,6 +2,8 @@
 using ApiServer.Model.Entity;
 using ApiServer.Model.Model.MsgModel;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace ApiServer.Controllers
@@ -20,8 +22,15 @@ namespace ApiServer.Controllers
 
         [HttpPost]
         [Route("tree")]
-        public async Task<IActionResult> Tree([FromForm] string userName, string orgNameLike, bool orgStatus)
+        public async Task<IActionResult> Tree([FromForm] Dictionary<string, string> pairs)
         {
+            string userName = (string)pairs["username"];
+            string orgNameLike = (string)pairs["orgNameLike"];
+            bool? orgStatus = null;
+            if (!string.IsNullOrWhiteSpace(pairs["orgStatus"]))
+            {
+                orgStatus = Convert.ToBoolean(pairs["orgStatus"]);
+            }
             Sys_User sys_User = _sysUserService.GetUserByUserName(userName);
             return Ok(await Task.FromResult(_sysOrgService.GetOrgTreeById(sys_User.org_id, orgNameLike, orgStatus)));
         }

@@ -2,6 +2,7 @@
 using ApiServer.Model;
 using ApiServer.Model.Entity;
 using ApiServer.Model.Model;
+using ApiServer.Model.Model.MsgModel;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -24,8 +25,13 @@ namespace ApiServer.BLL.BLL
         /// <param name="menuNameLike">菜单名称</param>
         /// <param name="menuStatus">菜单可用状态</param>
         /// <returns>菜单列表或树形列表</returns>
-        public List<SysMenuNode> GetMenuTree(string menuNameLike, bool menuStatus)
+        public MsgModel GetMenuTree(string menuNameLike, bool? menuStatus)
         {
+            MsgModel msg = new MsgModel
+            {
+                message = "查询成功！",
+                isok = true
+            };
             //保证数据库里面level=1的节点只有一个，根节点
             Sys_Menu rootSysMenu = _baseSysMenuService.GetModels(a => a.level == 1).Single();
             if (rootSysMenu != null)
@@ -54,18 +60,21 @@ namespace ApiServer.BLL.BLL
                 if (!string.IsNullOrEmpty(menuNameLike))
                 {
                     // 根据菜单名称查询，返回平面列表
-                    return sysMenuNodes;
+                    msg.data = sysMenuNodes;
+                    return msg;
                 }
                 else
                 {
                     // 否则返回菜单的树型结构列表
-                    return DataTreeUtil<SysMenuNode, long>.BuildTree(sysMenuNodes, rootMenuId);
+                    msg.data = DataTreeUtil<SysMenuNode, long>.BuildTree(sysMenuNodes, rootMenuId);
+                    return msg;
                 }
             }
             else
             {
                 // "请先在数据库内为菜单配置一个分类的根节点，level=1"
-                return new List<SysMenuNode>();
+                msg.data = new List<SysMenuNode>();
+                return msg;
             }
         }
 
@@ -167,8 +176,13 @@ namespace ApiServer.BLL.BLL
         /// </summary>
         /// <param name="username"></param>
         /// <returns></returns>
-        public List<SysMenuNode> GetMenuTreeByUsername(string username)
+        public MsgModel GetMenuTreeByUsername(string username)
         {
+            MsgModel msg = new MsgModel()
+            {
+                isok = true,
+                message = "查询成功！"
+            };
             List<Sys_Menu> sysMenus = _mySystemService.SelectMenuByUserName(username);
             if (sysMenus.Count > 0)
             {
@@ -192,9 +206,11 @@ namespace ApiServer.BLL.BLL
                     };
                     sysMenuNodes.Add(sysMenuNode);
                 }
-                return DataTreeUtil<SysMenuNode, long>.BuildTreeWithoutRoot(sysMenuNodes, rootMenuId);
+                msg.data = DataTreeUtil<SysMenuNode, long>.BuildTreeWithoutRoot(sysMenuNodes, rootMenuId);
+                return msg;
             }
-            return new List<SysMenuNode>();
+            msg.data = new List<SysMenuNode>();
+            return msg;
         }
 
         /// <summary>

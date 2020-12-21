@@ -1,7 +1,10 @@
 ﻿using ApiServer.BLL.IBLL;
 using ApiServer.Model.Entity;
+using ApiServer.Model.Model.MsgModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 
 namespace ApiServer.BLL.BLL
 {
@@ -24,9 +27,20 @@ namespace ApiServer.BLL.BLL
         /// </summary>
         /// <param name="roleLik">角色编码 或角色描述 或角色名称模糊查询</param>
         /// <returns>角色记录列表</returns>
-        public List<Sys_Role> QueryRoles(string roleLik)
+        public MsgModel QueryRoles(string roleLik)
         {
-            return _baseSysRoleService.GetModels(a => a.role_code.Contains(roleLik) || a.role_desc.Contains(roleLik) || a.role_name.Contains(roleLik)).ToList();
+            MsgModel msg = new MsgModel
+            {
+                message = "查询成功！",
+                isok = true
+            };
+            Expression<Func<Sys_Role, bool>> express = null;
+            if (!string.IsNullOrWhiteSpace(roleLik))
+            {
+                express = a => a.role_code.Contains(roleLik) || a.role_desc.Contains(roleLik) || a.role_name.Contains(roleLik);
+            }
+            msg.data = _baseSysRoleService.GetModels(express).ToList();
+            return msg;
 
         }
 

@@ -8,9 +8,9 @@ namespace ApiServer.DAL.IDAL
 {
     public interface IMySystemDal
     {
-        IQueryable<Sys_Org> SelectOrgTree(long rootOrgId, string orgNameLike, bool orgStatus);
+        IQueryable<Sys_Org> SelectOrgTree(long rootOrgId, string orgNameLike, bool? orgStatus);
 
-        IQueryable<Sys_Menu> SelectMenuTree(long rootMenuId, string menuNameLike, bool menuStatus);
+        IQueryable<Sys_Menu> SelectMenuTree(long rootMenuId, string menuNameLike, bool? menuStatus);
 
         IQueryable<Sys_Api> SelectApiTree(long rootApiId, string apiNameLike, bool apiStatus);
 

@@ -2,6 +2,7 @@
 using ApiServer.DAL.IDAL;
 using ApiServer.Model.Entity;
 using ApiServer.Model.Model;
+using ApiServer.Model.Model.MsgModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -67,18 +68,23 @@ namespace ApiServer.BLL.BLL
             return _mySystemDal.SelectMenuExpandedKeys().ToList();
         }
 
-        public List<Sys_Menu> SelectMenuTree(long rootMenuId, string menuNameLike, bool menuStatus)
+        public List<Sys_Menu> SelectMenuTree(long rootMenuId, string menuNameLike, bool? menuStatus)
         {
             return _mySystemDal.SelectMenuTree(rootMenuId, menuNameLike, menuStatus).ToList();
         }
 
-        public List<Sys_Org> SelectOrgTree(long rootOrgId, string orgNameLike, bool orgStatus)
+        public List<Sys_Org> SelectOrgTree(long rootOrgId, string orgNameLike, bool? orgStatus)
         {
             return _mySystemDal.SelectOrgTree(rootOrgId, orgNameLike, orgStatus).ToList();
         }
 
-        public PageModel<SysUserOrg> SelectUser(int pageIndex, int pageSize, long? orgId, string userName, string phone, string email, bool? enabled, DateTime? createStartTime, DateTime? createEndTime)
+        public MsgModel SelectUser(int pageIndex, int pageSize, long? orgId, string userName, string phone, string email, bool? enabled, DateTime? createStartTime, DateTime? createEndTime)
         {
+            MsgModel msg = new MsgModel()
+            {
+                isok = true,
+                message = "查询成功！"
+            };
             var result = _mySystemDal.SelectUser(orgId, userName, phone, email, enabled, createStartTime, createEndTime);
             int items = result.Count();
             PageModel<SysUserOrg> pageModel = new PageModel<SysUserOrg>
@@ -89,7 +95,8 @@ namespace ApiServer.BLL.BLL
             };
             pageModel.DataCount = items;
             pageModel.PageCount = items % pageSize > 0 ? items / pageSize + 1 : items / pageSize;
-            return pageModel;
+            msg.data = pageModel;
+            return msg;
         }
     }
 }

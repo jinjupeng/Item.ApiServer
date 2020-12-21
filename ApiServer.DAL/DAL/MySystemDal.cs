@@ -160,7 +160,7 @@ namespace ApiServer.DAL.DAL
             return list.AsQueryable();
         }
 
-        public IQueryable<Sys_Menu> SelectMenuTree(long rootMenuId, string menuNameLike, bool menuStatus)
+        public IQueryable<Sys_Menu> SelectMenuTree(long rootMenuId, string menuNameLike, bool? menuStatus)
         {
             string sql = $"SELECT id,menu_pid,menu_pids,is_leaf,menu_name,url,icon,sort,level,status FROM Sys_Menu o " +
             $"WHERE (menu_pids like CONCAT('%[{rootMenuId}]%') OR id = {rootMenuId}) ";
@@ -168,15 +168,17 @@ namespace ApiServer.DAL.DAL
             {
                 sql += $"AND menu_name like CONCAT('%{menuNameLike}%') ";
             }
-
-            sql += $"AND status = {(menuStatus ? 0 : 1)} ";
+            if (menuStatus != null)
+            {
+                sql += $"AND status = {((bool)menuStatus ? 0 : 1)} ";
+            }
             sql += $"ORDER BY level,sort";
 
             return DbContext.Set<Sys_Menu>().FromSqlRaw(sql).AsNoTracking().AsQueryable();
 
         }
 
-        public IQueryable<Sys_Org> SelectOrgTree(long rootOrgId, string orgNameLike, bool orgStatus)
+        public IQueryable<Sys_Org> SelectOrgTree(long rootOrgId, string orgNameLike, bool? orgStatus)
         {
             string sql = $"SELECT id,org_pid,org_pids,is_leaf,org_name,address,phone,email,sort,level,status FROM Sys_Org o " +
             $"WHERE (org_pids like CONCAT('%[{rootOrgId}]%') OR id = {rootOrgId}) ";
@@ -184,8 +186,11 @@ namespace ApiServer.DAL.DAL
             {
                 sql += $"AND org_name like CONCAT('%{orgNameLike}%') ";
             }
-
-            sql += $"AND status = {(orgStatus ? 0 : 1)} ";
+            if(orgStatus != null)
+            {
+                sql += $"AND status = {((bool)orgStatus ? 0 : 1)} ";
+            }
+            
             sql += $"ORDER BY level,sort";
 
             return DbContext.Set<Sys_Org>().FromSqlRaw(sql).AsNoTracking().AsQueryable();

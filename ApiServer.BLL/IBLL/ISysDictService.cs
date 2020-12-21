@@ -1,11 +1,12 @@
 ﻿using ApiServer.Model.Entity;
+using ApiServer.Model.Model.MsgModel;
 using System.Collections.Generic;
 
 namespace ApiServer.BLL.IBLL
 {
     public interface ISysDictService
     {
-        List<Sys_Dict> All();
+        MsgModel All();
         List<Sys_Dict> Query(string groupName, string groupCode);
 
         void Update(Sys_Dict sys_Dict);

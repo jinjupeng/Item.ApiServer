@@ -20,6 +20,8 @@ using System;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json.Serialization;
+using Microsoft.AspNetCore.Http.Features;
 
 namespace ApiServer
 {
@@ -37,6 +39,28 @@ namespace ApiServer
         // 使用DI将服务注入到容器中
         public void ConfigureServices(IServiceCollection services)
         {
+            //services.AddControllers().AddNewtonsoftJson(
+            //    options =>
+            //    {
+            //        //序列化时忽略循环
+            //        options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+            //        //不使用驼峰命名
+            //        options.SerializerSettings.ContractResolver = new DefaultContractResolver();
+            //        //Enum转换为字符串
+            //        options.SerializerSettings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
+            //        //序列化时是否忽略空值
+            //        options.SerializerSettings.NullValueHandling = NullValueHandling.Include;
+            //        //序列化时的时间格式
+            //        options.SerializerSettings.DateFormatString = "yyyy-MM-dd HH:mm:ss";
+            //    });
+
+            //services.Configure<FormOptions>(options =>
+            //{
+            //    options.MultipartBodyLengthLimit = int.MaxValue;
+            //    options.ValueLengthLimit = int.MaxValue;
+            //    options.MemoryBufferThreshold = int.MaxValue;
+            //});
+
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
             #region JwtSetting类注入
