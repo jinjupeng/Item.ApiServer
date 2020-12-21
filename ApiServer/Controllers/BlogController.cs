@@ -6,8 +6,7 @@ using System.Threading.Tasks;
 namespace ApiServer.Controllers
 {
     [Route("api/[controller]")]
-    [ApiController]
-    public class BlogController : ControllerBase
+    public class BlogController : BaseController
     {
         private readonly IBaseService<Blogs> _baseService;
 

@@ -7,8 +7,7 @@ namespace ApiServer.Controllers
     /// <summary>
     /// 异常
     /// </summary>
-    [ApiController]
-    public class ExceptionController : ControllerBase
+    public class ExceptionController : BaseController
     {
         private readonly ILogger _logger;
 

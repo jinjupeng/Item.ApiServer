@@ -7,8 +7,7 @@ using System.Threading.Tasks;
 namespace ApiServer.Controllers
 {
     [Route("api/[controller]")]
-    [ApiController]
-    public class SysConfigController : ControllerBase
+    public class SysConfigController : BaseController
     {
         private readonly ISysConfigService _sysConfigService;
         public SysConfigController(ISysConfigService sysConfigService)

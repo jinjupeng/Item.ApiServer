@@ -7,8 +7,7 @@ using System.Threading.Tasks;
 namespace ApiServer.Controllers
 {
     [Route("api/[controller]")]
-    [ApiController]
-    public class SysOrgController : ControllerBase
+    public class SysOrgController : BaseController
     {
         private readonly ISysOrgService _sysOrgService;
         private readonly ISysUserService _sysUserService;

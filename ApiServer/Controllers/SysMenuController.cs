@@ -12,8 +12,7 @@ namespace ApiServer.Controllers
     /// 菜单管理
     /// </summary>
     [Route("api/[controller]")]
-    [ApiController]
-    public class SysMenuController : ControllerBase
+    public class SysMenuController : BaseController
     {
         private readonly ISysMenuService _sysMenuService;
 
