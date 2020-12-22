@@ -2,7 +2,10 @@
 using ApiServer.Common;
 using ApiServer.Model.Entity;
 using ApiServer.Model.Model.MsgModel;
+using ApiServer.Model.Model.ViewModel;
+using Mapster;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 
@@ -41,7 +44,9 @@ namespace ApiServer.BLL.BLL
             {
                 express = a => a.param_name.Contains(configLik) || a.param_key.Contains(configLik);
             }
-            msg.data = _baseSysConfigService.GetModels(express).ToList();
+            TypeAdapterConfig<Sys_Config, SysConfig>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.ToCamelCase);
+            List<Sys_Config> list = _baseSysConfigService.GetModels(express).ToList();
+            msg.data = list.BuildAdapter().AdaptToType<List<SysConfig>>();
             return msg;
         }
 

@@ -5,11 +5,35 @@ namespace ApiServer.Model.Model.ViewModel
     public class SysDict
     {
         public long id { get; set; }
-        public string group_name { get; set; }
-        public string group_code { get; set; }
-        public string item_name { get; set; }
-        public string item_value { get; set; }
-        public string item_desc { get; set; }
-        public DateTime create_time { get; set; }
+
+        /// <summary>
+        /// 分组名称
+        /// </summary>
+        public string groupName { get; set; }
+
+        /// <summary>
+        /// 分组编码
+        /// </summary>
+        public string groupCode { get; set; }
+
+        /// <summary>
+        /// 字典项名称
+        /// </summary>
+        public string itemName { get; set; }
+
+        /// <summary>
+        /// 字典项Value
+        /// </summary>
+        public string itemValue { get; set; }
+
+        /// <summary>
+        /// 字典项描述
+        /// </summary>
+        public string itemDesc { get; set; }
+
+        /// <summary>
+        /// 字典项创建时间
+        /// </summary>
+        public DateTime createTime { get; set; }
     }
 }

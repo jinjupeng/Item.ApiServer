@@ -1,9 +1,9 @@
-﻿using ApiServer.Model.Entity;
+﻿using ApiServer.Model.Model.ViewModel;
 using System.Collections.Generic;
 
 namespace ApiServer.Model.Model
 {
-    public class SysOrgNode : Sys_Org, IDataTree<SysOrgNode, long>
+    public class SysOrgNode : SysOrg, IDataTree<SysOrgNode, long>
     {
         public List<SysOrgNode> Children { get; set; }
         public long GetId()
@@ -13,7 +13,7 @@ namespace ApiServer.Model.Model
 
         public long GetParentId()
         {
-            return org_pid;
+            return orgPid;
         }
 
 

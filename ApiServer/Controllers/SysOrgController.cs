@@ -1,6 +1,5 @@
 ﻿using ApiServer.BLL.IBLL;
 using ApiServer.Model.Entity;
-using ApiServer.Model.Model.MsgModel;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -39,13 +38,8 @@ namespace ApiServer.Controllers
         [Route("update")]
         public async Task<IActionResult> Update([FromBody] Sys_Org sys_Org)
         {
-            MsgModel msg = new MsgModel
-            {
-                message = "更新组织机构成功！"
-            };
-            _sysOrgService.UpdateOrg(sys_Org);
 
-            return Ok(await Task.FromResult(msg));
+            return Ok(await Task.FromResult(_sysOrgService.UpdateOrg(sys_Org)));
 
         }
 
@@ -53,13 +47,7 @@ namespace ApiServer.Controllers
         [Route("add")]
         public async Task<IActionResult> Add([FromBody] Sys_Org sys_Org)
         {
-            MsgModel msg = new MsgModel
-            {
-                message = "新增组织机构成功！"
-            };
-            _sysOrgService.AddOrg(sys_Org);
-
-            return Ok(await Task.FromResult(msg));
+            return Ok(await Task.FromResult(_sysOrgService.AddOrg(sys_Org)));
 
         }
 
@@ -67,13 +55,7 @@ namespace ApiServer.Controllers
         [Route("delete")]
         public async Task<IActionResult> Delete([FromBody] Sys_Org sys_Org)
         {
-            MsgModel msg = new MsgModel
-            {
-                message = "删除组织机构成功！"
-            };
-            _sysOrgService.DeleteOrg(sys_Org);
-
-            return Ok(await Task.FromResult(msg));
+            return Ok(await Task.FromResult(_sysOrgService.DeleteOrg(sys_Org)));
 
         }
 
@@ -81,13 +63,7 @@ namespace ApiServer.Controllers
         [Route("status/change")]
         public async Task<IActionResult> Update([FromForm] long orgId, bool status)
         {
-            MsgModel msg = new MsgModel
-            {
-                message = "删除组织机构成功！"
-            };
-            _sysOrgService.UpdateStatus(orgId, status);
-
-            return Ok(await Task.FromResult(msg));
+            return Ok(await Task.FromResult(_sysOrgService.UpdateStatus(orgId, status)));
 
         }
     }

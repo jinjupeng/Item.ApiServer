@@ -35,6 +35,7 @@ namespace ApiServer.BLL.BLL
                 isok = true,
                 message = "查询成功！"
             };
+            TypeAdapterConfig<Sys_Org, SysOrgNode>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.ToCamelCase);
             List<Sys_Org> sysOrgs = _mySystemService.SelectOrgTree(rootOrgId, orgNameLike, orgStatus);
             List<SysOrgNode> sysOrgNodes = new List<SysOrgNode>();
             foreach (Sys_Org sys_Org in sysOrgs)
@@ -53,7 +54,8 @@ namespace ApiServer.BLL.BLL
                 //    level = sys_Org.level,
                 //    status = sys_Org.status,
                 //};
-                SysOrgNode sysOrgNode = sys_Org.Adapt<SysOrgNode>();
+                // SysOrgNode sysOrgNode = sys_Org.Adapt<SysOrgNode>();
+                SysOrgNode sysOrgNode = sys_Org.BuildAdapter().AdaptToType<SysOrgNode>();
                 sysOrgNodes.Add(sysOrgNode);
             }
             if (!string.IsNullOrEmpty(orgNameLike))
@@ -71,13 +73,30 @@ namespace ApiServer.BLL.BLL
 
         }
 
-        public void UpdateOrg(Sys_Org sys_Org)
+        public MsgModel UpdateOrg(Sys_Org sys_Org)
         {
-            _baseSysOrgService.UpdateRange(sys_Org);
+            MsgModel msg = new MsgModel
+            {
+                isok = true,
+                message = "更新组织机构成功！"
+            };
+            if (!_baseSysOrgService.UpdateRange(sys_Org))
+            {
+                msg.isok = false;
+                msg.message = "更新组织机构失败！";
+
+            }
+
+            return msg;
         }
 
-        public void AddOrg(Sys_Org sys_Org)
+        public MsgModel AddOrg(Sys_Org sys_Org)
         {
+            MsgModel msg = new MsgModel
+            {
+                isok = true,
+                message = "新增组织机构成功！"
+            };
             sys_Org.id = new Snowflake().GetId();
             SetOrgIdsAndLevel(sys_Org);
             sys_Org.is_leaf = true;//新增的组织节点都是子节点，没有下级
@@ -90,10 +109,16 @@ namespace ApiServer.BLL.BLL
 
             sys_Org.status = false;//设置是否禁用，新增节点默认可用
             _baseSysOrgService.AddRange(sys_Org);
+            return msg;
         }
 
-        public void DeleteOrg(Sys_Org sys_Org)
+        public MsgModel DeleteOrg(Sys_Org sys_Org)
         {
+            MsgModel msg = new MsgModel
+            {
+                isok = true,
+                message = "删除组织机构成功！"
+            };
             List<Sys_Org> myChilds = _baseSysOrgService.GetModels(a => a.org_pids.Contains("[" + sys_Org.org_pid + "]")).ToList();
             if (myChilds.Count > 0)
             {
@@ -114,6 +139,7 @@ namespace ApiServer.BLL.BLL
             }
             // 删除节点
             _baseSysOrgService.DeleteRange(sys_Org);
+            return msg;
         }
 
         /// <summary>
@@ -141,14 +167,23 @@ namespace ApiServer.BLL.BLL
         /// </summary>
         /// <param name="id"></param>
         /// <param name="status"></param>
-        public void UpdateStatus(long id, bool status)
+        public MsgModel UpdateStatus(long id, bool status)
         {
+            MsgModel msg = new MsgModel
+            {
+                message = "更新组织机构状态成功！"
+            };
             Sys_Org sys_Org = new Sys_Org
             {
                 id = id,
                 status = status
             };
-            _baseSysOrgService.UpdateRange(sys_Org);
+            if (!_baseSysOrgService.UpdateRange(sys_Org))
+            {
+                msg.isok = false;
+                msg.message = "更新组织机构状态失败！";
+            }
+            return msg;
         }
     }
 }

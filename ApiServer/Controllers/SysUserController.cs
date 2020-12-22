@@ -1,6 +1,5 @@
 ﻿using ApiServer.BLL.IBLL;
 using ApiServer.Model.Entity;
-using ApiServer.Model.Model.MsgModel;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -33,27 +32,19 @@ namespace ApiServer.Controllers
         /// <summary>
         /// 用户列表查询接口
         /// </summary>
-        /// <param name="orgId"></param>
-        /// <param name="userName"></param>
-        /// <param name="phone"></param>
-        /// <param name="email"></param>
-        /// <param name="enabled"></param>
-        /// <param name="createStartTime"></param>
-        /// <param name="createEndTime"></param>
-        /// <param name="pageNum"></param>
-        /// <param name="pageSize"></param>
+        /// <param name="pairs"></param>
         /// <returns></returns>
         [HttpPost]
         [Route("query")]
         public async Task<IActionResult> Query([FromForm] Dictionary<string, string> pairs)
         {
-            long? orgId = long.TryParse(pairs["orgId"], out long tryOrgId) ? tryOrgId : default;
+            long? orgId = null;//long.TryParse(pairs["orgId"], out long tryOrgId) ? tryOrgId : default;
             string userName = pairs["username"];
             string phone = pairs["phone"];
             string email = pairs["email"];
-            bool? enabled = Convert.ToBoolean(pairs["enabled"]);
-            DateTime? createStartTime = Convert.ToDateTime(pairs["createStartTime"]);
-            DateTime? createEndTime = Convert.ToDateTime(pairs["createEndTime"]);
+            bool? enabled = null;//Convert.ToBoolean(pairs["enabled"]);
+            DateTime? createStartTime = null; // Convert.ToDateTime(pairs["createStartTime"]);
+            DateTime? createEndTime = null; // Convert.ToDateTime(pairs["createEndTime"]);
             int pageNum = Convert.ToInt32(pairs["pageNum"]);
             int pageSize = Convert.ToInt32(pairs["pageSize"]);
             var result = _sysUserService.QueryUser(orgId, userName, phone, email, enabled, createStartTime, createEndTime, pageNum, pageSize);
@@ -69,12 +60,7 @@ namespace ApiServer.Controllers
         [Route("update")]
         public async Task<IActionResult> Update([FromBody] Sys_User sys_User)
         {
-            MsgModel msg = new MsgModel
-            {
-                message = "更新用户成功！"
-            };
-            _sysUserService.UpdateUser(sys_User);
-            return Ok(await Task.FromResult(msg));
+            return Ok(await Task.FromResult(_sysUserService.UpdateUser(sys_User)));
         }
 
         /// <summary>
@@ -86,12 +72,7 @@ namespace ApiServer.Controllers
         [Route("add")]
         public async Task<IActionResult> Add([FromBody] Sys_User sys_User)
         {
-            MsgModel msg = new MsgModel
-            {
-                message = "新增用户成功！"
-            };
-            _sysUserService.AddUser(sys_User);
-            return Ok(await Task.FromResult(msg));
+            return Ok(await Task.FromResult(_sysUserService.AddUser(sys_User)));
         }
 
         /// <summary>
@@ -103,12 +84,7 @@ namespace ApiServer.Controllers
         [Route("delete")]
         public async Task<IActionResult> Delete([FromForm] long userId)
         {
-            MsgModel msg = new MsgModel
-            {
-                message = "删除用户成功！"
-            };
-            _sysUserService.DeleteUser(userId);
-            return Ok(await Task.FromResult(msg));
+            return Ok(await Task.FromResult(_sysUserService.DeleteUser(userId)));
         }
 
         /// <summary>
@@ -132,7 +108,6 @@ namespace ApiServer.Controllers
         [Route("pwd/isdefault")]
         public async Task<IActionResult> Isdefault([FromForm] string userName)
         {
-
             return Ok(await Task.FromResult(_sysUserService.IsDefault(userName)));
         }
 
@@ -160,12 +135,7 @@ namespace ApiServer.Controllers
         [Route("enabled/change")]
         public async Task<IActionResult> Update([FromForm] long userId, bool enabled)
         {
-            MsgModel msg = new MsgModel
-            {
-                message = "用户状态更新成功！"
-            };
-            _sysUserService.UpdateEnabled(userId, enabled);
-            return Ok(await Task.FromResult(msg));
+            return Ok(await Task.FromResult(_sysUserService.UpdateEnabled(userId, enabled)));
         }
     }
 }

@@ -27,9 +27,11 @@ namespace ApiServer.BLL.BLL
             MsgModel msg = new MsgModel
             {
                 message = "查询成功！",
-                isok = true,
-                data = _baseSysDictService.GetModels(null).ToList()
+                isok = true
             };
+            TypeAdapterConfig<Sys_Dict, SysDict>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.ToCamelCase);
+            List<Sys_Dict> list = _baseSysDictService.GetModels(null).ToList();
+            msg.data = list.BuildAdapter().AdaptToType<List<SysDict>>();
             return msg;
         }
 

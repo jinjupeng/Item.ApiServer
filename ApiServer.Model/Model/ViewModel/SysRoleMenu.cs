@@ -2,7 +2,14 @@
 {
     public class SysRoleMenu
     {
-        public long role_id { get; set; }
-        public long menu_id { get; set; }
+        /// <summary>
+        /// 角色id
+        /// </summary>
+        public long roleId { get; set; }
+
+        /// <summary>
+        /// 权限id
+        /// </summary>
+        public long menuId { get; set; }
     }
 }

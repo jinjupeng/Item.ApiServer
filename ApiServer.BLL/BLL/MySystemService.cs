@@ -3,6 +3,7 @@ using ApiServer.DAL.IDAL;
 using ApiServer.Model.Entity;
 using ApiServer.Model.Model;
 using ApiServer.Model.Model.MsgModel;
+using ApiServer.Model.Model.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;

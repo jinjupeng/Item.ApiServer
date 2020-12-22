@@ -2,7 +2,14 @@
 {
     public class SysRoleApi
     {
-        public long role_id { get; set; }
-        public long api_id { get; set; }
+        /// <summary>
+        /// 角色id
+        /// </summary>
+        public long roleId { get; set; }
+
+        /// <summary>
+        /// 接口id
+        /// </summary>
+        public long apiId { get; set; }
     }
 }

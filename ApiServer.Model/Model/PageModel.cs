@@ -11,7 +11,7 @@ namespace ApiServer.Model.Model
         /// 当前页
         /// </summary>
         public int pageNum { get; set; } = 1;
-        
+
         /// <summary>
         /// 每页数量
         /// </summary>
@@ -21,12 +21,12 @@ namespace ApiServer.Model.Model
         /// 总记录数
         /// </summary>
         public int total { get; set; } = 0;
-        
+
         /// <summary>
         /// 当前页的数量
         /// </summary>
         public int size { set; get; }
-        
+
         /// <summary>
         /// 结果集
         /// </summary>

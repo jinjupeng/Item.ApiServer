@@ -36,6 +36,7 @@ namespace ApiServer.BLL.BLL
                 message = "查询成功！",
                 isok = true
             };
+            TypeAdapterConfig<Sys_Menu, SysMenuNode>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.ToCamelCase);
             //保证数据库里面level=1的节点只有一个，根节点
             Sys_Menu rootSysMenu = _baseSysMenuService.GetModels(a => a.level == 1).Single();
             if (rootSysMenu != null)
@@ -59,7 +60,8 @@ namespace ApiServer.BLL.BLL
                     //    level = sys_Menu.level,
                     //    status = sys_Menu.status,
                     //};
-                    SysMenuNode sysMenuNode = sys_Menu.Adapt<SysMenuNode>();
+                    // SysMenuNode sysMenuNode = sys_Menu.Adapt<SysMenuNode>();
+                    SysMenuNode sysMenuNode = sys_Menu.BuildAdapter().AdaptToType<SysMenuNode>();
                     sysMenuNodes.Add(sysMenuNode);
                 }
                 if (!string.IsNullOrEmpty(menuNameLike))
@@ -216,6 +218,7 @@ namespace ApiServer.BLL.BLL
                 isok = true,
                 message = "查询成功！"
             };
+            TypeAdapterConfig<Sys_Menu, SysMenuNode>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.ToCamelCase);
             List<Sys_Menu> sysMenus = _mySystemService.SelectMenuByUserName(username);
             if (sysMenus.Count > 0)
             {
@@ -237,7 +240,8 @@ namespace ApiServer.BLL.BLL
                     //    level = sys_Menu.level,
                     //    status = sys_Menu.status,
                     //};
-                    SysMenuNode sysMenuNode = sys_Menu.Adapt<SysMenuNode>();
+                    // SysMenuNode sysMenuNode = sys_Menu.Adapt<SysMenuNode>();
+                    SysMenuNode sysMenuNode = sys_Menu.BuildAdapter().AdaptToType<SysMenuNode>();
                     sysMenuNodes.Add(sysMenuNode);
                 }
                 msg.data = DataTreeUtil<SysMenuNode, long>.BuildTreeWithoutRoot(sysMenuNodes, rootMenuId);

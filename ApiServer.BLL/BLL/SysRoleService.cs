@@ -49,21 +49,48 @@ namespace ApiServer.BLL.BLL
 
         }
 
-        public void UpdateRole(Sys_Role sys_Role)
+        public MsgModel UpdateRole(Sys_Role sys_Role)
         {
-            _baseSysRoleService.UpdateRange(sys_Role);
+            MsgModel msg = new MsgModel
+            {
+                message = "更新角色成功！"
+            };
+            if (!_baseSysRoleService.UpdateRange(sys_Role))
+            {
+                msg.isok = false;
+                msg.message = "更新角色失败！";
+            }
+            return msg;
         }
 
-        public void AddRole(Sys_Role sys_Role)
+        public MsgModel AddRole(Sys_Role sys_Role)
         {
+            MsgModel msg = new MsgModel
+            {
+                message = "新增角色成功！"
+            };
             sys_Role.id = new Snowflake().GetId();
             sys_Role.status = false;// 是否禁用:false
-            _baseSysRoleService.AddRange(sys_Role);
+            if (!_baseSysRoleService.AddRange(sys_Role))
+            {
+                msg.isok = false;
+                msg.message = "新增角色失败！";
+            }
+            return msg;
         }
 
-        public void DeleteRole(long id)
+        public MsgModel DeleteRole(long id)
         {
-            _baseSysRoleService.DeleteRange(_baseSysRoleService.GetModels(a => a.id == id));
+            MsgModel msg = new MsgModel
+            {
+                message = "删除角色成功！"
+            };
+            if (!_baseSysRoleService.DeleteRange(_baseSysRoleService.GetModels(a => a.id == id)))
+            {
+                msg.isok = false;
+                msg.message = "删除角色失败！";
+            }
+            return msg;
         }
 
         /// <summary>
@@ -71,17 +98,22 @@ namespace ApiServer.BLL.BLL
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
-        public Dictionary<string, object> GetRolesAndChecked(long userId)
+        public MsgModel GetRolesAndChecked(long userId)
         {
-            Dictionary<string, object> ret = new Dictionary<string, object>
+            MsgModel msg = new MsgModel
+            {
+                message = "查询成功！",
+                isok = true
+            };
+            Dictionary<string, object> dict = new Dictionary<string, object>
             {
                 // 所有角色记录
                 { "roleDatas", _baseSysRoleService.GetModels(null).ToList() },
                 //某用户具有的角色id列表
                 { "checkedRoleIds", _mySystemService.GetCheckedRoleIds(userId) }
             };
-
-            return ret;
+            msg.data = dict;
+            return msg;
         }
 
         /// <summary>
@@ -89,10 +121,15 @@ namespace ApiServer.BLL.BLL
         /// </summary>
         /// <param name="userId"></param>
         /// <param name="checkedIds"></param>
-        public void SaveCheckedKeys(long userId, List<long> checkedIds)
+        public MsgModel SaveCheckedKeys(long userId, List<long> checkedIds)
         {
+            MsgModel msg = new MsgModel
+            {
+                message = "用户角色保存成功！"
+            };
             _sysUserRoleService.DeleteRange(_sysUserRoleService.GetModels(a => a.user_id == userId).ToList());
             _mySystemService.InsertUserRoleIds(userId, checkedIds);
+            return msg;
         }
 
         /// <summary>
@@ -100,14 +137,23 @@ namespace ApiServer.BLL.BLL
         /// </summary>
         /// <param name="id"></param>
         /// <param name="status"></param>
-        public void UpdateStatus(long id, bool status)
+        public MsgModel UpdateStatus(long id, bool status)
         {
+            MsgModel msg = new MsgModel
+            {
+                message = "角色禁用状态更新成功！"
+            };
             Sys_Role sys_Role = new Sys_Role
             {
                 id = id,
                 status = status
             };
-            _baseSysRoleService.AddRange(sys_Role);
+            if (!_baseSysRoleService.AddRange(sys_Role))
+            {
+                msg.isok = false;
+                msg.message = "角色禁用状态更新失败！";
+            }
+            return msg;
         }
 
     }

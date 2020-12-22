@@ -8,11 +8,11 @@ namespace ApiServer.BLL.IBLL
     {
         MsgModel QueryRoles(string roleLik);
 
-        void UpdateRole(Sys_Role sys_Role);
-        void AddRole(Sys_Role sys_Role);
-        void DeleteRole(long id);
-        Dictionary<string, object> GetRolesAndChecked(long userId);
-        void SaveCheckedKeys(long userId, List<long> checkedIds);
-        void UpdateStatus(long id, bool status);
+        MsgModel UpdateRole(Sys_Role sys_Role);
+        MsgModel AddRole(Sys_Role sys_Role);
+        MsgModel DeleteRole(long id);
+        MsgModel GetRolesAndChecked(long userId);
+        MsgModel SaveCheckedKeys(long userId, List<long> checkedIds);
+        MsgModel UpdateStatus(long id, bool status);
     }
 }

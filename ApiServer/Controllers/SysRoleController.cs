@@ -1,7 +1,6 @@
 ﻿using ApiServer.BLL.IBLL;
 using ApiServer.Model.Entity;
 using ApiServer.Model.Model;
-using ApiServer.Model.Model.MsgModel;
 using ApiServer.Model.Model.ViewModel;
 using Mapster;
 using Microsoft.AspNetCore.Mvc;
@@ -40,13 +39,7 @@ namespace ApiServer.Controllers
         [Route("update")]
         public async Task<IActionResult> Update([FromBody] Sys_Role sys_Role)
         {
-            MsgModel msg = new MsgModel
-            {
-                message = "更新角色成功！"
-            };
-            _sysRoleService.UpdateRole(sys_Role);
-
-            return Ok(await Task.FromResult(msg));
+            return Ok(await Task.FromResult(_sysRoleService.UpdateRole(sys_Role)));
 
         }
 
@@ -59,17 +52,9 @@ namespace ApiServer.Controllers
         [Route("add")]
         public async Task<IActionResult> Add([FromBody] SysRole sysRole)
         {
-            MsgModel msg = new MsgModel
-            {
-                message = "新增角色成功！"
-            };
-
             TypeAdapterConfig<SysRole, Sys_Role>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.FromCamelCase);
-
             var sys_Role = sysRole.BuildAdapter().AdaptToType<Sys_Role>();
-            _sysRoleService.AddRole(sys_Role);
-
-            return Ok(await Task.FromResult(msg));
+            return Ok(await Task.FromResult(_sysRoleService.AddRole(sys_Role)));
 
         }
 
@@ -77,13 +62,7 @@ namespace ApiServer.Controllers
         [Route("delete")]
         public async Task<IActionResult> Delete([FromForm] long roleId)
         {
-            MsgModel msg = new MsgModel
-            {
-                message = "删除角色成功！"
-            };
-            _sysRoleService.DeleteRole(roleId);
-
-            return Ok(await Task.FromResult(msg));
+            return Ok(await Task.FromResult(_sysRoleService.DeleteRole(roleId)));
 
         }
 
@@ -108,13 +87,7 @@ namespace ApiServer.Controllers
         [Route("savekeys")]
         public async Task<IActionResult> Savekeys([FromBody] UserRoleCheckedIds userRoleCheckedIds)
         {
-            MsgModel msg = new MsgModel
-            {
-                message = "保存用户角色成功！"
-            };
-            _sysRoleService.SaveCheckedKeys(userRoleCheckedIds.UserId, userRoleCheckedIds.CheckedIds);
-
-            return Ok(await Task.FromResult(msg));
+            return Ok(await Task.FromResult(_sysRoleService.SaveCheckedKeys(userRoleCheckedIds.UserId, userRoleCheckedIds.CheckedIds)));
         }
 
         /// <summary>
@@ -127,13 +100,7 @@ namespace ApiServer.Controllers
         [Route("status/change")]
         public async Task<IActionResult> Update([FromForm] long roleId, bool status)
         {
-            MsgModel msg = new MsgModel
-            {
-                message = "角色禁用状态更新成功！"
-            };
-            _sysRoleService.UpdateStatus(roleId, status);
-
-            return Ok(await Task.FromResult(msg));
+            return Ok(await Task.FromResult(_sysRoleService.UpdateStatus(roleId, status)));
         }
     }
 }

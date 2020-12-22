@@ -2,7 +2,14 @@
 {
     public partial class SysUserRole
     {
-        public long role_id { get; set; }
-        public long user_id { get; set; }
+        /// <summary>
+        /// 角色id
+        /// </summary>
+        public long roleId { get; set; }
+
+        /// <summary>
+        /// 用户id
+        /// </summary>
+        public long userId { get; set; }
     }
 }

@@ -59,31 +59,58 @@ namespace ApiServer.BLL.BLL
         /// 用户管理：修改
         /// </summary>
         /// <param name="sys_User"></param>
-        public void UpdateUser(Sys_User sys_User)
+        public MsgModel UpdateUser(Sys_User sys_User)
         {
-            _baseSysUserService.UpdateRange(sys_User);
+            MsgModel msg = new MsgModel
+            {
+                message = "更新用户成功！"
+            };
+            if (!_baseSysUserService.UpdateRange(sys_User))
+            {
+                msg.isok = false;
+                msg.message = "更新用户失败！";
+            }
+            return msg;
         }
 
         /// <summary>
         /// 用户管理：新增
         /// </summary>
         /// <param name="sys_User"></param>
-        public void AddUser(Sys_User sys_User)
+        public MsgModel AddUser(Sys_User sys_User)
         {
+            MsgModel msg = new MsgModel
+            {
+                message = "新增用户成功！"
+            };
             sys_User.id = new Snowflake().GetId();
             sys_User.password = PasswordEncoder.Encode(_sysConfigService.GetConfig("user.init.password").param_value);
             sys_User.create_time = DateTime.Now; //创建时间
             sys_User.enabled = true;//新增用户激活
-            _baseSysUserService.AddRange(sys_User);
+            if (!_baseSysUserService.AddRange(sys_User))
+            {
+                msg.isok = false;
+                msg.message = "新增用户失败！";
+            }
+            return msg;
         }
 
         /// <summary>
         /// 用户管理：删除
         /// </summary>
         /// <param name="userId"></param>
-        public void DeleteUser(long userId)
+        public MsgModel DeleteUser(long userId)
         {
-            _baseSysUserService.DeleteRange(_baseSysUserService.GetModels(a => a.id == userId));
+            MsgModel msg = new MsgModel
+            {
+                message = "删除用户成功！"
+            };
+            if (!_baseSysUserService.DeleteRange(_baseSysUserService.GetModels(a => a.id == userId)))
+            {
+                msg.isok = false;
+                msg.message = "删除用户失败！";
+            }
+            return msg;
         }
 
         /// <summary>
@@ -155,14 +182,23 @@ namespace ApiServer.BLL.BLL
         /// </summary>
         /// <param name="id"></param>
         /// <param name="enabled"></param>
-        public void UpdateEnabled(long id, bool enabled)
+        public MsgModel UpdateEnabled(long id, bool enabled)
         {
+            MsgModel msg = new MsgModel
+            {
+                message = "用户状态更新成功！"
+            };
             Sys_User sys_User = new Sys_User
             {
                 id = id,
                 enabled = enabled
             };
-            _baseSysUserService.UpdateRange(sys_User);
+            if (!_baseSysUserService.UpdateRange(sys_User))
+            {
+                msg.isok = false;
+                msg.message = "用户状态更新失败！";
+            }
+            return msg;
         }
     }
 }
