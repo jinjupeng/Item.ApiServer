@@ -1,9 +1,11 @@
 ﻿using ApiServer.BLL.IBLL;
+using ApiServer.Common;
 using ApiServer.Model.Entity;
 using ApiServer.Model.Model.MsgModel;
+using ApiServer.Model.Model.ViewModel;
+using Mapster;
 using System.Collections.Generic;
 using System.Linq;
-using ApiServer.Common;
 
 namespace ApiServer.BLL.BLL
 {
@@ -24,7 +26,9 @@ namespace ApiServer.BLL.BLL
         {
             MsgModel msg = new MsgModel
             {
-                message = "查询成功！", isok = true, data = _baseSysDictService.GetModels(null).ToList()
+                message = "查询成功！",
+                isok = true,
+                data = _baseSysDictService.GetModels(null).ToList()
             };
             return msg;
         }
@@ -42,8 +46,10 @@ namespace ApiServer.BLL.BLL
                 message = "查询成功！",
                 isok = true
             };
-            msg.data = _baseSysDictService.GetModels(a => a.group_name.Contains(groupName) && a.group_code.Contains(groupCode)).ToList();
+            TypeAdapterConfig<Sys_Dict, SysDict>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.ToCamelCase);
+            var sysDictList = _baseSysDictService.GetModels(a => a.group_name.Contains(groupName) && a.group_code.Contains(groupCode)).ToList();
 
+            msg.data = sysDictList.BuildAdapter().AdaptToType<List<SysDict>>();
             return msg;
         }
 

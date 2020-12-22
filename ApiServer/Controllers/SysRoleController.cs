@@ -2,6 +2,8 @@
 using ApiServer.Model.Entity;
 using ApiServer.Model.Model;
 using ApiServer.Model.Model.MsgModel;
+using ApiServer.Model.Model.ViewModel;
+using Mapster;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
@@ -55,12 +57,16 @@ namespace ApiServer.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("add")]
-        public async Task<IActionResult> Add([FromBody] Sys_Role sys_Role)
+        public async Task<IActionResult> Add([FromBody] SysRole sysRole)
         {
             MsgModel msg = new MsgModel
             {
                 message = "新增角色成功！"
             };
+
+            TypeAdapterConfig<SysRole, Sys_Role>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.FromCamelCase);
+
+            var sys_Role = sysRole.BuildAdapter().AdaptToType<Sys_Role>();
             _sysRoleService.AddRole(sys_Role);
 
             return Ok(await Task.FromResult(msg));

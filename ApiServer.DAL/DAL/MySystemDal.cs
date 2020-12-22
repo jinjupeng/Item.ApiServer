@@ -186,11 +186,11 @@ namespace ApiServer.DAL.DAL
             {
                 sql += $"AND org_name like CONCAT('%{orgNameLike}%') ";
             }
-            if(orgStatus != null)
+            if (orgStatus != null)
             {
                 sql += $"AND status = {((bool)orgStatus ? 0 : 1)} ";
             }
-            
+
             sql += $"ORDER BY level,sort";
 
             return DbContext.Set<Sys_Org>().FromSqlRaw(sql).AsNoTracking().AsQueryable();

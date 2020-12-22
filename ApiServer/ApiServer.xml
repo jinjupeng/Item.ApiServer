@@ -224,7 +224,7 @@
             <param name="sys_Role"></param>
             <returns></returns>
         </member>
-        <member name="M:ApiServer.Controllers.SysRoleController.Add(ApiServer.Model.Entity.Sys_Role)">
+        <member name="M:ApiServer.Controllers.SysRoleController.Add(ApiServer.Model.Model.ViewModel.SysRole)">
             <summary>
             角色管理：新增
             </summary>

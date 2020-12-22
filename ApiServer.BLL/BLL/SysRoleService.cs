@@ -2,6 +2,8 @@
 using ApiServer.Common;
 using ApiServer.Model.Entity;
 using ApiServer.Model.Model.MsgModel;
+using ApiServer.Model.Model.ViewModel;
+using Mapster;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,7 +42,9 @@ namespace ApiServer.BLL.BLL
             {
                 express = a => a.role_code.Contains(roleLik) || a.role_desc.Contains(roleLik) || a.role_name.Contains(roleLik);
             }
-            msg.data = _baseSysRoleService.GetModels(express).ToList();
+            TypeAdapterConfig<Sys_Role, SysRole>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.ToCamelCase);
+            var sysRoleList = _baseSysRoleService.GetModels(express).ToList();
+            msg.data = sysRoleList.BuildAdapter().AdaptToType<List<SysRole>>();
             return msg;
 
         }

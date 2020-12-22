@@ -89,12 +89,12 @@ namespace ApiServer.BLL.BLL
             int items = result.Count();
             PageModel<SysUserOrg> pageModel = new PageModel<SysUserOrg>
             {
-                PageIndex = pageIndex,
+                pageNum = pageIndex,
                 size = pageSize,
-                records = result.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList() // 分页
+                records = result.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList(),
+                total = items,
+                pageSize = items % pageSize > 0 ? items / pageSize + 1 : items / pageSize // 分页
             };
-            pageModel.total = items;
-            pageModel.PageCount = items % pageSize > 0 ? items / pageSize + 1 : items / pageSize;
             msg.data = pageModel;
             return msg;
         }

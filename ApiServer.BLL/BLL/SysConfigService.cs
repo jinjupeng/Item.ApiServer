@@ -1,10 +1,10 @@
 ﻿using ApiServer.BLL.IBLL;
+using ApiServer.Common;
 using ApiServer.Model.Entity;
 using ApiServer.Model.Model.MsgModel;
 using System;
 using System.Linq;
 using System.Linq.Expressions;
-using ApiServer.Common;
 
 namespace ApiServer.BLL.BLL
 {
@@ -22,7 +22,9 @@ namespace ApiServer.BLL.BLL
         {
             MsgModel msg = new MsgModel
             {
-                message = "查询成功！", isok = true, data = _baseSysConfigService.GetModels(null).ToList()
+                message = "查询成功！",
+                isok = true,
+                data = _baseSysConfigService.GetModels(null).ToList()
             };
             return msg;
         }

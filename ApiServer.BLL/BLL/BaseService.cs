@@ -17,9 +17,6 @@ namespace ApiServer.BLL.BLL
         {
             _baseDal = baseDal;
         }
-
-
-
         public bool AddRange(IEnumerable<T> t)
         {
             _baseDal.AddRange(t);
@@ -72,12 +69,12 @@ namespace ApiServer.BLL.BLL
         {
             PageModel<T> pageModel = new PageModel<T>
             {
-                PageIndex = pageIndex,
+                pageNum = pageIndex,
                 size = pageSize,
                 records = _baseDal.QueryByPage(pageIndex, pageSize, whereLambda, orderBy).ToList()
             };
             pageModel.total = pageModel.records.Count;
-            pageModel.PageCount = pageModel.total % pageSize > 0 ? pageModel.total / pageSize + 1 : pageModel.total / pageSize;
+            pageModel.pageSize = pageModel.total % pageSize > 0 ? pageModel.total / pageSize + 1 : pageModel.total / pageSize;
 
             return pageModel;
         }

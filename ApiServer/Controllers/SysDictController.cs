@@ -1,6 +1,5 @@
 ﻿using ApiServer.BLL.IBLL;
 using ApiServer.Model.Entity;
-using ApiServer.Model.Model.MsgModel;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
