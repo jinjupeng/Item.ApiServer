@@ -1,4 +1,5 @@
 ﻿using ApiServer.BLL.IBLL;
+using ApiServer.Common;
 using ApiServer.Model.Entity;
 using ApiServer.Model.Model.MsgModel;
 using System;
@@ -51,6 +52,7 @@ namespace ApiServer.BLL.BLL
 
         public void AddRole(Sys_Role sys_Role)
         {
+            sys_Role.id = new Snowflake().GetId();
             sys_Role.status = false;// 是否禁用:false
             _baseSysRoleService.AddRange(sys_Role);
         }
@@ -67,11 +69,13 @@ namespace ApiServer.BLL.BLL
         /// <returns></returns>
         public Dictionary<string, object> GetRolesAndChecked(long userId)
         {
-            Dictionary<string, object> ret = new Dictionary<string, object>();
-            // 所有角色记录
-            ret.Add("roleDatas", _baseSysRoleService.GetModels(null).ToList());
-            //某用户具有的角色id列表
-            ret.Add("checkedRoleIds", _mySystemService.GetCheckedRoleIds(userId));
+            Dictionary<string, object> ret = new Dictionary<string, object>
+            {
+                // 所有角色记录
+                { "roleDatas", _baseSysRoleService.GetModels(null).ToList() },
+                //某用户具有的角色id列表
+                { "checkedRoleIds", _mySystemService.GetCheckedRoleIds(userId) }
+            };
 
             return ret;
         }

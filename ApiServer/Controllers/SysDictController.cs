@@ -51,13 +51,7 @@ namespace ApiServer.Controllers
         [Route("update")]
         public async Task<IActionResult> Update([FromBody] Sys_Dict sys_Dict)
         {
-            MsgModel msg = new MsgModel
-            {
-                message = "更新数据字典项成功！"
-            };
-            _sysDictService.Update(sys_Dict);
-
-            return Ok(await Task.FromResult(msg));
+            return Ok(await Task.FromResult(_sysDictService.Update(sys_Dict)));
 
         }
 
@@ -70,13 +64,7 @@ namespace ApiServer.Controllers
         [Route("add")]
         public async Task<IActionResult> Add([FromBody] Sys_Dict sys_Dict)
         {
-            MsgModel msg = new MsgModel
-            {
-                message = "新增数据字典项成功！"
-            };
-            _sysDictService.Add(sys_Dict);
-
-            return Ok(await Task.FromResult(msg));
+            return Ok(await Task.FromResult(_sysDictService.Add(sys_Dict)));
 
         }
 
@@ -89,13 +77,7 @@ namespace ApiServer.Controllers
         [Route("delete")]
         public async Task<IActionResult> Delete([FromForm] long id)
         {
-            MsgModel msg = new MsgModel
-            {
-                message = "删除数据字典项成功！"
-            };
-            _sysDictService.Delete(id);
-
-            return Ok(await Task.FromResult(msg));
+            return Ok(await Task.FromResult(_sysDictService.Delete(id)));
 
         }
     }

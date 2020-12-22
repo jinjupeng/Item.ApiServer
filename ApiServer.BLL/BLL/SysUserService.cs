@@ -1,7 +1,6 @@
 ﻿using ApiServer.BLL.IBLL;
 using ApiServer.Common;
 using ApiServer.Model.Entity;
-using ApiServer.Model.Model;
 using ApiServer.Model.Model.MsgModel;
 using System;
 using System.Linq;
@@ -50,7 +49,7 @@ namespace ApiServer.BLL.BLL
         /// <param name="pageNum"></param>
         /// <param name="pageSize"></param>
         /// <returns></returns>
-        public PageModel<SysUserOrg> QueryUser(long? orgId, string userName, string phone, string email, bool? enabled, DateTime? createStartTime, DateTime? createEndTime, int pageNum, int pageSize)
+        public MsgModel QueryUser(long? orgId, string userName, string phone, string email, bool? enabled, DateTime? createStartTime, DateTime? createEndTime, int pageNum, int pageSize)
         {
             return _mySystemService.SelectUser(pageNum, pageSize, orgId, userName, phone, email, enabled, createStartTime, createEndTime);
         }
@@ -71,6 +70,7 @@ namespace ApiServer.BLL.BLL
         /// <param name="sys_User"></param>
         public void AddUser(Sys_User sys_User)
         {
+            sys_User.id = new Snowflake().GetId();
             sys_User.password = PasswordEncoder.Encode(_sysConfigService.GetConfig("user.init.password").param_value);
             sys_User.create_time = DateTime.Now; //创建时间
             sys_User.enabled = true;//新增用户激活

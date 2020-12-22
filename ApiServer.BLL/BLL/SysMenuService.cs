@@ -5,6 +5,8 @@ using ApiServer.Model.Model;
 using ApiServer.Model.Model.MsgModel;
 using System.Collections.Generic;
 using System.Linq;
+using ApiServer.Common;
+using Mapster;
 
 namespace ApiServer.BLL.BLL
 {
@@ -12,11 +14,13 @@ namespace ApiServer.BLL.BLL
     {
         private readonly IBaseService<Sys_Menu> _baseSysMenuService;
         private readonly IMySystemService _mySystemService;
+        private readonly IBaseService<Sys_Role_Menu> _baseSysRoleMenuService;
 
-        public SysMenuService(IBaseService<Sys_Menu> baseSysMenuService, IMySystemService mySystemService)
+        public SysMenuService(IBaseService<Sys_Menu> baseSysMenuService, IMySystemService mySystemService, IBaseService<Sys_Role_Menu> baseSysRoleMenuService)
         {
             _baseSysMenuService = baseSysMenuService;
             _mySystemService = mySystemService;
+            _baseSysRoleMenuService = baseSysRoleMenuService;
         }
 
         /// <summary>
@@ -42,19 +46,20 @@ namespace ApiServer.BLL.BLL
                 List<SysMenuNode> sysMenuNodes = new List<SysMenuNode>();
                 foreach (Sys_Menu sys_Menu in sysMenus)
                 {
-                    SysMenuNode sysMenuNode = new SysMenuNode
-                    {
-                        id = sys_Menu.id,
-                        menu_pid = sys_Menu.menu_pid,
-                        menu_pids = sys_Menu.menu_pids,
-                        is_leaf = sys_Menu.is_leaf,
-                        menu_name = sys_Menu.menu_name,
-                        url = sys_Menu.url,
-                        icon = sys_Menu.icon,
-                        sort = sys_Menu.sort,
-                        level = sys_Menu.level,
-                        status = sys_Menu.status,
-                    };
+                    //SysMenuNode sysMenuNode = new SysMenuNode
+                    //{
+                    //    id = sys_Menu.id,
+                    //    menu_pid = sys_Menu.menu_pid,
+                    //    menu_pids = sys_Menu.menu_pids,
+                    //    is_leaf = sys_Menu.is_leaf,
+                    //    menu_name = sys_Menu.menu_name,
+                    //    url = sys_Menu.url,
+                    //    icon = sys_Menu.icon,
+                    //    sort = sys_Menu.sort,
+                    //    level = sys_Menu.level,
+                    //    status = sys_Menu.status,
+                    //};
+                    SysMenuNode sysMenuNode = sys_Menu.Adapt<SysMenuNode>();
                     sysMenuNodes.Add(sysMenuNode);
                 }
                 if (!string.IsNullOrEmpty(menuNameLike))
@@ -78,25 +83,45 @@ namespace ApiServer.BLL.BLL
             }
         }
 
-        public void UpdateMenu(Sys_Menu sys_Menu)
+        public MsgModel UpdateMenu(Sys_Menu sys_Menu)
         {
+            MsgModel msg = new MsgModel
+            {
+                isok = true,
+                message = "更新菜单项成功！"
+            };
             _baseSysMenuService.UpdateRange(sys_Menu);
+            return msg;
         }
 
-        public void AddMenu(Sys_Menu sys_Menu)
+        public MsgModel AddMenu(Sys_Menu sys_Menu)
         {
+            MsgModel msg = new MsgModel
+            {
+                isok = true,
+                message = "新增菜单项成功！"
+            };
+            sys_Menu.id = new Snowflake().GetId();
             SetMenuIdsAndLevel(sys_Menu);
             sys_Menu.is_leaf = true;//新增的菜单节点都是子节点，没有下级
-            Sys_Menu parent = new Sys_Menu();
-            parent.id = sys_Menu.menu_pid;
-            parent.is_leaf = false;//更新父节点为非子节点。
+            Sys_Menu parent = new Sys_Menu
+            {
+                id = sys_Menu.menu_pid,
+                is_leaf = false//更新父节点为非子节点。
+            };
             _baseSysMenuService.UpdateRange(parent);
             sys_Menu.status = false;//设置是否禁用，新增节点默认可用
             _baseSysMenuService.AddRange(sys_Menu);
+            return msg;
         }
 
-        public void DeleteMenu(Sys_Menu sys_Menu)
+        public MsgModel DeleteMenu(Sys_Menu sys_Menu)
         {
+            MsgModel msg = new MsgModel
+            {
+                isok = true,
+                message = "删除菜单项成功！"
+            };
             //查找被删除节点的子节点
             List<Sys_Menu> myChilds = _baseSysMenuService.GetModels(a => a.menu_pids.Contains("[" + sys_Menu.id + "]")).ToList();
 
@@ -110,14 +135,16 @@ namespace ApiServer.BLL.BLL
             //我的父节点只有我这一个子节点，而我还要被删除，更新父节点为叶子节点。
             if (myFatherChilds.Count == 1)
             {
-                Sys_Menu parent = new Sys_Menu();
-                parent.id = sys_Menu.menu_pid;
-                parent.is_leaf = true;//更新父节点为叶子节点。
+                Sys_Menu parent = new Sys_Menu
+                {
+                    id = sys_Menu.menu_pid,
+                    is_leaf = true//更新父节点为叶子节点。
+                };
                 _baseSysMenuService.UpdateRange(parent);
             }
             // 删除节点
             _baseSysMenuService.DeleteRange(sys_Menu);
-
+            return msg;
         }
 
         /// <summary>
@@ -164,11 +191,17 @@ namespace ApiServer.BLL.BLL
         /// </summary>
         /// <param name="roleId"></param>
         /// <param name="checkedIds"></param>
-        public void SaveCheckedKeys(long roleId, List<long> checkedIds)
+        public MsgModel SaveCheckedKeys(long roleId, List<long> checkedIds)
         {
+            MsgModel msg = new MsgModel
+            {
+                isok = true,
+                message = "保存菜单权限成功！"
+            };
             // 保存之前先删除
-            // _baseSysRoleMenuService.DeleteRange(_baseSysRoleMenuService.GetModels(a => a.role_id == roleId).ToList());
+            _baseSysRoleMenuService.DeleteRange(_baseSysRoleMenuService.GetModels(a => a.role_id == roleId).ToList());
             _mySystemService.InsertRoleMenuIds(roleId, checkedIds);
+            return msg;
         }
 
         /// <summary>
@@ -191,19 +224,20 @@ namespace ApiServer.BLL.BLL
                 List<SysMenuNode> sysMenuNodes = new List<SysMenuNode>();
                 foreach (Sys_Menu sys_Menu in sysMenus)
                 {
-                    SysMenuNode sysMenuNode = new SysMenuNode
-                    {
-                        id = sys_Menu.id,
-                        menu_pid = sys_Menu.menu_pid,
-                        menu_pids = sys_Menu.menu_pids,
-                        is_leaf = sys_Menu.is_leaf,
-                        menu_name = sys_Menu.menu_name,
-                        url = sys_Menu.url,
-                        icon = sys_Menu.icon,
-                        sort = sys_Menu.sort,
-                        level = sys_Menu.level,
-                        status = sys_Menu.status,
-                    };
+                    //SysMenuNode sysMenuNode = new SysMenuNode
+                    //{
+                    //    id = sys_Menu.id,
+                    //    menu_pid = sys_Menu.menu_pid,
+                    //    menu_pids = sys_Menu.menu_pids,
+                    //    is_leaf = sys_Menu.is_leaf,
+                    //    menu_name = sys_Menu.menu_name,
+                    //    url = sys_Menu.url,
+                    //    icon = sys_Menu.icon,
+                    //    sort = sys_Menu.sort,
+                    //    level = sys_Menu.level,
+                    //    status = sys_Menu.status,
+                    //};
+                    SysMenuNode sysMenuNode = sys_Menu.Adapt<SysMenuNode>();
                     sysMenuNodes.Add(sysMenuNode);
                 }
                 msg.data = DataTreeUtil<SysMenuNode, long>.BuildTreeWithoutRoot(sysMenuNodes, rootMenuId);
@@ -218,14 +252,20 @@ namespace ApiServer.BLL.BLL
         /// </summary>
         /// <param name="id"></param>
         /// <param name="status"></param>
-        public void UpdateStatus(long id, bool status)
+        public MsgModel UpdateStatus(long id, bool status)
         {
+            MsgModel msg = new MsgModel
+            {
+                isok = true,
+                message = "菜单禁用状态更新成功！"
+            };
             Sys_Menu sys_Menu = new Sys_Menu
             {
                 id = id,
                 status = status
             };
             _baseSysMenuService.UpdateRange(sys_Menu);
+            return msg;
         }
 
     }

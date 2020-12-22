@@ -90,10 +90,10 @@ namespace ApiServer.BLL.BLL
             PageModel<SysUserOrg> pageModel = new PageModel<SysUserOrg>
             {
                 PageIndex = pageIndex,
-                PageSize = pageSize,
-                Data = result.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList() // 分页
+                size = pageSize,
+                records = result.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList() // 分页
             };
-            pageModel.DataCount = items;
+            pageModel.total = items;
             pageModel.PageCount = items % pageSize > 0 ? items / pageSize + 1 : items / pageSize;
             msg.data = pageModel;
             return msg;

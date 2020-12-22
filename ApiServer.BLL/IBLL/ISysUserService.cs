@@ -1,5 +1,4 @@
 ﻿using ApiServer.Model.Entity;
-using ApiServer.Model.Model;
 using ApiServer.Model.Model.MsgModel;
 using System;
 
@@ -15,6 +14,6 @@ namespace ApiServer.BLL.IBLL
         bool IsDefault(string userName);
         MsgModel ChangePwd(string userName, string oldPass, string newPass);
         void UpdateEnabled(long id, bool enabled);
-        PageModel<SysUserOrg> QueryUser(long? orgId, string userName, string phone, string email, bool? enabled, DateTime? createStartTime, DateTime? createEndTime, int pageNum, int pageSize);
+        MsgModel QueryUser(long? orgId, string userName, string phone, string email, bool? enabled, DateTime? createStartTime, DateTime? createEndTime, int pageNum, int pageSize);
     }
 }

@@ -40,13 +40,7 @@ namespace ApiServer.Controllers
         [Route("update")]
         public async Task<IActionResult> Update([FromBody] Sys_Config sys_Config)
         {
-            MsgModel msg = new MsgModel
-            {
-                message = "更新配置成功！"
-            };
-            _sysConfigService.UpdateConfig(sys_Config);
-
-            return Ok(await Task.FromResult(msg));
+            return Ok(await Task.FromResult(_sysConfigService.UpdateConfig(sys_Config)));
 
         }
 
@@ -54,13 +48,7 @@ namespace ApiServer.Controllers
         [Route("add")]
         public async Task<IActionResult> Add([FromBody] Sys_Config sys_Config)
         {
-            MsgModel msg = new MsgModel
-            {
-                message = "新增配置成功！"
-            };
-            _sysConfigService.AddConfig(sys_Config);
-
-            return Ok(await Task.FromResult(msg));
+            return Ok(await Task.FromResult(_sysConfigService.AddConfig(sys_Config)));
 
         }
 
@@ -68,13 +56,7 @@ namespace ApiServer.Controllers
         [Route("delete")]
         public async Task<IActionResult> Delete([FromForm] long configId)
         {
-            MsgModel msg = new MsgModel
-            {
-                message = "删除配置成功！"
-            };
-            _sysConfigService.DeleteConfig(configId);
-
-            return Ok(await Task.FromResult(msg));
+            return Ok(await Task.FromResult(_sysConfigService.DeleteConfig(configId)));
 
         }
     }

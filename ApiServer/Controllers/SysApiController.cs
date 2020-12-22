@@ -28,13 +28,7 @@ namespace ApiServer.Controllers
         [Route("tree")]
         public async Task<IActionResult> Tree([FromForm] string apiNameLike, bool apiStatus)
         {
-            MsgModel msg = new MsgModel
-            {
-                message = "查询成功！"
-            };
-            List<SysApiNode> list = _sysApiService.GetApiTreeById(apiNameLike, apiStatus);
-            msg.data = list;
-            return Ok(await Task.FromResult(msg));
+            return Ok(await Task.FromResult(_sysApiService.GetApiTreeById(apiNameLike, apiStatus)));
         }
 
 
@@ -47,12 +41,7 @@ namespace ApiServer.Controllers
         [Route("add")]
         public async Task<IActionResult> Add([FromBody] Sys_Api sys_Api)
         {
-            MsgModel msg = new MsgModel
-            {
-                message = "新增接口配置成功！"
-            };
-            _sysApiService.AddApi(sys_Api);
-            return Ok(await Task.FromResult(msg));
+            return Ok(await Task.FromResult(_sysApiService.AddApi(sys_Api)));
         }
 
         /// <summary>
@@ -64,12 +53,7 @@ namespace ApiServer.Controllers
         [Route("update")]
         public async Task<IActionResult> Update([FromBody] Sys_Api sys_Api)
         {
-            MsgModel msg = new MsgModel
-            {
-                message = "修改接口配置成功！"
-            };
-            _sysApiService.UpdateApi(sys_Api);
-            return Ok(await Task.FromResult(msg));
+            return Ok(await Task.FromResult(_sysApiService.UpdateApi(sys_Api)));
         }
 
         /// <summary>
@@ -81,12 +65,7 @@ namespace ApiServer.Controllers
         [Route("delete")]
         public async Task<IActionResult> Delete([FromBody] Sys_Api sys_Api)
         {
-            MsgModel msg = new MsgModel
-            {
-                message = "删除接口配置成功！"
-            };
-            _sysApiService.DeleteApi(sys_Api);
-            return Ok(await Task.FromResult(msg));
+            return Ok(await Task.FromResult(_sysApiService.DeleteApi(sys_Api)));
         }
 
         /// <summary>
@@ -98,12 +77,19 @@ namespace ApiServer.Controllers
         [Route("checkedtree")]
         public async Task<IActionResult> CheckedTree([FromForm] long roleId)
         {
-            Dictionary<string, object> dict = new Dictionary<string, object>();
-            dict.Add("tree", _sysApiService.GetApiTreeById("", default));
-            dict.Add("expandedKeys", _sysApiService.GetExpandedKeys());
-            dict.Add("checkedKeys", _sysApiService.GetCheckedKeys(roleId));
-
-            return Ok(await Task.FromResult(dict));
+            MsgModel msg = new MsgModel
+            {
+                isok = true,
+                message = "获取成功！"
+            };
+            Dictionary<string, object> dict = new Dictionary<string, object>
+            {
+                { "tree", _sysApiService.GetApiTreeById("", default) },
+                { "expandedKeys", _sysApiService.GetExpandedKeys() },
+                { "checkedKeys", _sysApiService.GetCheckedKeys(roleId) }
+            };
+            msg.data = dict;
+            return Ok(await Task.FromResult(msg));
 
         }
 
@@ -116,13 +102,7 @@ namespace ApiServer.Controllers
         [Route("savekeys")]
         public async Task<IActionResult> SaveKeys([FromBody] RoleCheckedIds roleCheckedIds)
         {
-            MsgModel msg = new MsgModel
-            {
-                message = "保存接口权限成功！"
-            };
-            _sysApiService.SaveCheckedKeys(roleCheckedIds.RoleId, roleCheckedIds.CheckedIds);
-
-            return Ok(await Task.FromResult(msg));
+            return Ok(await Task.FromResult(_sysApiService.SaveCheckedKeys(roleCheckedIds.RoleId, roleCheckedIds.CheckedIds)));
 
         }
 
@@ -136,13 +116,7 @@ namespace ApiServer.Controllers
         [Route("status/change")]
         public async Task<IActionResult> Update([FromForm] long apiId, bool status)
         {
-            MsgModel msg = new MsgModel
-            {
-                message = "接口禁用状态更新成功！"
-            };
-            _sysApiService.UpdateStatus(apiId, status);
-
-            return Ok(await Task.FromResult(msg));
+            return Ok(await Task.FromResult(_sysApiService.UpdateStatus(apiId, status)));
 
         }
     }

@@ -73,11 +73,11 @@ namespace ApiServer.BLL.BLL
             PageModel<T> pageModel = new PageModel<T>
             {
                 PageIndex = pageIndex,
-                PageSize = pageSize,
-                Data = _baseDal.QueryByPage(pageIndex, pageSize, whereLambda, orderBy).ToList()
+                size = pageSize,
+                records = _baseDal.QueryByPage(pageIndex, pageSize, whereLambda, orderBy).ToList()
             };
-            pageModel.DataCount = pageModel.Data.Count;
-            pageModel.PageCount = pageModel.DataCount % pageSize > 0 ? pageModel.DataCount / pageSize + 1 : pageModel.DataCount / pageSize;
+            pageModel.total = pageModel.records.Count;
+            pageModel.PageCount = pageModel.total % pageSize > 0 ? pageModel.total / pageSize + 1 : pageModel.total / pageSize;
 
             return pageModel;
         }

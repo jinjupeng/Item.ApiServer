@@ -176,7 +176,7 @@
         </member>
         <member name="M:ApiServer.Controllers.SysMenuController.Delete(ApiServer.Model.Entity.Sys_Menu)">
             <summary>
-            菜单管理：新增
+            菜单管理：删除
             </summary>
             <param name="sys_Menu"></param>
             <returns></returns>

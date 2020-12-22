@@ -3,6 +3,7 @@ using ApiServer.Model.Entity;
 using ApiServer.Model.Model.MsgModel;
 using System.Collections.Generic;
 using System.Linq;
+using ApiServer.Common;
 
 namespace ApiServer.BLL.BLL
 {
@@ -23,10 +24,8 @@ namespace ApiServer.BLL.BLL
         {
             MsgModel msg = new MsgModel
             {
-                message = "查询成功！",
-                isok = true
+                message = "查询成功！", isok = true, data = _baseSysDictService.GetModels(null).ToList()
             };
-            msg.data = _baseSysDictService.GetModels(null).ToList();
             return msg;
         }
 
@@ -36,37 +35,61 @@ namespace ApiServer.BLL.BLL
         /// <param name="groupName">分组名称</param>
         /// <param name="groupCode">分组编码</param>
         /// <returns></returns>
-        public List<Sys_Dict> Query(string groupName, string groupCode)
+        public MsgModel Query(string groupName, string groupCode)
         {
-            return _baseSysDictService.GetModels(a => a.group_name.Contains(groupName) && a.group_code.Contains(groupCode)).ToList();
+            MsgModel msg = new MsgModel
+            {
+                message = "查询成功！",
+                isok = true
+            };
+            msg.data = _baseSysDictService.GetModels(a => a.group_name.Contains(groupName) && a.group_code.Contains(groupCode)).ToList();
 
+            return msg;
         }
 
         /// <summary>
         /// 更新数据字典项
         /// </summary>
         /// <param name="sys_Dict"></param>
-        public void Update(Sys_Dict sys_Dict)
+        public MsgModel Update(Sys_Dict sys_Dict)
         {
+            MsgModel msg = new MsgModel
+            {
+                isok = true,
+                message = "更新数据字典项成功！"
+            };
             _baseSysDictService.UpdateRange(sys_Dict);
+            return msg;
         }
 
         /// <summary>
         /// 新增数据字典项
         /// </summary>
         /// <param name="sys_Dict"></param>
-        public void Add(Sys_Dict sys_Dict)
+        public MsgModel Add(Sys_Dict sys_Dict)
         {
+            MsgModel msg = new MsgModel
+            {
+                isok = true,
+                message = "新增数据字典项成功！"
+            };
+            sys_Dict.id = new Snowflake().GetId();
             _baseSysDictService.AddRange(sys_Dict);
+            return msg;
         }
 
         /// <summary>
         /// 根据id删除数据字典项
         /// </summary>
         /// <param name="id"></param>
-        public void Delete(long id)
+        public MsgModel Delete(long id)
         {
+            MsgModel msg = new MsgModel
+            {
+                message = "删除数据字典项成功！"
+            };
             _baseSysDictService.DeleteRange(_baseSysDictService.GetModels(a => a.id == id));
+            return msg;
         }
     }
 }

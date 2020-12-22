@@ -2,9 +2,9 @@
 using ApiServer.Model.Entity;
 using ApiServer.Model.Model.MsgModel;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using ApiServer.Common;
 
 namespace ApiServer.BLL.BLL
 {
@@ -22,10 +22,8 @@ namespace ApiServer.BLL.BLL
         {
             MsgModel msg = new MsgModel
             {
-                message = "查询成功！",
-                isok = true
+                message = "查询成功！", isok = true, data = _baseSysConfigService.GetModels(null).ToList()
             };
-            msg.data = _baseSysConfigService.GetModels(null).ToList();
             return msg;
         }
 
@@ -50,19 +48,38 @@ namespace ApiServer.BLL.BLL
             return _baseSysConfigService.GetModels(a => a.param_key == paramKey).ToList().SingleOrDefault();
         }
 
-        public void UpdateConfig(Sys_Config sys_Config)
+        public MsgModel UpdateConfig(Sys_Config sys_Config)
         {
+            MsgModel msg = new MsgModel
+            {
+                isok = true,
+                message = "更新配置成功！"
+            };
             _baseSysConfigService.UpdateRange(sys_Config);
+            return msg;
         }
 
-        public void AddConfig(Sys_Config sys_Config)
+        public MsgModel AddConfig(Sys_Config sys_Config)
         {
+            MsgModel msg = new MsgModel
+            {
+                isok = true,
+                message = "新增配置成功！"
+            };
+            sys_Config.id = new Snowflake().GetId();
             _baseSysConfigService.AddRange(sys_Config);
+            return msg;
         }
 
-        public void DeleteConfig(long configId)
+        public MsgModel DeleteConfig(long configId)
         {
+            MsgModel msg = new MsgModel
+            {
+                isok = true,
+                message = "删除配置成功！"
+            };
             _baseSysConfigService.DeleteRange(_baseSysConfigService.GetModels(a => a.id == configId));
+            return msg;
         }
     }
 }

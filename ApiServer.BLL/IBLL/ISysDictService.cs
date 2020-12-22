@@ -7,10 +7,10 @@ namespace ApiServer.BLL.IBLL
     public interface ISysDictService
     {
         MsgModel All();
-        List<Sys_Dict> Query(string groupName, string groupCode);
+        MsgModel Query(string groupName, string groupCode);
 
-        void Update(Sys_Dict sys_Dict);
-        void Add(Sys_Dict sys_Dict);
-        void Delete(long id);
+        MsgModel Update(Sys_Dict sys_Dict);
+        MsgModel Add(Sys_Dict sys_Dict);
+        MsgModel Delete(long id);
     }
 }

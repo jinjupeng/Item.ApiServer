@@ -47,7 +47,7 @@ namespace ApiServer.Controllers
         [Route("query")]
         public async Task<IActionResult> Query([FromForm] Dictionary<string, string> pairs)
         {
-            long? orgId = long.TryParse(pairs["orgId"], out long tryOrgId) ? tryOrgId : null;
+            long? orgId = long.TryParse(pairs["orgId"], out long tryOrgId) ? tryOrgId : default;
             string userName = pairs["username"];
             string phone = pairs["phone"];
             string email = pairs["email"];

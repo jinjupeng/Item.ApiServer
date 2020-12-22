@@ -34,7 +34,7 @@ namespace ApiServer.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("tree")]
-        public async Task<IActionResult> Tree([FromForm]Dictionary<string, string> pairs)
+        public async Task<IActionResult> Tree([FromForm] Dictionary<string, string> pairs)
         {
             string menuNameLike = (string)pairs["menuNameLike"];
             bool? menuStatus = null;
@@ -54,13 +54,7 @@ namespace ApiServer.Controllers
         [Route("update")]
         public async Task<IActionResult> Update([FromBody] Sys_Menu sys_Menu)
         {
-            MsgModel msg = new MsgModel
-            {
-                message = "更新菜单项成功！"
-            };
-            _sysMenuService.UpdateMenu(sys_Menu);
-
-            return Ok(await Task.FromResult(msg));
+            return Ok(await Task.FromResult(_sysMenuService.UpdateMenu(sys_Menu)));
 
         }
 
@@ -73,18 +67,12 @@ namespace ApiServer.Controllers
         [Route("add")]
         public async Task<IActionResult> Add([FromBody] Sys_Menu sys_Menu)
         {
-            MsgModel msg = new MsgModel
-            {
-                message = "新增菜单项成功！"
-            };
-            _sysMenuService.AddMenu(sys_Menu);
-
-            return Ok(await Task.FromResult(msg));
+            return Ok(await Task.FromResult(_sysMenuService.AddMenu(sys_Menu)));
 
         }
 
         /// <summary>
-        /// 菜单管理：新增
+        /// 菜单管理：删除
         /// </summary>
         /// <param name="sys_Menu"></param>
         /// <returns></returns>
@@ -92,13 +80,7 @@ namespace ApiServer.Controllers
         [Route("delete")]
         public async Task<IActionResult> Delete([FromBody] Sys_Menu sys_Menu)
         {
-            MsgModel msg = new MsgModel
-            {
-                message = "删除菜单项成功！"
-            };
-            _sysMenuService.DeleteMenu(sys_Menu);
-
-            return Ok(await Task.FromResult(msg));
+            return Ok(await Task.FromResult(_sysMenuService.DeleteMenu(sys_Menu)));
 
         }
 
@@ -111,12 +93,19 @@ namespace ApiServer.Controllers
         [Route("checkedtree")]
         public async Task<IActionResult> CheckedTree([FromForm] long roleId)
         {
-            Dictionary<string, object> dict = new Dictionary<string, object>();
-            dict.Add("tree", _sysMenuService.GetMenuTree("", default));
-            dict.Add("expandedKeys", _sysMenuService.GetExpandedKeys());
-            dict.Add("checkedKeys", _sysMenuService.GetCheckedKeys(roleId));
-
-            return Ok(await Task.FromResult(dict));
+            MsgModel msg = new MsgModel
+            {
+                isok = true,
+                message = "获取成功！"
+            };
+            Dictionary<string, object> dict = new Dictionary<string, object>
+            {
+                { "tree", _sysMenuService.GetMenuTree("", default) },
+                { "expandedKeys", _sysMenuService.GetExpandedKeys() },
+                { "checkedKeys", _sysMenuService.GetCheckedKeys(roleId) }
+            };
+            msg.data = dict;
+            return Ok(await Task.FromResult(msg));
 
         }
 
@@ -129,13 +118,7 @@ namespace ApiServer.Controllers
         [Route("savekeys")]
         public async Task<IActionResult> SaveKeys([FromBody] RoleCheckedIds roleCheckedIds)
         {
-            MsgModel msg = new MsgModel
-            {
-                message = "保存菜单权限成功！"
-            };
-            _sysMenuService.SaveCheckedKeys(roleCheckedIds.RoleId, roleCheckedIds.CheckedIds);
-
-            return Ok(await Task.FromResult(msg));
+            return Ok(await Task.FromResult(_sysMenuService.SaveCheckedKeys(roleCheckedIds.RoleId, roleCheckedIds.CheckedIds)));
 
         }
 
@@ -162,13 +145,7 @@ namespace ApiServer.Controllers
         [Route("status/change")]
         public async Task<IActionResult> Update([FromForm] long menuId, bool status)
         {
-            MsgModel msg = new MsgModel
-            {
-                message = "菜单禁用状态更新成功！"
-            };
-            _sysMenuService.UpdateStatus(menuId, status);
-
-            return Ok(await Task.FromResult(msg));
+            return Ok(await Task.FromResult(_sysMenuService.UpdateStatus(menuId, status)));
 
         }
     }

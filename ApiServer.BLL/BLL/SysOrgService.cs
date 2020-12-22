@@ -5,6 +5,8 @@ using ApiServer.Model.Model;
 using ApiServer.Model.Model.MsgModel;
 using System.Collections.Generic;
 using System.Linq;
+using ApiServer.Common;
+using Mapster;
 
 namespace ApiServer.BLL.BLL
 {
@@ -37,20 +39,21 @@ namespace ApiServer.BLL.BLL
             List<SysOrgNode> sysOrgNodes = new List<SysOrgNode>();
             foreach (Sys_Org sys_Org in sysOrgs)
             {
-                SysOrgNode sysOrgNode = new SysOrgNode
-                {
-                    id = sys_Org.id,
-                    org_pid = sys_Org.org_pid,
-                    org_pids = sys_Org.org_pids,
-                    is_leaf = sys_Org.is_leaf,
-                    org_name = sys_Org.org_name,
-                    address = sys_Org.address,
-                    phone = sys_Org.phone,
-                    email = sys_Org.email,
-                    sort = sys_Org.sort,
-                    level = sys_Org.level,
-                    status = sys_Org.status,
-                };
+                //SysOrgNode sysOrgNode = new SysOrgNode
+                //{
+                //    id = sys_Org.id,
+                //    org_pid = sys_Org.org_pid,
+                //    org_pids = sys_Org.org_pids,
+                //    is_leaf = sys_Org.is_leaf,
+                //    org_name = sys_Org.org_name,
+                //    address = sys_Org.address,
+                //    phone = sys_Org.phone,
+                //    email = sys_Org.email,
+                //    sort = sys_Org.sort,
+                //    level = sys_Org.level,
+                //    status = sys_Org.status,
+                //};
+                SysOrgNode sysOrgNode = sys_Org.Adapt<SysOrgNode>();
                 sysOrgNodes.Add(sysOrgNode);
             }
             if (!string.IsNullOrEmpty(orgNameLike))
@@ -75,11 +78,14 @@ namespace ApiServer.BLL.BLL
 
         public void AddOrg(Sys_Org sys_Org)
         {
+            sys_Org.id = new Snowflake().GetId();
             SetOrgIdsAndLevel(sys_Org);
             sys_Org.is_leaf = true;//新增的组织节点都是子节点，没有下级
-            Sys_Org parent = new Sys_Org();
-            parent.id = sys_Org.org_pid;
-            parent.is_leaf = false; //更新父节点为非子节点。
+            Sys_Org parent = new Sys_Org
+            {
+                id = sys_Org.org_pid,
+                is_leaf = false //更新父节点为非子节点。
+            };
             _baseSysOrgService.UpdateRange(parent);
 
             sys_Org.status = false;//设置是否禁用，新增节点默认可用
@@ -99,9 +105,11 @@ namespace ApiServer.BLL.BLL
             //我的父节点只有我这一个子节点，而我还要被删除，更新父节点为叶子节点。
             if (myFatherChilds.Count == 1)
             {
-                Sys_Org parent = new Sys_Org();
-                parent.id = sys_Org.org_pid;
-                parent.is_leaf = true;// 更新父节点为叶子节点。
+                Sys_Org parent = new Sys_Org
+                {
+                    id = sys_Org.org_pid,
+                    is_leaf = true// 更新父节点为叶子节点。
+                };
                 _baseSysOrgService.UpdateRange(parent);
             }
             // 删除节点
