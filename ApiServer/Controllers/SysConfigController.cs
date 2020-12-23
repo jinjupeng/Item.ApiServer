@@ -1,9 +1,9 @@
 ﻿using ApiServer.BLL.IBLL;
 using ApiServer.Model.Entity;
-using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 using ApiServer.Model.Model.ViewModel;
 using Mapster;
+using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace ApiServer.Controllers
 {
@@ -39,8 +39,10 @@ namespace ApiServer.Controllers
 
         [HttpPost]
         [Route("update")]
-        public async Task<IActionResult> Update([FromBody] Sys_Config sys_Config)
+        public async Task<IActionResult> Update([FromBody] SysConfig sysConfig)
         {
+            TypeAdapterConfig<SysConfig, Sys_Config>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.FromCamelCase);
+            var sys_Config = sysConfig.BuildAdapter().AdaptToType<Sys_Config>();
             return Ok(await Task.FromResult(_sysConfigService.UpdateConfig(sys_Config)));
 
         }

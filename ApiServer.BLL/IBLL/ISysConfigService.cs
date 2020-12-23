@@ -8,7 +8,7 @@ namespace ApiServer.BLL.IBLL
         MsgModel GetSysConfigList();
         MsgModel QueryConfigs(string configLik);
 
-        Sys_Config GetConfig(string paramKey);
+        string GetConfigItem(string paramKey);
         MsgModel UpdateConfig(Sys_Config sys_Config);
 
         MsgModel AddConfig(Sys_Config sys_Config);

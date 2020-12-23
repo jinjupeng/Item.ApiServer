@@ -65,7 +65,7 @@
             <param name="sys_Api"></param>
             <returns></returns>
         </member>
-        <member name="M:ApiServer.Controllers.SysApiController.Update(ApiServer.Model.Entity.Sys_Api)">
+        <member name="M:ApiServer.Controllers.SysApiController.Update(ApiServer.Model.Model.ViewModel.SysApi)">
             <summary>
             接口管理:修改
             </summary>
@@ -120,7 +120,7 @@
             <param name="groupCode">分组编码</param>
             <returns>数据字典项列表</returns>
         </member>
-        <member name="M:ApiServer.Controllers.SysDictController.Update(ApiServer.Model.Entity.Sys_Dict)">
+        <member name="M:ApiServer.Controllers.SysDictController.Update(ApiServer.Model.Model.ViewModel.SysDict)">
             <summary>
             根据id更新数据数据字典项目
             </summary>
@@ -160,7 +160,7 @@
             <param name="menuStatus"></param>
             <returns></returns>
         </member>
-        <member name="M:ApiServer.Controllers.SysMenuController.Update(ApiServer.Model.Entity.Sys_Menu)">
+        <member name="M:ApiServer.Controllers.SysMenuController.Update(ApiServer.Model.Model.ViewModel.SysMenu)">
             <summary>
             菜单管理：修改
             </summary>
@@ -217,7 +217,7 @@
             <param name="roleLike"></param>
             <returns></returns>
         </member>
-        <member name="M:ApiServer.Controllers.SysRoleController.Update(ApiServer.Model.Entity.Sys_Role)">
+        <member name="M:ApiServer.Controllers.SysRoleController.Update(ApiServer.Model.Model.ViewModel.SysRole)">
             <summary>
             角色管理：修改
             </summary>
@@ -267,7 +267,7 @@
             <param name="pairs"></param>
             <returns></returns>
         </member>
-        <member name="M:ApiServer.Controllers.SysUserController.Update(ApiServer.Model.Entity.Sys_User)">
+        <member name="M:ApiServer.Controllers.SysUserController.Update(ApiServer.Model.Model.ViewModel.SysUser)">
             <summary>
             用户管理：更新
             </summary>

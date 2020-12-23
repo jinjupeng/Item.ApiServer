@@ -26,9 +26,11 @@ namespace ApiServer.BLL.BLL
             MsgModel msg = new MsgModel
             {
                 message = "查询成功！",
-                isok = true,
-                data = _baseSysConfigService.GetModels(null).ToList()
+                isok = true
             };
+            TypeAdapterConfig<Sys_Config, SysConfig>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.ToCamelCase);
+            List<Sys_Config> list = _baseSysConfigService.GetModels(null).ToList();
+            msg.data = list.BuildAdapter().AdaptToType<List<SysConfig>>();
             return msg;
         }
 
@@ -50,9 +52,9 @@ namespace ApiServer.BLL.BLL
             return msg;
         }
 
-        public Sys_Config GetConfig(string paramKey)
+        public string GetConfigItem(string paramKey)
         {
-            return _baseSysConfigService.GetModels(a => a.param_key == paramKey).ToList().SingleOrDefault();
+            return _baseSysConfigService.GetModels(a => a.param_key == paramKey).ToList().SingleOrDefault().param_value;
         }
 
         public MsgModel UpdateConfig(Sys_Config sys_Config)

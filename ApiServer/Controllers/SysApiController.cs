@@ -2,11 +2,11 @@
 using ApiServer.Model.Entity;
 using ApiServer.Model.Model;
 using ApiServer.Model.Model.MsgModel;
+using ApiServer.Model.Model.ViewModel;
+using Mapster;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using ApiServer.Model.Model.ViewModel;
-using Mapster;
 
 namespace ApiServer.Controllers
 {
@@ -55,8 +55,10 @@ namespace ApiServer.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("update")]
-        public async Task<IActionResult> Update([FromBody] Sys_Api sys_Api)
+        public async Task<IActionResult> Update([FromBody] SysApi sysApi)
         {
+            TypeAdapterConfig<SysApi, Sys_Api>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.FromCamelCase);
+            var sys_Api = sysApi.BuildAdapter().AdaptToType<Sys_Api>();
             return Ok(await Task.FromResult(_sysApiService.UpdateApi(sys_Api)));
         }
 

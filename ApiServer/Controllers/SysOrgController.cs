@@ -1,11 +1,11 @@
 ﻿using ApiServer.BLL.IBLL;
 using ApiServer.Model.Entity;
+using ApiServer.Model.Model.ViewModel;
+using Mapster;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using ApiServer.Model.Model.ViewModel;
-using Mapster;
 
 namespace ApiServer.Controllers
 {
@@ -38,9 +38,10 @@ namespace ApiServer.Controllers
 
         [HttpPost]
         [Route("update")]
-        public async Task<IActionResult> Update([FromBody] Sys_Org sys_Org)
+        public async Task<IActionResult> Update([FromBody] SysOrg sysOrg)
         {
-
+            TypeAdapterConfig<SysOrg, Sys_Org>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.FromCamelCase);
+            var sys_Org = sysOrg.BuildAdapter().AdaptToType<Sys_Org>();
             return Ok(await Task.FromResult(_sysOrgService.UpdateOrg(sys_Org)));
 
         }

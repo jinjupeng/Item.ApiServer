@@ -1,9 +1,9 @@
 ﻿using ApiServer.BLL.IBLL;
 using ApiServer.Model.Entity;
-using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 using ApiServer.Model.Model.ViewModel;
 using Mapster;
+using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace ApiServer.Controllers
 {
@@ -50,8 +50,10 @@ namespace ApiServer.Controllers
         /// <returns>更新成功结果</returns>
         [HttpPost]
         [Route("update")]
-        public async Task<IActionResult> Update([FromBody] Sys_Dict sys_Dict)
+        public async Task<IActionResult> Update([FromBody] SysDict sysDict)
         {
+            TypeAdapterConfig<SysDict, Sys_Dict>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.FromCamelCase);
+            var sys_Dict = sysDict.BuildAdapter().AdaptToType<Sys_Dict>();
             return Ok(await Task.FromResult(_sysDictService.Update(sys_Dict)));
 
         }

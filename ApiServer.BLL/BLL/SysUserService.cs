@@ -84,7 +84,7 @@ namespace ApiServer.BLL.BLL
                 message = "新增用户成功！"
             };
             sys_User.id = new Snowflake().GetId();
-            sys_User.password = PasswordEncoder.Encode(_sysConfigService.GetConfig("user.init.password").param_value);
+            sys_User.password = PasswordEncoder.Encode(_sysConfigService.GetConfigItem("user.init.password"));
             sys_User.create_time = DateTime.Now; //创建时间
             sys_User.enabled = true;//新增用户激活
             if (!_baseSysUserService.AddRange(sys_User))
@@ -126,7 +126,7 @@ namespace ApiServer.BLL.BLL
             };
             Sys_User sys_User = _baseSysUserService.GetModels(a => a.id == userId).ToList().SingleOrDefault();
             sys_User.id = userId;
-            sys_User.password = PasswordEncoder.Encode(_sysConfigService.GetConfig("user.init.password").param_value);
+            sys_User.password = PasswordEncoder.Encode(_sysConfigService.GetConfigItem("user.init.password"));
             var length = sys_User.password.Length;
             bool result = _baseSysUserService.UpdateRange(sys_User);
             if (!result)
@@ -150,7 +150,8 @@ namespace ApiServer.BLL.BLL
                 isok = true
             };
             Sys_User sys_User = _baseSysUserService.GetModels(a => a.username == userName).SingleOrDefault();
-            msg.data = _baseSysUserService.GetModels(a => a.username == userName).SingleOrDefault();
+            //判断数据库密码是否是默认密码
+            msg.data = PasswordEncoder.IsMatch(sys_User.password, _sysConfigService.GetConfigItem("user.init.password"));
             //判断数据库密码是否是默认密码
             return msg;
         }

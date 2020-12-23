@@ -37,8 +37,10 @@ namespace ApiServer.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("update")]
-        public async Task<IActionResult> Update([FromBody] Sys_Role sys_Role)
+        public async Task<IActionResult> Update([FromBody] SysRole sysRole)
         {
+            TypeAdapterConfig<SysRole, Sys_Role>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.FromCamelCase);
+            var sys_Role = sysRole.BuildAdapter().AdaptToType<Sys_Role>();
             return Ok(await Task.FromResult(_sysRoleService.UpdateRole(sys_Role)));
 
         }

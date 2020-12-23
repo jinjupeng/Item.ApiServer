@@ -2,12 +2,12 @@
 using ApiServer.Model.Entity;
 using ApiServer.Model.Model;
 using ApiServer.Model.Model.MsgModel;
+using ApiServer.Model.Model.ViewModel;
+using Mapster;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using ApiServer.Model.Model.ViewModel;
-using Mapster;
 
 namespace ApiServer.Controllers
 {
@@ -54,8 +54,10 @@ namespace ApiServer.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("update")]
-        public async Task<IActionResult> Update([FromBody] Sys_Menu sys_Menu)
+        public async Task<IActionResult> Update([FromBody] SysMenu sysMenu)
         {
+            TypeAdapterConfig<SysMenu, Sys_Menu>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.FromCamelCase);
+            var sys_Menu = sysMenu.BuildAdapter().AdaptToType<Sys_Menu>();
             return Ok(await Task.FromResult(_sysMenuService.UpdateMenu(sys_Menu)));
 
         }
