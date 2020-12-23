@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using ApiServer.Model.Model.ViewModel;
+using Mapster;
 
 namespace ApiServer.Controllers
 {
@@ -65,8 +67,10 @@ namespace ApiServer.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("add")]
-        public async Task<IActionResult> Add([FromBody] Sys_Menu sys_Menu)
+        public async Task<IActionResult> Add([FromBody] SysMenu sysMenu)
         {
+            TypeAdapterConfig<SysMenu, Sys_Menu>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.FromCamelCase);
+            var sys_Menu = sysMenu.BuildAdapter().AdaptToType<Sys_Menu>();
             return Ok(await Task.FromResult(_sysMenuService.AddMenu(sys_Menu)));
 
         }

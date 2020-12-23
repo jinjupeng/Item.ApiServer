@@ -58,7 +58,7 @@
             <param name="apiStatus"></param>
             <returns></returns>
         </member>
-        <member name="M:ApiServer.Controllers.SysApiController.Add(ApiServer.Model.Entity.Sys_Api)">
+        <member name="M:ApiServer.Controllers.SysApiController.Add(ApiServer.Model.Model.ViewModel.SysApi)">
             <summary>
             接口管理:新增
             </summary>
@@ -127,7 +127,7 @@
             <param name="sys_Dict">更新实体（必须包含id）</param>
             <returns>更新成功结果</returns>
         </member>
-        <member name="M:ApiServer.Controllers.SysDictController.Add(ApiServer.Model.Entity.Sys_Dict)">
+        <member name="M:ApiServer.Controllers.SysDictController.Add(ApiServer.Model.Model.ViewModel.SysDict)">
             <summary>
             新增数据字典项
             </summary>
@@ -167,7 +167,7 @@
             <param name="sys_Menu"></param>
             <returns></returns>
         </member>
-        <member name="M:ApiServer.Controllers.SysMenuController.Add(ApiServer.Model.Entity.Sys_Menu)">
+        <member name="M:ApiServer.Controllers.SysMenuController.Add(ApiServer.Model.Model.ViewModel.SysMenu)">
             <summary>
             菜单管理：新增
             </summary>
@@ -264,15 +264,7 @@
             <summary>
             用户列表查询接口
             </summary>
-            <param name="orgId"></param>
-            <param name="userName"></param>
-            <param name="phone"></param>
-            <param name="email"></param>
-            <param name="enabled"></param>
-            <param name="createStartTime"></param>
-            <param name="createEndTime"></param>
-            <param name="pageNum"></param>
-            <param name="pageSize"></param>
+            <param name="pairs"></param>
             <returns></returns>
         </member>
         <member name="M:ApiServer.Controllers.SysUserController.Update(ApiServer.Model.Entity.Sys_User)">
@@ -282,7 +274,7 @@
             <param name="sys_User"></param>
             <returns></returns>
         </member>
-        <member name="M:ApiServer.Controllers.SysUserController.Add(ApiServer.Model.Entity.Sys_User)">
+        <member name="M:ApiServer.Controllers.SysUserController.Add(ApiServer.Model.Model.ViewModel.SysUser)">
             <summary>
             用户管理：新增
             </summary>

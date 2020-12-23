@@ -5,6 +5,8 @@ using ApiServer.Model.Model.MsgModel;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using ApiServer.Model.Model.ViewModel;
+using Mapster;
 
 namespace ApiServer.Controllers
 {
@@ -39,8 +41,10 @@ namespace ApiServer.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("add")]
-        public async Task<IActionResult> Add([FromBody] Sys_Api sys_Api)
+        public async Task<IActionResult> Add([FromBody] SysApi sysApi)
         {
+            TypeAdapterConfig<SysApi, Sys_Api>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.FromCamelCase);
+            var sys_Api = sysApi.BuildAdapter().AdaptToType<Sys_Api>();
             return Ok(await Task.FromResult(_sysApiService.AddApi(sys_Api)));
         }
 

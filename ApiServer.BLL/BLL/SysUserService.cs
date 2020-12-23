@@ -142,12 +142,17 @@ namespace ApiServer.BLL.BLL
         /// </summary>
         /// <param name="userName"></param>
         /// <returns></returns>
-        public bool IsDefault(string userName)
+        public MsgModel IsDefault(string userName)
         {
+            MsgModel msg = new MsgModel
+            {
+                message = "获取成功！",
+                isok = true
+            };
             Sys_User sys_User = _baseSysUserService.GetModels(a => a.username == userName).SingleOrDefault();
-
+            msg.data = _baseSysUserService.GetModels(a => a.username == userName).SingleOrDefault();
             //判断数据库密码是否是默认密码
-            return PasswordEncoder.IsMatch(sys_User.password, _sysConfigService.GetConfig("user.init.password").param_value);
+            return msg;
         }
 
         /// <summary>

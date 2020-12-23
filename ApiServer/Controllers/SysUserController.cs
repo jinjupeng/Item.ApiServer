@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using ApiServer.Model.Model.ViewModel;
+using Mapster;
 
 namespace ApiServer.Controllers
 {
@@ -70,8 +72,10 @@ namespace ApiServer.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("add")]
-        public async Task<IActionResult> Add([FromBody] Sys_User sys_User)
+        public async Task<IActionResult> Add([FromBody] SysUser sysUser)
         {
+            TypeAdapterConfig<SysUser, Sys_User>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.FromCamelCase);
+            var sys_User = sysUser.BuildAdapter().AdaptToType<Sys_User>();
             return Ok(await Task.FromResult(_sysUserService.AddUser(sys_User)));
         }
 

@@ -2,6 +2,8 @@
 using ApiServer.Model.Entity;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using ApiServer.Model.Model.ViewModel;
+using Mapster;
 
 namespace ApiServer.Controllers
 {
@@ -61,8 +63,10 @@ namespace ApiServer.Controllers
         /// <returns>更新成功结果</returns>
         [HttpPost]
         [Route("add")]
-        public async Task<IActionResult> Add([FromBody] Sys_Dict sys_Dict)
+        public async Task<IActionResult> Add([FromBody] SysDict sysDict)
         {
+            TypeAdapterConfig<SysDict, Sys_Dict>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.FromCamelCase);
+            var sys_Dict = sysDict.BuildAdapter().AdaptToType<Sys_Dict>();
             return Ok(await Task.FromResult(_sysDictService.Add(sys_Dict)));
 
         }

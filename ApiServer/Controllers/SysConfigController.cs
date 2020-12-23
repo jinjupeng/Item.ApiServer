@@ -2,6 +2,8 @@
 using ApiServer.Model.Entity;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using ApiServer.Model.Model.ViewModel;
+using Mapster;
 
 namespace ApiServer.Controllers
 {
@@ -45,8 +47,10 @@ namespace ApiServer.Controllers
 
         [HttpPost]
         [Route("add")]
-        public async Task<IActionResult> Add([FromBody] Sys_Config sys_Config)
+        public async Task<IActionResult> Add([FromBody] SysConfig sysConfig)
         {
+            TypeAdapterConfig<SysConfig, Sys_Config>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.FromCamelCase);
+            var sys_Config = sysConfig.BuildAdapter().AdaptToType<Sys_Config>();
             return Ok(await Task.FromResult(_sysConfigService.AddConfig(sys_Config)));
 
         }
