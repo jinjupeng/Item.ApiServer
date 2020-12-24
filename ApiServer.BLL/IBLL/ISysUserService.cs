@@ -6,7 +6,7 @@ namespace ApiServer.BLL.IBLL
 {
     public interface ISysUserService
     {
-        Sys_User GetUserByUserName(string userName);
+        MsgModel GetUserByUserName(string userName);
         MsgModel UpdateUser(Sys_User sys_User);
         MsgModel AddUser(Sys_User sys_User);
         MsgModel DeleteUser(long userId);

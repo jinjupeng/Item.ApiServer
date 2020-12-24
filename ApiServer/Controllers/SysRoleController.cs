@@ -8,11 +8,18 @@ using System.Threading.Tasks;
 
 namespace ApiServer.Controllers
 {
+    /// <summary>
+    /// 角色管理
+    /// </summary>
     [Route("api/[controller]")]
     public class SysRoleController : BaseController
     {
         private readonly ISysRoleService _sysRoleService;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sysRoleService"></param>
         public SysRoleController(ISysRoleService sysRoleService)
         {
             _sysRoleService = sysRoleService;
@@ -33,7 +40,7 @@ namespace ApiServer.Controllers
         /// <summary>
         /// 角色管理：修改
         /// </summary>
-        /// <param name="sys_Role"></param>
+        /// <param name="sysRole"></param>
         /// <returns></returns>
         [HttpPost]
         [Route("update")]
@@ -48,7 +55,7 @@ namespace ApiServer.Controllers
         /// <summary>
         /// 角色管理：新增
         /// </summary>
-        /// <param name="sys_Role"></param>
+        /// <param name="sysRole"></param>
         /// <returns></returns>
         [HttpPost]
         [Route("add")]
@@ -60,6 +67,11 @@ namespace ApiServer.Controllers
 
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="roleId"></param>
+        /// <returns></returns>
         [HttpPost]
         [Route("delete")]
         public async Task<IActionResult> Delete([FromForm] long roleId)

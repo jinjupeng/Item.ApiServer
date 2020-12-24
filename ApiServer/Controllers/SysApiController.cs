@@ -10,11 +10,18 @@ using System.Threading.Tasks;
 
 namespace ApiServer.Controllers
 {
+    /// <summary>
+    /// 
+    /// </summary>
     [Route("api/[controller]")]
     public class SysApiController : BaseController
     {
         private readonly ISysApiService _sysApiService;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sysApiService"></param>
         public SysApiController(ISysApiService sysApiService)
         {
             _sysApiService = sysApiService;
@@ -37,7 +44,7 @@ namespace ApiServer.Controllers
         /// <summary>
         /// 接口管理:新增
         /// </summary>
-        /// <param name="sys_Api"></param>
+        /// <param name="sysApi"></param>
         /// <returns></returns>
         [HttpPost]
         [Route("add")]
@@ -51,7 +58,7 @@ namespace ApiServer.Controllers
         /// <summary>
         /// 接口管理:修改
         /// </summary>
-        /// <param name="sys_Api"></param>
+        /// <param name="sysApi"></param>
         /// <returns></returns>
         [HttpPost]
         [Route("update")]
@@ -65,12 +72,14 @@ namespace ApiServer.Controllers
         /// <summary>
         /// 接口管理:删除
         /// </summary>
-        /// <param name="sys_Api"></param>
+        /// <param name="sysApi"></param>
         /// <returns></returns>
         [HttpPost]
         [Route("delete")]
-        public async Task<IActionResult> Delete([FromBody] Sys_Api sys_Api)
+        public async Task<IActionResult> Delete([FromBody] SysApi sysApi)
         {
+            TypeAdapterConfig<SysApi, Sys_Api>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.FromCamelCase);
+            var sys_Api = sysApi.BuildAdapter().AdaptToType<Sys_Api>();
             return Ok(await Task.FromResult(_sysApiService.DeleteApi(sys_Api)));
         }
 

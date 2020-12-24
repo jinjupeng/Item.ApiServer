@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using ApiServer.Model.Model.MsgModel;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -36,18 +37,19 @@ namespace ApiServer.Exception
         /// <param name="context"></param>
         public void OnException(ExceptionContext context)
         {
-            // throw  new  NotImplementedException();
-            var json = new JsonErrorResponse
+            MsgModel json = new MsgModel
             {
-                Message = context.Exception.Message // 错误信息
+                isok = false,
+                code = StatusCodes.Status500InternalServerError,
+                message = context.Exception.Message // 错误信息
             };
             if (_env.IsDevelopment())
             {
-                json.DevelopmentMessage = context.Exception.StackTrace;// 堆栈信息
+                json.message = context.Exception.StackTrace;// 堆栈信息
             }
             context.Result = new InternalServerErrorObjectResult(json);
             // 采用Serilog日志框架记录
-            _logger.LogError(json.Message, WriteLog(json.Message, context.Exception));
+            _logger.LogError(json.message, WriteLog(json.message, context.Exception));
             context.ExceptionHandled = true;
         }
 
@@ -62,27 +64,21 @@ namespace ApiServer.Exception
             return string.Format("【自定义错误】：{0} \r\n【异常类型】：{1} \r\n【异常信息】：{2} \r\n【堆栈调用】：{3}", new object[] { throwMsg,
                 ex.GetType().Name, ex.Message, ex.StackTrace });
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public class InternalServerErrorObjectResult : ObjectResult
         {
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="value"></param>
             public InternalServerErrorObjectResult(object value) : base(value)
             {
                 StatusCode = StatusCodes.Status500InternalServerError;
             }
         }
 
-        /// <summary>
-        /// 返回错误信息
-        /// </summary>
-        public class JsonErrorResponse
-        {
-            /// <summary>
-            /// 生产环境的消息
-            /// </summary>
-            public string Message { get; set; }
-            /// <summary>
-            /// 开发环境的消息
-            /// </summary>
-            public string DevelopmentMessage { get; set; }
-        }
     }
 }

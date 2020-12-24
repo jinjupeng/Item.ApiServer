@@ -5,22 +5,36 @@ using Mapster;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace ApiServer.Controllers
 {
+    /// <summary>
+    /// 部门管理
+    /// </summary>
     [Route("api/[controller]")]
     public class SysOrgController : BaseController
     {
         private readonly ISysOrgService _sysOrgService;
-        private readonly ISysUserService _sysUserService;
+        private readonly IBaseService<Sys_User> _baseSysUserService;
 
-        public SysOrgController(ISysOrgService sysOrgService, ISysUserService sysUserService)
+        /// <summary>
+        /// 构造函数
+        /// </summary>
+        /// <param name="sysOrgService"></param>
+        /// <param name="baseSysUserService"></param>
+        public SysOrgController(ISysOrgService sysOrgService, IBaseService<Sys_User> baseSysUserService)
         {
             _sysOrgService = sysOrgService;
-            _sysUserService = sysUserService;
+            _baseSysUserService = baseSysUserService;
         }
 
+        /// <summary>
+        /// 部门层级树
+        /// </summary>
+        /// <param name="pairs"></param>
+        /// <returns></returns>
         [HttpPost]
         [Route("tree")]
         public async Task<IActionResult> Tree([FromForm] Dictionary<string, string> pairs)
@@ -32,10 +46,15 @@ namespace ApiServer.Controllers
             {
                 orgStatus = Convert.ToBoolean(pairs["orgStatus"]);
             }
-            Sys_User sys_User = _sysUserService.GetUserByUserName(userName);
+            Sys_User sys_User = _baseSysUserService.GetModels(a => a.username == userName).SingleOrDefault();
             return Ok(await Task.FromResult(_sysOrgService.GetOrgTreeById(sys_User.org_id, orgNameLike, orgStatus)));
         }
 
+        /// <summary>
+        /// 更新
+        /// </summary>
+        /// <param name="sysOrg"></param>
+        /// <returns></returns>
         [HttpPost]
         [Route("update")]
         public async Task<IActionResult> Update([FromBody] SysOrg sysOrg)
@@ -46,6 +65,11 @@ namespace ApiServer.Controllers
 
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sysOrg"></param>
+        /// <returns></returns>
         [HttpPost]
         [Route("add")]
         public async Task<IActionResult> Add([FromBody] SysOrg sysOrg)
@@ -56,14 +80,27 @@ namespace ApiServer.Controllers
 
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sysOrg"></param>
+        /// <returns></returns>
         [HttpPost]
         [Route("delete")]
-        public async Task<IActionResult> Delete([FromBody] Sys_Org sys_Org)
+        public async Task<IActionResult> Delete([FromBody] SysOrg sysOrg)
         {
+            TypeAdapterConfig<SysOrg, Sys_Org>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.FromCamelCase);
+            var sys_Org = sysOrg.BuildAdapter().AdaptToType<Sys_Org>();
             return Ok(await Task.FromResult(_sysOrgService.DeleteOrg(sys_Org)));
 
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="orgId"></param>
+        /// <param name="status"></param>
+        /// <returns></returns>
         [HttpPost]
         [Route("status/change")]
         public async Task<IActionResult> Update([FromForm] long orgId, bool status)

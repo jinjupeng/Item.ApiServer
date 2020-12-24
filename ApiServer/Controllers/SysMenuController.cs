@@ -31,8 +31,7 @@ namespace ApiServer.Controllers
         /// <summary>
         /// 菜单管理：查询
         /// </summary>
-        /// <param name="menuNameLike"></param>
-        /// <param name="menuStatus"></param>
+        /// <param name="pairs"></param>
         /// <returns></returns>
         [HttpPost]
         [Route("tree")]
@@ -50,7 +49,7 @@ namespace ApiServer.Controllers
         /// <summary>
         /// 菜单管理：修改
         /// </summary>
-        /// <param name="sys_Menu"></param>
+        /// <param name="sysMenu"></param>
         /// <returns></returns>
         [HttpPost]
         [Route("update")]
@@ -65,7 +64,7 @@ namespace ApiServer.Controllers
         /// <summary>
         /// 菜单管理：新增
         /// </summary>
-        /// <param name="sys_Menu"></param>
+        /// <param name="sysMenu"></param>
         /// <returns></returns>
         [HttpPost]
         [Route("add")]
@@ -80,12 +79,14 @@ namespace ApiServer.Controllers
         /// <summary>
         /// 菜单管理：删除
         /// </summary>
-        /// <param name="sys_Menu"></param>
+        /// <param name="sysMenu"></param>
         /// <returns></returns>
         [HttpPost]
         [Route("delete")]
-        public async Task<IActionResult> Delete([FromBody] Sys_Menu sys_Menu)
+        public async Task<IActionResult> Delete([FromBody] SysMenu sysMenu)
         {
+            TypeAdapterConfig<SysMenu, Sys_Menu>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.FromCamelCase);
+            var sys_Menu = sysMenu.BuildAdapter().AdaptToType<Sys_Menu>();
             return Ok(await Task.FromResult(_sysMenuService.DeleteMenu(sys_Menu)));
 
         }

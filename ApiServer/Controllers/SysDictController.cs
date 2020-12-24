@@ -14,6 +14,11 @@ namespace ApiServer.Controllers
     public class SysDictController : BaseController
     {
         private readonly ISysDictService _sysDictService;
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sysDictService"></param>
         public SysDictController(ISysDictService sysDictService)
         {
             _sysDictService = sysDictService;
@@ -46,7 +51,7 @@ namespace ApiServer.Controllers
         /// <summary>
         /// 根据id更新数据数据字典项目
         /// </summary>
-        /// <param name="sys_Dict">更新实体（必须包含id）</param>
+        /// <param name="sysDict">更新实体（必须包含id）</param>
         /// <returns>更新成功结果</returns>
         [HttpPost]
         [Route("update")]
@@ -61,7 +66,7 @@ namespace ApiServer.Controllers
         /// <summary>
         /// 新增数据字典项
         /// </summary>
-        /// <param name="sys_Dict">新增实体</param>
+        /// <param name="sysDict">新增实体</param>
         /// <returns>更新成功结果</returns>
         [HttpPost]
         [Route("add")]

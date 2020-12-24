@@ -5,7 +5,7 @@ namespace ApiServer.Model.Enum
     /// <summary>
     /// 状态码枚举
     /// </summary>
-    public enum StatusCodes
+    public enum Codes
     {
         /// <summary>
         /// 未登录（需要重新登录）

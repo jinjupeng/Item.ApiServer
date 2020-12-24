@@ -210,6 +210,65 @@
             <param name="status"></param>
             <returns></returns>
         </member>
+        <member name="T:ApiServer.Controllers.SysOrgController">
+            <summary>
+            部门管理
+            </summary>
+        </member>
+        <member name="M:ApiServer.Controllers.SysOrgController.#ctor(ApiServer.BLL.IBLL.ISysOrgService,ApiServer.BLL.IBLL.IBaseService{ApiServer.Model.Entity.Sys_User})">
+            <summary>
+            构造函数
+            </summary>
+            <param name="sysOrgService"></param>
+            <param name="baseSysUserService"></param>
+        </member>
+        <member name="M:ApiServer.Controllers.SysOrgController.Tree(System.Collections.Generic.Dictionary{System.String,System.String})">
+            <summary>
+            部门层级树
+            </summary>
+            <param name="pairs"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiServer.Controllers.SysOrgController.Update(ApiServer.Model.Model.ViewModel.SysOrg)">
+            <summary>
+            更新
+            </summary>
+            <param name="sysOrg"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiServer.Controllers.SysOrgController.Add(ApiServer.Model.Model.ViewModel.SysOrg)">
+            <summary>
+            
+            </summary>
+            <param name="sysOrg"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiServer.Controllers.SysOrgController.Delete(ApiServer.Model.Entity.Sys_Org)">
+            <summary>
+            
+            </summary>
+            <param name="sys_Org"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiServer.Controllers.SysOrgController.Update(System.Int64,System.Boolean)">
+            <summary>
+            
+            </summary>
+            <param name="orgId"></param>
+            <param name="status"></param>
+            <returns></returns>
+        </member>
+        <member name="T:ApiServer.Controllers.SysRoleController">
+            <summary>
+            角色管理
+            </summary>
+        </member>
+        <member name="M:ApiServer.Controllers.SysRoleController.#ctor(ApiServer.BLL.IBLL.ISysRoleService)">
+            <summary>
+            
+            </summary>
+            <param name="sysRoleService"></param>
+        </member>
         <member name="M:ApiServer.Controllers.SysRoleController.Query(System.String)">
             <summary>
             角色管理:查询
@@ -221,14 +280,21 @@
             <summary>
             角色管理：修改
             </summary>
-            <param name="sys_Role"></param>
+            <param name="sysRole"></param>
             <returns></returns>
         </member>
         <member name="M:ApiServer.Controllers.SysRoleController.Add(ApiServer.Model.Model.ViewModel.SysRole)">
             <summary>
             角色管理：新增
             </summary>
-            <param name="sys_Role"></param>
+            <param name="sysRole"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiServer.Controllers.SysRoleController.Delete(System.Int64)">
+            <summary>
+            
+            </summary>
+            <param name="roleId"></param>
             <returns></returns>
         </member>
         <member name="M:ApiServer.Controllers.SysRoleController.CheckedRoles(System.Int64)">
@@ -253,6 +319,17 @@
             <param name="status"></param>
             <returns></returns>
         </member>
+        <member name="T:ApiServer.Controllers.SysUserController">
+            <summary>
+            用户管理
+            </summary>
+        </member>
+        <member name="M:ApiServer.Controllers.SysUserController.#ctor(ApiServer.BLL.IBLL.ISysUserService)">
+            <summary>
+            
+            </summary>
+            <param name="sysUserService"></param>
+        </member>
         <member name="M:ApiServer.Controllers.SysUserController.Info(System.String)">
             <summary>
             获取用户信息接口(个人中心)
@@ -271,14 +348,14 @@
             <summary>
             用户管理：更新
             </summary>
-            <param name="sys_User"></param>
+            <param name="sysUser"></param>
             <returns></returns>
         </member>
         <member name="M:ApiServer.Controllers.SysUserController.Add(ApiServer.Model.Model.ViewModel.SysUser)">
             <summary>
             用户管理：新增
             </summary>
-            <param name="sys_User"></param>
+            <param name="sysUser"></param>
             <returns></returns>
         </member>
         <member name="M:ApiServer.Controllers.SysUserController.Delete(System.Int64)">
@@ -348,20 +425,16 @@
             <param name="ex"></param>
             <returns></returns>
         </member>
-        <member name="T:ApiServer.Exception.GlobalExceptionFilter.JsonErrorResponse">
+        <member name="T:ApiServer.Exception.GlobalExceptionFilter.InternalServerErrorObjectResult">
             <summary>
-            返回错误信息
+            
             </summary>
         </member>
-        <member name="P:ApiServer.Exception.GlobalExceptionFilter.JsonErrorResponse.Message">
+        <member name="M:ApiServer.Exception.GlobalExceptionFilter.InternalServerErrorObjectResult.#ctor(System.Object)">
             <summary>
-            生产环境的消息
+            
             </summary>
-        </member>
-        <member name="P:ApiServer.Exception.GlobalExceptionFilter.JsonErrorResponse.DevelopmentMessage">
-            <summary>
-            开发环境的消息
-            </summary>
+            <param name="value"></param>
         </member>
         <member name="F:ApiServer.JWT.JwtHelper.SecurityKey">
             <summary>

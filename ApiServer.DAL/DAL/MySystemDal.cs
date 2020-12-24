@@ -110,7 +110,7 @@ namespace ApiServer.DAL.DAL
                 sql += $"AND api_name like CONCAT('%{apiNameLike}%') ";
             }
 
-            sql += $"AND status = {(apiStatus ? 0 : 1)} ";
+            sql += $"AND status = {(apiStatus ? 1 : 0)} ";
             sql += $"ORDER BY level,sort";
 
             return DbContext.Set<Sys_Api>().FromSqlRaw(sql).AsNoTracking().AsQueryable();
@@ -170,7 +170,7 @@ namespace ApiServer.DAL.DAL
             }
             if (menuStatus != null)
             {
-                sql += $"AND status = {((bool)menuStatus ? 0 : 1)} ";
+                sql += $"AND status = {((bool)menuStatus ? 1 : 0)} ";
             }
             sql += $"ORDER BY level,sort";
 
@@ -188,7 +188,7 @@ namespace ApiServer.DAL.DAL
             }
             if (orgStatus != null)
             {
-                sql += $"AND status = {((bool)orgStatus ? 0 : 1)} ";
+                sql += $"AND status = {((bool)orgStatus ? 1 : 0)} ";
             }
 
             sql += $"ORDER BY level,sort";

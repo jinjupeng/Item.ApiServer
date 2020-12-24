@@ -9,11 +9,18 @@ using System.Threading.Tasks;
 
 namespace ApiServer.Controllers
 {
+    /// <summary>
+    /// 用户管理
+    /// </summary>
     [Route("api/[controller]")]
     public class SysUserController : BaseController
     {
         private readonly ISysUserService _sysUserService;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sysUserService"></param>
         public SysUserController(ISysUserService sysUserService)
         {
             _sysUserService = sysUserService;
@@ -56,7 +63,7 @@ namespace ApiServer.Controllers
         /// <summary>
         /// 用户管理：更新
         /// </summary>
-        /// <param name="sys_User"></param>
+        /// <param name="sysUser"></param>
         /// <returns></returns>
         [HttpPost]
         [Route("update")]
@@ -70,7 +77,7 @@ namespace ApiServer.Controllers
         /// <summary>
         /// 用户管理：新增
         /// </summary>
-        /// <param name="sys_User"></param>
+        /// <param name="sysUser"></param>
         /// <returns></returns>
         [HttpPost]
         [Route("add")]

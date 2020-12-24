@@ -2,6 +2,7 @@
 using ApiServer.Common;
 using ApiServer.Model.Entity;
 using ApiServer.Model.Model.MsgModel;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Linq;
 
@@ -26,14 +27,20 @@ namespace ApiServer.BLL.BLL
         /// </summary>
         /// <param name="userName"></param>
         /// <returns></returns>
-        public Sys_User GetUserByUserName(string userName)
+        public MsgModel GetUserByUserName(string userName)
         {
-            Sys_User sys_User = _baseSysUserService.GetModels(a => a.username == userName).SingleOrDefault();
-            if (sys_User != null)
+            MsgModel msg = new MsgModel
             {
-                sys_User.password = "";
+                message = "查询用户信息成功！"
+            };
+            Sys_User sysUser = _baseSysUserService.GetModels(a => a.username == userName).SingleOrDefault();
+            if (sysUser != null)
+            {
+                sysUser.password = "";
             }
-            return sys_User;
+
+            msg.data = sysUser;
+            return msg;
         }
 
         /// <summary>
@@ -68,6 +75,7 @@ namespace ApiServer.BLL.BLL
             if (!_baseSysUserService.UpdateRange(sys_User))
             {
                 msg.isok = false;
+                msg.code = StatusCodes.Status500InternalServerError;
                 msg.message = "更新用户失败！";
             }
             return msg;
@@ -90,6 +98,7 @@ namespace ApiServer.BLL.BLL
             if (!_baseSysUserService.AddRange(sys_User))
             {
                 msg.isok = false;
+                msg.code = StatusCodes.Status500InternalServerError;
                 msg.message = "新增用户失败！";
             }
             return msg;
@@ -108,6 +117,7 @@ namespace ApiServer.BLL.BLL
             if (!_baseSysUserService.DeleteRange(_baseSysUserService.GetModels(a => a.id == userId)))
             {
                 msg.isok = false;
+                msg.code = StatusCodes.Status500InternalServerError;
                 msg.message = "删除用户失败！";
             }
             return msg;
@@ -132,6 +142,7 @@ namespace ApiServer.BLL.BLL
             if (!result)
             {
                 msg.message = "密码重置失败！";
+                msg.code = StatusCodes.Status500InternalServerError;
                 msg.isok = false;
             }
             return msg;
@@ -202,6 +213,7 @@ namespace ApiServer.BLL.BLL
             if (!_baseSysUserService.UpdateRange(sys_User))
             {
                 msg.isok = false;
+                msg.code = StatusCodes.Status500InternalServerError;
                 msg.message = "用户状态更新失败！";
             }
             return msg;
