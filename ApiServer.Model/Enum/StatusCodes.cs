@@ -7,6 +7,9 @@ namespace ApiServer.Model.Enum
     /// </summary>
     public enum Codes
     {
+        [Description("您输入的数据格式错误或您没有权限访问资源！")]
+        Status400Error = 400,
+
         /// <summary>
         /// 未登录（需要重新登录）
         /// </summary>
@@ -34,7 +37,7 @@ namespace ApiServer.Model.Enum
         /// <summary>
         /// 系统内部错误（非业务代码里显式抛出的异常，例如由于数据不正确导致空指针异常、数据库异常等等）
         /// </summary>
-        [Description("系统内部错误")]
+        [Description("系统出现异常，请您稍后再试或联系管理员！")]
         Status500InternalServerError = 500,
 
         [Description("服务器不支持请求的功能，无法完成请求")]
@@ -51,5 +54,6 @@ namespace ApiServer.Model.Enum
 
         [Description("http版本不支持该请求")]
         Status505HttpVersionNotSupported = 505,
+
     }
 }

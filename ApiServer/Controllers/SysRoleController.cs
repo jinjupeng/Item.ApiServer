@@ -59,7 +59,7 @@ namespace ApiServer.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("add")]
-        public async Task<IActionResult> Add([FromBody] SysRole sysRole)
+        public async Task<IActionResult> Add(SysRole sysRole)
         {
             TypeAdapterConfig<SysRole, Sys_Role>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.FromCamelCase);
             var sys_Role = sysRole.BuildAdapter().AdaptToType<Sys_Role>();

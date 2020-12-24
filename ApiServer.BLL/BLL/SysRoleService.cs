@@ -143,12 +143,9 @@ namespace ApiServer.BLL.BLL
             {
                 message = "角色禁用状态更新成功！"
             };
-            Sys_Role sys_Role = new Sys_Role
-            {
-                id = id,
-                status = status
-            };
-            if (!_baseSysRoleService.AddRange(sys_Role))
+            Sys_Role sys_Role = _baseSysRoleService.GetModels(a => a.id == id).SingleOrDefault();
+            sys_Role.status = status;
+            if (!_baseSysRoleService.UpdateRange(sys_Role))
             {
                 msg.isok = false;
                 msg.message = "角色禁用状态更新失败！";

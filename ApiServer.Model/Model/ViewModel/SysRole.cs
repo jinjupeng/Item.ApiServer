@@ -2,7 +2,7 @@
 {
     public class SysRole
     {
-        public long id { get; set; }
+        public long? id { get; set; }
 
         /// <summary>
         /// 角色名称(汉字)
@@ -25,7 +25,7 @@
         public int sort { get; set; }
 
         /// <summary>
-        /// 0表示可用
+        /// 0表示可用(false)
         /// </summary>
         public bool? status { get; set; }
     }

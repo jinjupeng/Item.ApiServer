@@ -50,6 +50,17 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="T:ApiServer.Controllers.SysApiController">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:ApiServer.Controllers.SysApiController.#ctor(ApiServer.BLL.IBLL.ISysApiService)">
+            <summary>
+            
+            </summary>
+            <param name="sysApiService"></param>
+        </member>
         <member name="M:ApiServer.Controllers.SysApiController.Tree(System.String,System.Boolean)">
             <summary>
             接口管理:查询
@@ -62,21 +73,21 @@
             <summary>
             接口管理:新增
             </summary>
-            <param name="sys_Api"></param>
+            <param name="sysApi"></param>
             <returns></returns>
         </member>
         <member name="M:ApiServer.Controllers.SysApiController.Update(ApiServer.Model.Model.ViewModel.SysApi)">
             <summary>
             接口管理:修改
             </summary>
-            <param name="sys_Api"></param>
+            <param name="sysApi"></param>
             <returns></returns>
         </member>
-        <member name="M:ApiServer.Controllers.SysApiController.Delete(ApiServer.Model.Entity.Sys_Api)">
+        <member name="M:ApiServer.Controllers.SysApiController.Delete(ApiServer.Model.Model.ViewModel.SysApi)">
             <summary>
             接口管理:删除
             </summary>
-            <param name="sys_Api"></param>
+            <param name="sysApi"></param>
             <returns></returns>
         </member>
         <member name="M:ApiServer.Controllers.SysApiController.CheckedTree(System.Int64)">
@@ -101,10 +112,67 @@
             <param name="status"></param>
             <returns></returns>
         </member>
+        <member name="T:ApiServer.Controllers.SysConfigController">
+            <summary>
+            用户管理
+            </summary>
+        </member>
+        <member name="M:ApiServer.Controllers.SysConfigController.#ctor(ApiServer.BLL.IBLL.ISysConfigService)">
+            <summary>
+            
+            </summary>
+            <param name="sysConfigService"></param>
+        </member>
+        <member name="M:ApiServer.Controllers.SysConfigController.All">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ApiServer.Controllers.SysConfigController.Refresh">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ApiServer.Controllers.SysConfigController.Query(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="configLike"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiServer.Controllers.SysConfigController.Update(ApiServer.Model.Model.ViewModel.SysConfig)">
+            <summary>
+            
+            </summary>
+            <param name="sysConfig"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiServer.Controllers.SysConfigController.Add(ApiServer.Model.Model.ViewModel.SysConfig)">
+            <summary>
+            
+            </summary>
+            <param name="sysConfig"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiServer.Controllers.SysConfigController.Delete(System.Int64)">
+            <summary>
+            
+            </summary>
+            <param name="configId"></param>
+            <returns></returns>
+        </member>
         <member name="T:ApiServer.Controllers.SysDictController">
             <summary>
             系统数据字典配置控制层代码
             </summary>
+        </member>
+        <member name="M:ApiServer.Controllers.SysDictController.#ctor(ApiServer.BLL.IBLL.ISysDictService)">
+            <summary>
+            
+            </summary>
+            <param name="sysDictService"></param>
         </member>
         <member name="M:ApiServer.Controllers.SysDictController.All">
             <summary>
@@ -124,14 +192,14 @@
             <summary>
             根据id更新数据数据字典项目
             </summary>
-            <param name="sys_Dict">更新实体（必须包含id）</param>
+            <param name="sysDict">更新实体（必须包含id）</param>
             <returns>更新成功结果</returns>
         </member>
         <member name="M:ApiServer.Controllers.SysDictController.Add(ApiServer.Model.Model.ViewModel.SysDict)">
             <summary>
             新增数据字典项
             </summary>
-            <param name="sys_Dict">新增实体</param>
+            <param name="sysDict">新增实体</param>
             <returns>更新成功结果</returns>
         </member>
         <member name="M:ApiServer.Controllers.SysDictController.Delete(System.Int64)">
@@ -156,29 +224,28 @@
             <summary>
             菜单管理：查询
             </summary>
-            <param name="menuNameLike"></param>
-            <param name="menuStatus"></param>
+            <param name="pairs"></param>
             <returns></returns>
         </member>
         <member name="M:ApiServer.Controllers.SysMenuController.Update(ApiServer.Model.Model.ViewModel.SysMenu)">
             <summary>
             菜单管理：修改
             </summary>
-            <param name="sys_Menu"></param>
+            <param name="sysMenu"></param>
             <returns></returns>
         </member>
         <member name="M:ApiServer.Controllers.SysMenuController.Add(ApiServer.Model.Model.ViewModel.SysMenu)">
             <summary>
             菜单管理：新增
             </summary>
-            <param name="sys_Menu"></param>
+            <param name="sysMenu"></param>
             <returns></returns>
         </member>
-        <member name="M:ApiServer.Controllers.SysMenuController.Delete(ApiServer.Model.Entity.Sys_Menu)">
+        <member name="M:ApiServer.Controllers.SysMenuController.Delete(ApiServer.Model.Model.ViewModel.SysMenu)">
             <summary>
             菜单管理：删除
             </summary>
-            <param name="sys_Menu"></param>
+            <param name="sysMenu"></param>
             <returns></returns>
         </member>
         <member name="M:ApiServer.Controllers.SysMenuController.CheckedTree(System.Int64)">
@@ -243,11 +310,11 @@
             <param name="sysOrg"></param>
             <returns></returns>
         </member>
-        <member name="M:ApiServer.Controllers.SysOrgController.Delete(ApiServer.Model.Entity.Sys_Org)">
+        <member name="M:ApiServer.Controllers.SysOrgController.Delete(ApiServer.Model.Model.ViewModel.SysOrg)">
             <summary>
             
             </summary>
-            <param name="sys_Org"></param>
+            <param name="sysOrg"></param>
             <returns></returns>
         </member>
         <member name="M:ApiServer.Controllers.SysOrgController.Update(System.Int64,System.Boolean)">
