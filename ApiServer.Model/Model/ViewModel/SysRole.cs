@@ -2,7 +2,7 @@
 {
     public class SysRole
     {
-        public long? id { get; set; }
+        public long id { get; set; }
 
         /// <summary>
         /// 角色名称(汉字)

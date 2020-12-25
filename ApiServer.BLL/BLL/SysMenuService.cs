@@ -36,14 +36,14 @@ namespace ApiServer.BLL.BLL
                 message = "查询成功！",
                 isok = true
             };
-            TypeAdapterConfig<Sys_Menu, SysMenuNode>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.ToCamelCase);
+
             //保证数据库里面level=1的节点只有一个，根节点
-            Sys_Menu rootSysMenu = _baseSysMenuService.GetModels(a => a.level == 1).Single();
+            Sys_Menu rootSysMenu = _baseSysMenuService.GetModels(a => a.level == 1).SingleOrDefault();
             if (rootSysMenu != null)
             {
                 long rootMenuId = rootSysMenu.id;
                 List<Sys_Menu> sysMenus = _mySystemService.SelectMenuTree(rootMenuId, menuNameLike, menuStatus);
-
+                TypeAdapterConfig<Sys_Menu, SysMenuNode>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.ToCamelCase);
                 List<SysMenuNode> sysMenuNodes = new List<SysMenuNode>();
                 foreach (Sys_Menu sys_Menu in sysMenus)
                 {
@@ -80,6 +80,7 @@ namespace ApiServer.BLL.BLL
             else
             {
                 // "请先在数据库内为菜单配置一个分类的根节点，level=1"
+                msg.message = "请先在数据库内为菜单配置一个分类的根节点，level=1";
                 msg.data = new List<SysMenuNode>();
                 return msg;
             }
@@ -106,12 +107,12 @@ namespace ApiServer.BLL.BLL
             sys_Menu.id = new Snowflake().GetId();
             SetMenuIdsAndLevel(sys_Menu);
             sys_Menu.is_leaf = true;//新增的菜单节点都是子节点，没有下级
-            Sys_Menu parent = new Sys_Menu
-            {
-                id = sys_Menu.menu_pid,
-                is_leaf = false//更新父节点为非子节点。
-            };
+
+            Sys_Menu parent = _baseSysMenuService.GetModels(a => a.id == sys_Menu.menu_pid).SingleOrDefault();
+            parent.id = sys_Menu.menu_pid;
+            parent.is_leaf = false; //更新父节点为非子节点。
             _baseSysMenuService.UpdateRange(parent);
+
             sys_Menu.status = false;//设置是否禁用，新增节点默认可用
             _baseSysMenuService.AddRange(sys_Menu);
             return msg;
@@ -130,6 +131,8 @@ namespace ApiServer.BLL.BLL
             if (myChilds.Count > 0)
             {
                 // "不能删除含有下级菜单的菜单"
+                msg.message = "不能删除含有下级菜单的菜单";
+                return msg;
             }
             //查找被删除节点的父节点
             List<Sys_Menu> myFatherChilds = _baseSysMenuService.GetModels(a => a.menu_pids.Contains("[" + sys_Menu.menu_pid + "]")).ToList();
@@ -137,11 +140,9 @@ namespace ApiServer.BLL.BLL
             //我的父节点只有我这一个子节点，而我还要被删除，更新父节点为叶子节点。
             if (myFatherChilds.Count == 1)
             {
-                Sys_Menu parent = new Sys_Menu
-                {
-                    id = sys_Menu.menu_pid,
-                    is_leaf = true//更新父节点为叶子节点。
-                };
+                Sys_Menu parent = _baseSysMenuService.GetModels(a => a.id == sys_Menu.menu_pid).SingleOrDefault();
+                parent.id = sys_Menu.menu_pid;
+                parent.is_leaf = true;//更新父节点为叶子节点。
                 _baseSysMenuService.UpdateRange(parent);
             }
             // 删除节点
@@ -258,18 +259,11 @@ namespace ApiServer.BLL.BLL
         /// <param name="status"></param>
         public MsgModel UpdateStatus(long id, bool status)
         {
-            MsgModel msg = new MsgModel
-            {
-                isok = true,
-                message = "菜单禁用状态更新成功！"
-            };
-            Sys_Menu sys_Menu = new Sys_Menu
-            {
-                id = id,
-                status = status
-            };
+            Sys_Menu sys_Menu = _baseSysMenuService.GetModels(a => a.id == id).SingleOrDefault();
+            sys_Menu.id = id;
+            sys_Menu.status = status;
             _baseSysMenuService.UpdateRange(sys_Menu);
-            return msg;
+            return MsgModel.Success("菜单禁用状态更新成功！");
         }
 
     }

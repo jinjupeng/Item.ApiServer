@@ -2,6 +2,7 @@
 using ApiServer.Common;
 using ApiServer.Model;
 using ApiServer.Model.Entity;
+using ApiServer.Model.Enum;
 using ApiServer.Model.Model;
 using ApiServer.Model.Model.MsgModel;
 using Mapster;
@@ -100,11 +101,9 @@ namespace ApiServer.BLL.BLL
             sys_Org.id = new Snowflake().GetId();
             SetOrgIdsAndLevel(sys_Org);
             sys_Org.is_leaf = true;//新增的组织节点都是子节点，没有下级
-            Sys_Org parent = new Sys_Org
-            {
-                id = sys_Org.org_pid,
-                is_leaf = false //更新父节点为非子节点。
-            };
+            Sys_Org parent = _baseSysOrgService.GetModels(a => a.id == sys_Org.org_pid).SingleOrDefault();
+            parent.id = sys_Org.org_pid;
+            parent.is_leaf = false; //更新父节点为非子节点。
             _baseSysOrgService.UpdateRange(parent);
 
             sys_Org.status = false;//设置是否禁用，新增节点默认可用
@@ -123,6 +122,7 @@ namespace ApiServer.BLL.BLL
             if (myChilds.Count > 0)
             {
                 // "不能删除有下级组织的组织机构"
+                throw new CustomException((int)HttpStatusCode.Status500InternalServerError, "不能删除有下级组织的组织机构");
             }
 
 

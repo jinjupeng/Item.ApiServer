@@ -5,7 +5,7 @@ namespace ApiServer.Model.Enum
     /// <summary>
     /// 状态码枚举
     /// </summary>
-    public enum Codes
+    public enum HttpStatusCode
     {
         [Description("您输入的数据格式错误或您没有权限访问资源！")]
         Status400Error = 400,

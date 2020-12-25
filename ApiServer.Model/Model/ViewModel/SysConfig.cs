@@ -4,6 +4,8 @@ namespace ApiServer.Model.Model.ViewModel
 {
     public class SysConfig
     {
+        public long id { get; set; }
+
         /// <summary>
         /// 参数名称(中文)
         /// </summary>

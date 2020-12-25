@@ -4,8 +4,10 @@ using ApiServer.Model.Entity;
 using ApiServer.Model.Model.MsgModel;
 using ApiServer.Model.Model.ViewModel;
 using Mapster;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 
 namespace ApiServer.BLL.BLL
 {
@@ -43,16 +45,19 @@ namespace ApiServer.BLL.BLL
         /// <returns></returns>
         public MsgModel Query(string groupName, string groupCode)
         {
-            MsgModel msg = new MsgModel
+            Expression<Func<Sys_Dict, bool>> where = PredicateBuilder.True<Sys_Dict>();
+            if (!string.IsNullOrWhiteSpace(groupName))
             {
-                message = "查询成功！",
-                isok = true
-            };
+                where = where.And(a => a.group_name.Contains(groupName));
+            }
+            if (!string.IsNullOrWhiteSpace(groupCode))
+            {
+                where = where.And(a => a.group_name.Contains(groupCode));
+            }
             TypeAdapterConfig<Sys_Dict, SysDict>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.ToCamelCase);
-            var sysDictList = _baseSysDictService.GetModels(a => a.group_name.Contains(groupName) && a.group_code.Contains(groupCode)).ToList();
+            var sysDictList = _baseSysDictService.GetModels(where).ToList();
 
-            msg.data = sysDictList.BuildAdapter().AdaptToType<List<SysDict>>();
-            return msg;
+            return MsgModel.Success(sysDictList.BuildAdapter().AdaptToType<List<SysDict>>(), "查询成功！");
         }
 
         /// <summary>
