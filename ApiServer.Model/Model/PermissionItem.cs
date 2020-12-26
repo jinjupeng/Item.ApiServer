@@ -1,4 +1,4 @@
-﻿namespace ApiServer.JWT
+﻿namespace ApiServer.Model.Model
 {
     /// <summary>
     /// 用户或角色或其他凭据实体
@@ -9,6 +9,7 @@
         /// 用户或角色或其他凭据名称
         /// </summary>
         public virtual string Role { get; set; }
+        
         /// <summary>
         /// 请求Url
         /// </summary>

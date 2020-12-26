@@ -15,7 +15,7 @@ namespace ApiServer.Controllers
     /// 
     /// </summary>
     [Route("api/[controller]")]
-    //[Authorize("Permission")]
+    [Authorize("Permission")]
     public class SysApiController : BaseController
     {
         private readonly ISysApiService _sysApiService;

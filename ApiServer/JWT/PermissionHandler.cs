@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using ApiServer.BLL.IBLL;
 
 namespace ApiServer.JWT
 {
@@ -12,14 +13,17 @@ namespace ApiServer.JWT
     public class PermissionHandler : AuthorizationHandler<PermissionRequirement>
     {
         private readonly IHttpContextAccessor _accessor;
+        private readonly ISysApiService _sysApiService;
 
         /// <summary>
         /// 构造函数
         /// </summary>
         /// <param name="accessor"></param>
-        public PermissionHandler(IHttpContextAccessor accessor)
+        /// <param name="sysApiService"></param>
+        public PermissionHandler(IHttpContextAccessor accessor, ISysApiService sysApiService)
         {
             this._accessor = accessor;
+            _sysApiService = sysApiService;
         }
 
         /// <summary>
@@ -31,7 +35,7 @@ namespace ApiServer.JWT
         protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, PermissionRequirement requirement)
         {
             // 赋值用户权限，也可直接从数据库获取
-            var userPermissions = requirement.Permissions;
+            var userPermissions = _sysApiService.GetAllApiOfRole();
             var httpContext = _accessor.HttpContext;
             // 请求Url
             var questUrl = httpContext.Request.Path.Value.ToLower();

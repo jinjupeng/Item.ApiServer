@@ -14,15 +14,48 @@ namespace ApiServer.BLL.BLL
     {
         private readonly IBaseService<Sys_Api> _baseService;
         private readonly IBaseService<Sys_Role_Api> _baseSysRoleApiService;
+        private readonly IBaseService<Sys_Role> _baseSysRoleService;
         private readonly IMySystemService _mySystemService;
 
-        public SysApiService(IBaseService<Sys_Api> baseService, IMySystemService mySystemService, IBaseService<Sys_Role_Api> baseSysRoleApiService)
+        public SysApiService(IBaseService<Sys_Api> baseService, IMySystemService mySystemService, 
+            IBaseService<Sys_Role_Api> baseSysRoleApiService, IBaseService<Sys_Role> baseSysRoleService)
         {
             _baseService = baseService;
             _mySystemService = mySystemService;
             _baseSysRoleApiService = baseSysRoleApiService;
+            _baseSysRoleService = baseSysRoleService;
         }
 
+        /// <summary>
+        /// 获取到所有的角色和对应的api接口
+        /// </summary>
+        /// <returns></returns>
+        public List<PermissionItem> GetAllApiOfRole()
+        {
+            List<PermissionItem> permissionItems = new List<PermissionItem>();
+            List<Sys_Role> sysRoles = _baseSysRoleService.GetModels(a => a.status == false).ToList(); // 获取所有未禁用的角色
+            List<Sys_Api> sysApis = _baseService.GetModels(a => a.status == false).ToList(); // 获取所有未禁用的接口
+            List<Sys_Role_Api> sysRoleApis = _baseSysRoleApiService.GetModels(null).ToList();
+            foreach (var sysRole in sysRoles)
+            {
+                foreach (var sysRoleApi in sysRoleApis)
+                {
+                    if (sysRole.id == sysRoleApi.role_id)
+                    {
+                        Sys_Api sysApi = sysApis.SingleOrDefault(a => a.id == sysRoleApi.api_id);
+                        PermissionItem permissionItem = new PermissionItem
+                        {
+                            Url = sysApi?.url,
+                            Role = sysRole.role_name
+                        };
+                        permissionItems.Add(permissionItem);
+                    }
+                }
+            }
+
+            return permissionItems;
+        }
+        
         public MsgModel GetApiTreeById(string apiNameLike, bool apiStatus)
         {
             MsgModel msg = new MsgModel

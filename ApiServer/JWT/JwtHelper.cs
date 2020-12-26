@@ -10,10 +10,17 @@ using System.Text;
 
 namespace ApiServer.JWT
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class JwtHelper
     {
-        private static JwtSettings settings;
-        public static JwtSettings Settings { set { settings = value; } }
+        private static JwtSettings _settings;
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        public static JwtSettings Settings { set => _settings = value; }
 
         /// <summary>
         /// 秘钥，可以从配置文件中获取
@@ -30,8 +37,8 @@ namespace ApiServer.JWT
             // 这里就是声明我们的claim
             var claims = new Claim[] {
                     #region token添加自定义参数
-                    // new Claim(ClaimTypes.Name, tokenModel.Name),
-                    // new Claim(ClaimTypes.Role, tokenModel.Role),
+                    new Claim(ClaimTypes.Name, tokenModel.Name),
+                    new Claim(ClaimTypes.Role, tokenModel.Role),
                     // new Claim(ClaimTypes.Sid,tokenModel.ToString()),
                     #endregion
                     new Claim(JwtRegisteredClaimNames.Jti, tokenModel.Sid.ToString()),
@@ -39,23 +46,23 @@ namespace ApiServer.JWT
                     new Claim(JwtRegisteredClaimNames.Nbf,$"{new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds()}") ,
                     // 这个就是过期时间，目前是过期60秒，可自定义，注意JWT有自己的缓冲过期时间
                     new Claim (JwtRegisteredClaimNames.Exp,$"{new DateTimeOffset(DateTime.Now.AddSeconds(600)).ToUnixTimeSeconds()}"),
-                    new Claim(JwtRegisteredClaimNames.Iss,settings.Issuer),
-                    new Claim(JwtRegisteredClaimNames.Aud,settings.Audience),
+                    new Claim(JwtRegisteredClaimNames.Iss,_settings.Issuer),
+                    new Claim(JwtRegisteredClaimNames.Aud,_settings.Audience),
                     new Claim(JwtRegisteredClaimNames.Sub, tokenModel.Name)
                 };
 
             // 密钥(SymmetricSecurityKey 对安全性的要求，密钥的长度太短会报出异常)
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(settings.SecretKey));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_settings.SecretKey));
+            var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-            var token = new JwtSecurityToken(
-                issuer: settings.Issuer,
-                // audience: settings.Audience,
+            var jwtSecurityToken = new JwtSecurityToken(
+                issuer: _settings.Issuer,
+                // audience: _settings.Audience,
                 claims: claims,
                 // expires: DateTime.Now.AddDays(1),
-                signingCredentials: creds);
-            var Token = new JwtSecurityTokenHandler().WriteToken(token);
-            return Token;
+                signingCredentials: credentials);
+            var token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
+            return token;
         }
 
         /// <summary>
@@ -105,15 +112,15 @@ namespace ApiServer.JWT
             var encodedSignature = Base64UrlEncoder.Encode(hs256.ComputeHash(Encoding.UTF8.GetBytes(string.Concat(jwtArr[0], ".", jwtArr[1]))));
 
             //首先验证签名是否正确（必须的)
-            success = success && (string.Equals(jwtArr[2], encodedSignature));
+            success = string.Equals(jwtArr[2], encodedSignature);
             if (!success)
             {
-                return success;
+                return false;
             }
 
             //其次验证是否在有效期内（也应该必须）
             var now = ToUnixEpochDate(DateTime.UtcNow);
-            success = success && (now <= long.Parse(payLoad["exp"].ToString()) && now >= long.Parse(payLoad["nbf"].ToString()));
+            success = now <= long.Parse(payLoad["exp"].ToString()) && now >= long.Parse(payLoad["nbf"].ToString());
             return success;
         }
 

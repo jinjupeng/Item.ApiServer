@@ -1,5 +1,8 @@
-﻿namespace ApiServer
+﻿namespace ApiServer.JWT
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class JwtSettings
     {
         /// <summary>

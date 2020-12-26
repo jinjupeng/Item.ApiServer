@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
+using ApiServer.Model.Model;
 
 namespace ApiServer.JWT
 {
@@ -31,10 +32,7 @@ namespace ApiServer.JWT
             // 没有权限则跳转到这个路由
             DeniedAction = new PathString("/api/nopermission");
             // 角色和有权限接口配置集合
-            Permissions = new List<PermissionItem>
-            {
-                new PermissionItem{Url = "/api/value3", Role = "admin"},
-            };
+            Permissions = new List<PermissionItem>();
         }
         /// <summary>
         /// 认证授权类型

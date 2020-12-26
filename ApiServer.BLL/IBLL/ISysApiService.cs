@@ -1,11 +1,13 @@
 ﻿using ApiServer.Model.Entity;
 using ApiServer.Model.Model.MsgModel;
 using System.Collections.Generic;
+using ApiServer.Model.Model;
 
 namespace ApiServer.BLL.IBLL
 {
     public interface ISysApiService
     {
+        List<PermissionItem> GetAllApiOfRole();
         MsgModel GetApiTreeById(string apiNameLike, bool apiStatus);
 
         MsgModel UpdateApi(Sys_Api sys_Api);

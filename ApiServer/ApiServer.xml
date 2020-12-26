@@ -514,6 +514,16 @@
             </summary>
             <param name="value"></param>
         </member>
+        <member name="T:ApiServer.JWT.JwtHelper">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:ApiServer.JWT.JwtHelper.Settings">
+            <summary>
+            
+            </summary>
+        </member>
         <member name="F:ApiServer.JWT.JwtHelper.SecurityKey">
             <summary>
             秘钥，可以从配置文件中获取
@@ -556,16 +566,37 @@
             <param name="date"></param>
             <returns></returns>
         </member>
+        <member name="T:ApiServer.JWT.JwtSettings">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:ApiServer.JWT.JwtSettings.Issuer">
+            <summary>
+            证书颁发者
+            </summary>
+        </member>
+        <member name="P:ApiServer.JWT.JwtSettings.Audience">
+            <summary>
+            允许使用的角色
+            </summary>
+        </member>
+        <member name="P:ApiServer.JWT.JwtSettings.SecretKey">
+            <summary>
+            加密字符串
+            </summary>
+        </member>
         <member name="T:ApiServer.JWT.PermissionHandler">
             <summary>
             权限授权处理器
             </summary>
         </member>
-        <member name="M:ApiServer.JWT.PermissionHandler.#ctor(Microsoft.AspNetCore.Http.IHttpContextAccessor)">
+        <member name="M:ApiServer.JWT.PermissionHandler.#ctor(Microsoft.AspNetCore.Http.IHttpContextAccessor,ApiServer.BLL.IBLL.ISysApiService)">
             <summary>
             构造函数
             </summary>
             <param name="accessor"></param>
+            <param name="sysApiService"></param>
         </member>
         <member name="M:ApiServer.JWT.PermissionHandler.HandleRequirementAsync(Microsoft.AspNetCore.Authorization.AuthorizationHandlerContext,ApiServer.JWT.PermissionRequirement)">
             <summary>
@@ -574,21 +605,6 @@
             <param name="context"></param>
             <param name="requirement"></param>
             <returns></returns>
-        </member>
-        <member name="T:ApiServer.JWT.PermissionItem">
-            <summary>
-            用户或角色或其他凭据实体
-            </summary>
-        </member>
-        <member name="P:ApiServer.JWT.PermissionItem.Role">
-            <summary>
-            用户或角色或其他凭据名称
-            </summary>
-        </member>
-        <member name="P:ApiServer.JWT.PermissionItem.Url">
-            <summary>
-            请求Url
-            </summary>
         </member>
         <member name="T:ApiServer.JWT.PermissionRequirement">
             <summary>
@@ -643,7 +659,7 @@
             签名验证
             </summary>
         </member>
-        <member name="M:ApiServer.JWT.PermissionRequirement.#ctor(System.String,System.Collections.Generic.List{ApiServer.JWT.PermissionItem},System.String,System.String,System.String,Microsoft.IdentityModel.Tokens.SigningCredentials,System.TimeSpan)">
+        <member name="M:ApiServer.JWT.PermissionRequirement.#ctor(System.String,System.Collections.Generic.List{ApiServer.Model.Model.PermissionItem},System.String,System.String,System.String,Microsoft.IdentityModel.Tokens.SigningCredentials,System.TimeSpan)">
             <summary>
             构造
             </summary>
@@ -654,21 +670,6 @@
             <param name="audience">订阅人</param>
             <param name="signingCredentials">签名验证实体</param>
             <param name="expiration">过期时间</param>
-        </member>
-        <member name="P:ApiServer.JwtSettings.Issuer">
-            <summary>
-            证书颁发者
-            </summary>
-        </member>
-        <member name="P:ApiServer.JwtSettings.Audience">
-            <summary>
-            允许使用的角色
-            </summary>
-        </member>
-        <member name="P:ApiServer.JwtSettings.SecretKey">
-            <summary>
-            加密字符串
-            </summary>
         </member>
         <member name="T:ApiServer.Mapping.MapsterMap">
             <summary>
