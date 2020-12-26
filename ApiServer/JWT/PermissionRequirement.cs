@@ -13,7 +13,6 @@ namespace ApiServer.JWT
     /// </summary>
     public class PermissionRequirement : IAuthorizationRequirement
     {
-
         /// <summary>
         /// 用户权限集合，一个订单包含了很多详情，
         /// 同理，一个网站的认证发行中，也有很多权限详情(这里是Role和URL的关系)
@@ -24,7 +23,9 @@ namespace ApiServer.JWT
         /// </summary>
         public string DeniedAction { get; set; }
 
-        // 这里是写死的，也可从数据库获取
+        /// <summary>
+        /// 这里是写死的，也可从数据库获取
+        /// </summary>
         public PermissionRequirement()
         {
             // 没有权限则跳转到这个路由
@@ -39,22 +40,27 @@ namespace ApiServer.JWT
         /// 认证授权类型
         /// </summary>
         public string ClaimType { internal get; set; }
+        
         /// <summary>
         /// 请求路径
         /// </summary>
         public string LoginPath { get; set; } = "/Api/Login";
+        
         /// <summary>
         /// 发行人
         /// </summary>
         public string Issuer { get; set; }
+        
         /// <summary>
         /// 订阅人
         /// </summary>
         public string Audience { get; set; }
+        
         /// <summary>
         /// 过期时间
         /// </summary>
         public TimeSpan Expiration { get; set; }
+        
         /// <summary>
         /// 签名验证
         /// </summary>

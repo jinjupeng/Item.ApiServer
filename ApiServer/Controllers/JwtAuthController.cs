@@ -9,11 +9,18 @@ using System.Threading.Tasks;
 
 namespace ApiServer.Controllers
 {
+    /// <summary>
+    /// 
+    /// </summary>
     [Route("api/[controller]")]
     public class JwtAuthController : BaseController
     {
         private readonly IJwtAuthService _jwtAuthService;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="jwtAuthService"></param>
         public JwtAuthController(IJwtAuthService jwtAuthService)
         {
             _jwtAuthService = jwtAuthService;
@@ -34,9 +41,11 @@ namespace ApiServer.Controllers
             MsgModel msg = _jwtAuthService.Login(username, password);
             if (msg.isok)
             {
-                TokenModelJwt tokenModel = new TokenModelJwt();
-                tokenModel.Name = username;
-                tokenModel.Role = "admin";
+                TokenModelJwt tokenModel = new TokenModelJwt
+                {
+                    Name = username,
+                    Role = "admin"
+                };
                 msg.data = JwtHelper.IssueJwt(tokenModel);
             }
             return Ok(await Task.FromResult(msg));

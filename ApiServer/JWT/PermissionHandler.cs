@@ -13,6 +13,10 @@ namespace ApiServer.JWT
     {
         private readonly IHttpContextAccessor _accessor;
 
+        /// <summary>
+        /// 构造函数
+        /// </summary>
+        /// <param name="accessor"></param>
         public PermissionHandler(IHttpContextAccessor accessor)
         {
             this._accessor = accessor;
@@ -38,9 +42,9 @@ namespace ApiServer.JWT
                 if (userPermissions.GroupBy(g => g.Url).Any(w => w.Key.ToLower() == questUrl))
                 {
                     // 用户名
-                    var userName = httpContext.User.Claims.SingleOrDefault(s => s.Type == ClaimTypes.Name).Value;
+                    var userName = httpContext.User.Claims.SingleOrDefault(s => s.Type == ClaimTypes.Name)?.Value;
                     // 角色
-                    var userRole = httpContext.User.Claims.SingleOrDefault(s => s.Type == ClaimTypes.Role).Value;
+                    var userRole = httpContext.User.Claims.SingleOrDefault(s => s.Type == ClaimTypes.Role)?.Value;
                     if (userPermissions.Any(w => w.Role == userRole && w.Url.ToLower() == questUrl))
                     {
                         context.Succeed(requirement);

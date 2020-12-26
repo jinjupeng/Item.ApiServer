@@ -197,18 +197,11 @@ namespace ApiServer.BLL.BLL
         /// <param name="status"></param>
         public MsgModel UpdateStatus(long id, bool status)
         {
-            MsgModel msg = new MsgModel
-            {
-                isok = true,
-                message = "接口禁用状态更新成功！"
-            };
-            Sys_Api sys_Api = new Sys_Api
-            {
-                id = id,
-                status = status
-            };
-            _baseService.UpdateRange(sys_Api);
-            return msg;
+            Sys_Api sys_Api = _baseService.GetModels(a => a.id == id).SingleOrDefault();
+            sys_Api.status = status;
+            bool result = _baseService.UpdateRange(sys_Api);
+
+            return MsgModel.Success(result ? "接口禁用状态更新成功！" : "接口禁用状态更新失败！");
         }
     }
 }

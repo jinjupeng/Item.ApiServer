@@ -201,22 +201,12 @@ namespace ApiServer.BLL.BLL
         /// <param name="enabled"></param>
         public MsgModel UpdateEnabled(long id, bool enabled)
         {
-            MsgModel msg = new MsgModel
-            {
-                message = "用户状态更新成功！"
-            };
-            Sys_User sys_User = new Sys_User
-            {
-                id = id,
-                enabled = enabled
-            };
-            if (!_baseSysUserService.UpdateRange(sys_User))
-            {
-                msg.isok = false;
-                msg.code = StatusCodes.Status500InternalServerError;
-                msg.message = "用户状态更新失败！";
-            }
-            return msg;
+            Sys_User sys_User = _baseSysUserService.GetModels(a => a.id == id).SingleOrDefault();
+            sys_User.enabled = enabled;
+            bool result = _baseSysUserService.UpdateRange(sys_User);
+
+            return MsgModel.Success(result ? "用户状态更新成功！" : "用户状态更新失败！");
+
         }
     }
 }

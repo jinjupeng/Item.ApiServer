@@ -13,7 +13,6 @@ namespace ApiServer.BLL.BLL
 {
     public class SysConfigService : ISysConfigService
     {
-        private readonly IMySystemService _mySystemService;
         private readonly IBaseService<Sys_Config> _baseSysConfigService;
 
         public SysConfigService(IBaseService<Sys_Config> baseSysConfigService)
@@ -54,7 +53,7 @@ namespace ApiServer.BLL.BLL
 
         public string GetConfigItem(string paramKey)
         {
-            return _baseSysConfigService.GetModels(a => a.param_key == paramKey).ToList().SingleOrDefault().param_value;
+            return _baseSysConfigService.GetModels(a => a.param_key == paramKey).ToList().SingleOrDefault()?.param_value;
         }
 
         public MsgModel UpdateConfig(Sys_Config sys_Config)

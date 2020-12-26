@@ -23,6 +23,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http.Features;
 using Newtonsoft.Json.Serialization;
 using ApiServer.Common;
+using ApiServer.Mapping;
+using ApiServer.Model.Model.MsgModel;
 
 namespace ApiServer
 {
@@ -156,7 +158,8 @@ namespace ApiServer
 
             // 注入自定义策略
             services.AddSingleton<IAuthorizationHandler, PermissionHandler>();
-
+            services.AddSingleton(typeof(MapsterMap));
+            
             services.AddMvc();
 
             #region Swagger UI

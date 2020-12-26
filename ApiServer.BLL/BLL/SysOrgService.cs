@@ -169,21 +169,11 @@ namespace ApiServer.BLL.BLL
         /// <param name="status"></param>
         public MsgModel UpdateStatus(long id, bool status)
         {
-            MsgModel msg = new MsgModel
-            {
-                message = "更新组织机构状态成功！"
-            };
-            Sys_Org sys_Org = new Sys_Org
-            {
-                id = id,
-                status = status
-            };
-            if (!_baseSysOrgService.UpdateRange(sys_Org))
-            {
-                msg.isok = false;
-                msg.message = "更新组织机构状态失败！";
-            }
-            return msg;
+            Sys_Org sys_Org = _baseSysOrgService.GetModels(a => a.id == id).SingleOrDefault();
+            sys_Org.status = status;
+            bool result = _baseSysOrgService.UpdateRange(sys_Org);
+            
+            return MsgModel.Success(result ? "更新组织机构状态成功！" : "更新组织机构状态失败！");
         }
     }
 }

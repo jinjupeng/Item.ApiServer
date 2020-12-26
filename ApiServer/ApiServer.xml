@@ -37,6 +37,17 @@
             </summary>
             <param name="logger"></param>
         </member>
+        <member name="T:ApiServer.Controllers.JwtAuthController">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:ApiServer.Controllers.JwtAuthController.#ctor(ApiServer.BLL.IBLL.IJwtAuthService)">
+            <summary>
+            
+            </summary>
+            <param name="jwtAuthService"></param>
+        </member>
         <member name="M:ApiServer.Controllers.JwtAuthController.Login(System.Collections.Generic.Dictionary{System.String,System.String})">
             <summary>
             使用用户名密码来换取jwt令牌
@@ -550,6 +561,12 @@
             权限授权处理器
             </summary>
         </member>
+        <member name="M:ApiServer.JWT.PermissionHandler.#ctor(Microsoft.AspNetCore.Http.IHttpContextAccessor)">
+            <summary>
+            构造函数
+            </summary>
+            <param name="accessor"></param>
+        </member>
         <member name="M:ApiServer.JWT.PermissionHandler.HandleRequirementAsync(Microsoft.AspNetCore.Authorization.AuthorizationHandlerContext,ApiServer.JWT.PermissionRequirement)">
             <summary>
             常用自定义验证策略
@@ -589,6 +606,11 @@
         <member name="P:ApiServer.JWT.PermissionRequirement.DeniedAction">
             <summary>
             无权限action
+            </summary>
+        </member>
+        <member name="M:ApiServer.JWT.PermissionRequirement.#ctor">
+            <summary>
+            这里是写死的，也可从数据库获取
             </summary>
         </member>
         <member name="P:ApiServer.JWT.PermissionRequirement.ClaimType">
@@ -646,6 +668,16 @@
         <member name="P:ApiServer.JwtSettings.SecretKey">
             <summary>
             加密字符串
+            </summary>
+        </member>
+        <member name="T:ApiServer.Mapping.MapsterMap">
+            <summary>
+            实体类映射
+            </summary>
+        </member>
+        <member name="M:ApiServer.Mapping.MapsterMap.#ctor">
+            <summary>
+            
             </summary>
         </member>
         <member name="T:ApiServer.Middleware.ExceptionMiddleware">

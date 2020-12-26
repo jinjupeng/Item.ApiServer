@@ -7,6 +7,7 @@ using Mapster;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ApiServer.Controllers
 {
@@ -14,6 +15,7 @@ namespace ApiServer.Controllers
     /// 
     /// </summary>
     [Route("api/[controller]")]
+    //[Authorize("Permission")]
     public class SysApiController : BaseController
     {
         private readonly ISysApiService _sysApiService;
