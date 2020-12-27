@@ -1,6 +1,7 @@
 ﻿using ApiServer.BLL.IBLL;
 using ApiServer.Common;
 using ApiServer.Model.Entity;
+using ApiServer.Model.Enum;
 using ApiServer.Model.Model.MsgModel;
 using ApiServer.Model.Model.ViewModel;
 using Mapster;
@@ -16,14 +17,31 @@ namespace ApiServer.BLL.BLL
         private readonly IBaseService<Sys_Role> _baseSysRoleService;
         private readonly IMySystemService _mySystemService;
         private readonly IBaseService<Sys_User_Role> _sysUserRoleService;
+        private readonly IBaseService<Sys_User> _sysUserService;
 
         public SysRoleService(IBaseService<Sys_Role> baseSysRoleService,
-            IMySystemService mySystemService, IBaseService<Sys_User_Role> sysUserRoleService)
+            IMySystemService mySystemService, IBaseService<Sys_User_Role> sysUserRoleService,
+            IBaseService<Sys_User> sysUserService)
         {
             _baseSysRoleService = baseSysRoleService;
             _mySystemService = mySystemService;
             _sysUserRoleService = sysUserRoleService;
+            _sysUserService = sysUserService;
         }
+
+        /// <summary>
+        /// 根据用户名获取用户角色（目前只支持单用户单角色）
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <returns></returns>
+        public string GetRoleByUserName(string userName)
+        {
+            Sys_User sys_User = _sysUserService.GetModels(a => a.username == userName).SingleOrDefault();
+            Sys_User_Role sys_User_Role = _sysUserRoleService.GetModels(a => a.user_id == sys_User.id).SingleOrDefault();
+            Sys_Role sys_Role = _baseSysRoleService.GetModels(a => a.id == sys_User_Role.role_id).SingleOrDefault();
+            return sys_Role.role_code;
+        }
+
 
         /// <summary>
         /// 根据参数查询角色记录
@@ -51,32 +69,29 @@ namespace ApiServer.BLL.BLL
 
         public MsgModel UpdateRole(Sys_Role sys_Role)
         {
-            MsgModel msg = new MsgModel
+            if (_baseSysRoleService.UpdateRange(sys_Role))
             {
-                message = "更新角色成功！"
-            };
-            if (!_baseSysRoleService.UpdateRange(sys_Role))
-            {
-                msg.isok = false;
-                msg.message = "更新角色失败！";
+                return MsgModel.Success("角色更新成功！");
             }
-            return msg;
+            return MsgModel.Success("角色更新失败！");
         }
 
         public MsgModel AddRole(Sys_Role sys_Role)
         {
-            MsgModel msg = new MsgModel
-            {
-                message = "新增角色成功！"
-            };
+            CustomException customException = new CustomException();
             sys_Role.id = new Snowflake().GetId();
             sys_Role.status = false;// 是否禁用:false
-            if (!_baseSysRoleService.AddRange(sys_Role))
+            if (_baseSysRoleService.GetModels(a => a.role_code == sys_Role.role_code).Any())
             {
-                msg.isok = false;
-                msg.message = "新增角色失败！";
+                customException.Code = (int)HttpStatusCode.Status500InternalServerError;
+
+                return MsgModel.Error(new CustomException((int)HttpStatusCode.Status500InternalServerError, "角色编码已存在，不能重复！"));
             }
-            return msg;
+            if (_baseSysRoleService.AddRange(sys_Role))
+            {
+                return MsgModel.Success("新增角色成功！");
+            }
+            return MsgModel.Success("新增角色失败！");
         }
 
         public MsgModel DeleteRole(long id)

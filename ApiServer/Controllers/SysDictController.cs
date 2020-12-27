@@ -14,7 +14,7 @@ namespace ApiServer.Controllers
     public class SysDictController : BaseController
     {
         private readonly ISysDictService _sysDictService;
-        
+
         /// <summary>
         /// 
         /// </summary>

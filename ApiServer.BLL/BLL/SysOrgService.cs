@@ -172,7 +172,7 @@ namespace ApiServer.BLL.BLL
             Sys_Org sys_Org = _baseSysOrgService.GetModels(a => a.id == id).SingleOrDefault();
             sys_Org.status = status;
             bool result = _baseSysOrgService.UpdateRange(sys_Org);
-            
+
             return MsgModel.Success(result ? "更新组织机构状态成功！" : "更新组织机构状态失败！");
         }
     }

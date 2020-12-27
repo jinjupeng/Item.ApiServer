@@ -1,9 +1,10 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using ApiServer.BLL.IBLL;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Primitives;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using ApiServer.BLL.IBLL;
 
 namespace ApiServer.JWT
 {
@@ -37,8 +38,17 @@ namespace ApiServer.JWT
             // 赋值用户权限，也可直接从数据库获取
             var userPermissions = _sysApiService.GetAllApiOfRole();
             var httpContext = _accessor.HttpContext;
+
+            //获取请求头部信息token
+            var result = httpContext.Request.Headers.TryGetValue("Authorization", out StringValues authStr);
+            //判断token是否为空
+            if (!result || string.IsNullOrEmpty(authStr.ToString()))
+            {
+                return Task.CompletedTask;
+            }
+
             // 请求Url
-            var questUrl = httpContext.Request.Path.Value.ToLower();
+            var questUrl = httpContext.Request.Path.Value.ToLower().Replace("/api", "");
             // 是否经过验证
             var isAuthenticated = httpContext.User.Identity.IsAuthenticated;
             if (isAuthenticated)
@@ -61,7 +71,7 @@ namespace ApiServer.JWT
                 }
                 else
                 {
-                    context.Succeed(requirement);
+                    context.Fail();
                 }
             }
             return Task.CompletedTask;

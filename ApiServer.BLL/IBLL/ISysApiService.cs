@@ -1,7 +1,7 @@
 ﻿using ApiServer.Model.Entity;
+using ApiServer.Model.Model;
 using ApiServer.Model.Model.MsgModel;
 using System.Collections.Generic;
-using ApiServer.Model.Model;
 
 namespace ApiServer.BLL.IBLL
 {

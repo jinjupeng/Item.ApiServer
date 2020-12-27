@@ -1,6 +1,7 @@
 ﻿using ApiServer.BLL.IBLL;
 using ApiServer.Common;
 using ApiServer.Model.Entity;
+using ApiServer.Model.Enum;
 using ApiServer.Model.Model.MsgModel;
 using Microsoft.AspNetCore.Http;
 using System;
@@ -87,21 +88,19 @@ namespace ApiServer.BLL.BLL
         /// <param name="sys_User"></param>
         public MsgModel AddUser(Sys_User sys_User)
         {
-            MsgModel msg = new MsgModel
-            {
-                message = "新增用户成功！"
-            };
             sys_User.id = new Snowflake().GetId();
             sys_User.password = PasswordEncoder.Encode(_sysConfigService.GetConfigItem("user.init.password"));
             sys_User.create_time = DateTime.Now; //创建时间
             sys_User.enabled = true;//新增用户激活
-            if (!_baseSysUserService.AddRange(sys_User))
+            if (_baseSysUserService.GetModels(a => a.username == sys_User.username).Any())
             {
-                msg.isok = false;
-                msg.code = StatusCodes.Status500InternalServerError;
-                msg.message = "新增用户失败！";
+                return MsgModel.Error(new CustomException((int)HttpStatusCode.Status500InternalServerError, "用户名已存在，不能重复"));
             }
-            return msg;
+            if (_baseSysUserService.AddRange(sys_User))
+            {
+                return MsgModel.Success("新增用户成功！");
+            }
+            return MsgModel.Success("新增用户失败！");
         }
 
         /// <summary>

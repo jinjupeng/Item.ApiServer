@@ -1,5 +1,7 @@
-﻿using ApiServer.Exception;
+﻿using ApiServer.Common;
+using ApiServer.Exception;
 using ApiServer.JWT;
+using ApiServer.Mapping;
 using ApiServer.Middleware;
 using Autofac;
 using Item.ApiServer.BLL.BLLModule;
@@ -9,22 +11,19 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using Serilog;
 using System;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http.Features;
-using Newtonsoft.Json.Serialization;
-using ApiServer.Common;
-using ApiServer.Mapping;
-using ApiServer.Model.Model.MsgModel;
 
 namespace ApiServer
 {
@@ -87,8 +86,15 @@ namespace ApiServer
 
             #region JWT认证，core自带官方jwt认证
             // 开启Bearer认证
-            .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            // 添加JwtBearer服务：
+            // .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddAuthentication(s =>
+            {
+                //添加JWT Scheme
+                s.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                s.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                s.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            // 添加JwtBearer验证服务：
             .AddJwtBearer(config =>
             {
                 config.TokenValidationParameters = new TokenValidationParameters
@@ -96,6 +102,7 @@ namespace ApiServer
                     ValidateIssuer = true,// 是否验证Issuer
                     ValidateAudience = true,// 是否验证Audience
                     ValidateLifetime = true,// 是否验证失效时间
+                    ClockSkew = TimeSpan.FromSeconds(30),
                     ValidateIssuerSigningKey = true,// 是否验证SecurityKey
                     ValidAudience = setting.Audience,// Audience
                     ValidIssuer = setting.Issuer,// Issuer，这两项和前面签发jwt的设置一致
@@ -103,15 +110,15 @@ namespace ApiServer
                 };
                 config.Events = new JwtBearerEvents
                 {
-                    //OnAuthenticationFailed = context =>
-                    //{
-                    //    // 如果过期，则把<是否过期>添加到返回头信息中
-                    //    if (context.Exception.GetType() == typeof(SecurityTokenExpiredException))
-                    //    {
-                    //        context.Response.Headers.Add("Token-Expired", "true");
-                    //    }
-                    //    return Task.CompletedTask;
-                    //}
+                    OnAuthenticationFailed = context =>
+                    {
+                        // 如果token过期，则把<是否过期>添加到返回头信息中
+                        if (context.Exception.GetType() == typeof(SecurityTokenExpiredException))
+                        {
+                            context.Response.Headers.Add("Token-Expired", "true");
+                        }
+                        return Task.CompletedTask;
+                    },
                     //此处为权限验证失败后触发的事件
                     OnChallenge = context =>
                     {
@@ -159,13 +166,46 @@ namespace ApiServer
             // 注入自定义策略
             services.AddSingleton<IAuthorizationHandler, PermissionHandler>();
             services.AddSingleton(typeof(MapsterMap));
-            
+
             services.AddMvc();
 
             #region Swagger UI
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API171", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Title = "My API171",
+                    Version = "v1",
+                    Description = "基于.NET Core 3.1 的JWT 身份验证",
+                    Contact = new OpenApiContact
+                    {
+                        Name = "jinjupeng",
+                        Email = "im.jp@outlook.com.com",
+                        Url = new Uri("http://cnblogs.com/jinjupeng"),
+                    },
+                });
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
+                {
+                    Description = "在下框中输入请求头中需要添加Jwt授权Token：Bearer Token",
+                    Name = "Authorization",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.ApiKey,
+                    BearerFormat = "JWT",
+                    Scheme = "Bearer"
+                });
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        },
+                        new string[] { }
+                    }
+                });
                 //获取应用程序所在目录（绝对，不受工作目录影响，建议采用此方法获取路径）
                 var basePath = Path.GetDirectoryName(typeof(Program).Assembly.Location);
                 var xmlPath = Path.Combine(basePath, "ApiServer.xml");
@@ -200,10 +240,11 @@ namespace ApiServer
             app.UseMiddleware<ExceptionMiddleware>(); // 全局异常过滤
             app.UseRouting();
 
-            app.UseAuthorization();
+
             // 添加jwt验证
             app.UseAuthentication();
 
+            app.UseAuthorization();
 
             // 添加请求日志中间件
             app.UseSerilogRequestLogging();

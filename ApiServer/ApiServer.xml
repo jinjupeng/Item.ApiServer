@@ -42,11 +42,12 @@
             
             </summary>
         </member>
-        <member name="M:ApiServer.Controllers.JwtAuthController.#ctor(ApiServer.BLL.IBLL.IJwtAuthService)">
+        <member name="M:ApiServer.Controllers.JwtAuthController.#ctor(ApiServer.BLL.IBLL.IJwtAuthService,ApiServer.BLL.IBLL.ISysRoleService,Microsoft.AspNetCore.Http.IHttpContextAccessor)">
             <summary>
             
             </summary>
             <param name="jwtAuthService"></param>
+            <param name="sysRoleService"></param>
         </member>
         <member name="M:ApiServer.Controllers.JwtAuthController.Login(System.Collections.Generic.Dictionary{System.String,System.String})">
             <summary>
@@ -543,6 +544,12 @@
             <param name="token"></param>
             <returns></returns>
         </member>
+        <member name="M:ApiServer.JWT.JwtHelper.RefreshToken(System.String)">
+            <summary>
+            刷新token值
+            </summary>
+            <returns></returns>
+        </member>
         <member name="M:ApiServer.JWT.JwtHelper.Validate(System.String)">
             <summary>
             验证身份 验证签名的有效性,
@@ -584,6 +591,11 @@
         <member name="P:ApiServer.JWT.JwtSettings.SecretKey">
             <summary>
             加密字符串
+            </summary>
+        </member>
+        <member name="P:ApiServer.JWT.JwtSettings.ExpireMinutes">
+            <summary>
+            过期时间（分钟）
             </summary>
         </member>
         <member name="T:ApiServer.JWT.PermissionHandler">

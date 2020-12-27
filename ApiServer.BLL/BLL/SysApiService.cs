@@ -17,7 +17,7 @@ namespace ApiServer.BLL.BLL
         private readonly IBaseService<Sys_Role> _baseSysRoleService;
         private readonly IMySystemService _mySystemService;
 
-        public SysApiService(IBaseService<Sys_Api> baseService, IMySystemService mySystemService, 
+        public SysApiService(IBaseService<Sys_Api> baseService, IMySystemService mySystemService,
             IBaseService<Sys_Role_Api> baseSysRoleApiService, IBaseService<Sys_Role> baseSysRoleService)
         {
             _baseService = baseService;
@@ -43,19 +43,22 @@ namespace ApiServer.BLL.BLL
                     if (sysRole.id == sysRoleApi.role_id)
                     {
                         Sys_Api sysApi = sysApis.SingleOrDefault(a => a.id == sysRoleApi.api_id);
-                        PermissionItem permissionItem = new PermissionItem
+                        if (!string.IsNullOrEmpty(sysApi.url))
                         {
-                            Url = sysApi?.url,
-                            Role = sysRole.role_name
-                        };
-                        permissionItems.Add(permissionItem);
+                            PermissionItem permissionItem = new PermissionItem
+                            {
+                                Url = sysApi.url,
+                                Role = sysRole.role_code
+                            };
+                            permissionItems.Add(permissionItem);
+                        }
                     }
                 }
             }
 
             return permissionItems;
         }
-        
+
         public MsgModel GetApiTreeById(string apiNameLike, bool apiStatus)
         {
             MsgModel msg = new MsgModel

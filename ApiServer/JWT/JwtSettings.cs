@@ -19,5 +19,10 @@
         /// 加密字符串
         /// </summary>
         public string SecretKey { get; set; }
+
+        /// <summary>
+        /// 过期时间（分钟）
+        /// </summary>
+        public string ExpireMinutes { get; set; }
     }
 }

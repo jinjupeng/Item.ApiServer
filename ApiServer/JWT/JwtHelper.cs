@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
@@ -16,7 +17,7 @@ namespace ApiServer.JWT
     public class JwtHelper
     {
         private static JwtSettings _settings;
-        
+
         /// <summary>
         /// 
         /// </summary>
@@ -48,7 +49,7 @@ namespace ApiServer.JWT
                     new Claim (JwtRegisteredClaimNames.Exp,$"{new DateTimeOffset(DateTime.Now.AddSeconds(600)).ToUnixTimeSeconds()}"),
                     new Claim(JwtRegisteredClaimNames.Iss,_settings.Issuer),
                     new Claim(JwtRegisteredClaimNames.Aud,_settings.Audience),
-                    new Claim(JwtRegisteredClaimNames.Sub, tokenModel.Name)
+                    // new Claim(JwtRegisteredClaimNames.Sub, tokenModel.Name)
                 };
 
             // 密钥(SymmetricSecurityKey 对安全性的要求，密钥的长度太短会报出异常)
@@ -57,7 +58,7 @@ namespace ApiServer.JWT
 
             var jwtSecurityToken = new JwtSecurityToken(
                 issuer: _settings.Issuer,
-                // audience: _settings.Audience,
+                audience: _settings.Audience,
                 claims: claims,
                 // expires: DateTime.Now.AddDays(1),
                 signingCredentials: credentials);
@@ -90,6 +91,39 @@ namespace ApiServer.JWT
                 Role = role != null ? Convert.ToString(role) : "",
             };
             return tm;
+        }
+
+        /// <summary>
+        /// 刷新token值
+        /// </summary>
+        /// <returns></returns>
+        public static string RefreshToken(string token)
+        {
+            string tokenStr = token;
+            var oldToken = new JwtSecurityTokenHandler().ReadJwtToken(token);
+            var oldClaims = oldToken.Claims;
+            if (long.Parse(GetPayLoad(token)["exp"].ToString()) - ToUnixEpochDate(DateTime.UtcNow) <= 500)
+            {
+                // 这里就是声明我们的claim
+                var claims = new List<Claim>(); // 从旧token中获取到Claim
+                claims.AddRange(oldClaims.Where(t => t.Type != JwtRegisteredClaimNames.Iat));
+                //重置token的发布时间为当前时间
+                string nowDate = DateTimeOffset.Now.ToUnixTimeSeconds().ToString();
+                claims.Add(new Claim(JwtRegisteredClaimNames.Iat, nowDate, ClaimValueTypes.Integer64));
+
+                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_settings.SecretKey));
+                var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+                var jwtSecurityToken = new JwtSecurityToken
+                (
+                    issuer: _settings.Issuer,
+                    audience: _settings.Audience,
+                    claims: claims,
+                    expires: DateTime.Now.AddMinutes(Convert.ToDouble(_settings.ExpireMinutes)),
+                    signingCredentials: cred
+                );
+                tokenStr = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
+            }
+            return tokenStr;
         }
 
         /// <summary>
@@ -131,7 +165,7 @@ namespace ApiServer.JWT
         /// <returns></returns>
         public static Dictionary<string, object> GetPayLoad(string encodeJwt)
         {
-            var jwtArr = encodeJwt.Split(',');
+            var jwtArr = encodeJwt.Split('.');
             var payLoad = JsonConvert.DeserializeObject<Dictionary<string, object>>(Base64UrlEncoder.Decode(jwtArr[1]));
             return payLoad;
         }

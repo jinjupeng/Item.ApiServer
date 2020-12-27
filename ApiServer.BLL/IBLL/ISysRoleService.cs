@@ -6,6 +6,7 @@ namespace ApiServer.BLL.IBLL
 {
     public interface ISysRoleService
     {
+        string GetRoleByUserName(string userName);
         MsgModel QueryRoles(string roleLik);
 
         MsgModel UpdateRole(Sys_Role sys_Role);
