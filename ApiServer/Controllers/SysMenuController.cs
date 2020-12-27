@@ -107,7 +107,7 @@ namespace ApiServer.Controllers
             };
             Dictionary<string, object> dict = new Dictionary<string, object>
             {
-                { "tree", _sysMenuService.GetMenuTree("", default) },
+                { "tree", _sysMenuService.GetMenuTree("", default).data },
                 { "expandedKeys", _sysMenuService.GetExpandedKeys() },
                 { "checkedKeys", _sysMenuService.GetCheckedKeys(roleId) }
             };
