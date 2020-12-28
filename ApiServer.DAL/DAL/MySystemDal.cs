@@ -29,49 +29,32 @@ namespace ApiServer.DAL.DAL
 
         public int InsertRoleApiIds(long roleId, List<long> checkedIds)
         {
-            var roleApis = new List<Sys_Role_Api>();
             foreach (var checkedId in checkedIds)
             {
-                var sysRoleApi = new Sys_Role_Api
-                {
-                    role_id = roleId,
-                    api_id = checkedId
-                };
-                roleApis.Add(sysRoleApi);
+                string sql = $"INSERT INTO Sys_Role_Api (role_id, api_id) VALUES({roleId}, {checkedId})";
+                DbContext.Database.ExecuteSqlRaw(sql);
             }
-            DbContext.Set<Sys_Role_Api>().AddRange(roleApis);
+           
             return DbContext.SaveChanges();
         }
 
         public int InsertRoleMenuIds(long roleId, List<long> checkedIds)
         {
-            var roleMenus = new List<Sys_Role_Menu>();
             foreach (var checkedId in checkedIds)
             {
-                var sysRoleMenu = new Sys_Role_Menu
-                {
-                    role_id = roleId,
-                    menu_id = checkedId
-                };
-                roleMenus.Add(sysRoleMenu);
+                string sql = $"INSERT INTO Sys_Role_Menu (role_id, menu_id) VALUES({roleId}, {checkedId})";
+                DbContext.Database.ExecuteSqlRaw(sql);
             }
-            DbContext.Set<Sys_Role_Menu>().AddRange(roleMenus);
             return DbContext.SaveChanges();
         }
 
         public long InsertUserRoleIds(long userId, List<long> checkedIds)
         {
-            var userRoles = new List<Sys_User_Role>();
             foreach (var checkedId in checkedIds)
             {
-                var sysUserRole = new Sys_User_Role
-                {
-                    user_id = userId,
-                    role_id = checkedId
-                };
-                userRoles.Add(sysUserRole);
+                string sql = $"INSERT INTO Sys_User_Role (role_id, user_id) VALUES({userId}, {checkedId})";
+                DbContext.Database.ExecuteSqlRaw(sql);
             }
-            DbContext.Set<Sys_User_Role>().AddRange(userRoles);
             return DbContext.SaveChanges();
         }
 
