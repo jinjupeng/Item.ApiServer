@@ -3,6 +3,7 @@ using ApiServer.Exception;
 using ApiServer.JWT;
 using ApiServer.Mapping;
 using ApiServer.Middleware;
+using ApiServer.Model.Model.MsgModel;
 using Autofac;
 using Item.ApiServer.BLL.BLLModule;
 using Item.ApiServer.DAL.DALModule;
@@ -127,11 +128,12 @@ namespace ApiServer
                         if (!context.Response.HasStarted)
                         {
                             //自定义自己想要返回的数据结果，我这里要返回的是Json对象，通过引用Newtonsoft.Json库进行转换
-                            var payload = JsonConvert.SerializeObject(new { Code = 0, Message = "很抱歉，您无权访问该接口!" });
+                            // var payload = JsonConvert.SerializeObject(new { Code = 0, Message = "很抱歉，您无权访问该接口!" });
+                            var payload = JsonConvert.SerializeObject(MsgModel.Error(new CustomException(403, "很抱歉，您无权访问该接口!")));
                             //自定义返回的数据类型
                             context.Response.ContentType = "application/json";
                             //自定义返回状态码，默认为401 我这里改成 200
-                            context.Response.StatusCode = StatusCodes.Status200OK;
+                            context.Response.StatusCode = StatusCodes.Status403Forbidden;
                             //context.Response.StatusCode = StatusCodes.Status401Unauthorized;
                             //输出Json数据结果
                             context.Response.WriteAsync(payload);

@@ -45,6 +45,7 @@ namespace ApiServer.Middleware
 
         private async Task HandleException(HttpContext context, System.Exception e)
         {
+
             context.Response.StatusCode = 500;
             context.Response.ContentType = "text/json;charset=utf-8;";
             string error;

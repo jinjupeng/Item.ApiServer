@@ -28,7 +28,7 @@ namespace ApiServer.DAL.IDAL
 
         IQueryable<string> GetCheckedRoleIds(long userId);
 
-        long InsertUserRoleIds(long userId, List<long> checkedIds);
+        int InsertUserRoleIds(long userId, List<long> checkedIds);
 
         IQueryable<Sys_Menu> SelectMenuByUserName(string userName);
 

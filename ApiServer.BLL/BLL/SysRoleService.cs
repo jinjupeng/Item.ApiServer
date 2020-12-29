@@ -36,10 +36,20 @@ namespace ApiServer.BLL.BLL
         /// <returns></returns>
         public string GetRoleByUserName(string userName)
         {
-            Sys_User sys_User = _sysUserService.GetModels(a => a.username == userName).SingleOrDefault();
-            Sys_User_Role sys_User_Role = _sysUserRoleService.GetModels(a => a.user_id == sys_User.id).SingleOrDefault();
-            Sys_Role sys_Role = _baseSysRoleService.GetModels(a => a.id == sys_User_Role.role_id).SingleOrDefault();
-            return sys_Role.role_code;
+            string roleCode = string.Empty;
+            try
+            {
+                Sys_User sys_User = _sysUserService.GetModels(a => a.username == userName).SingleOrDefault();
+                Sys_User_Role sys_User_Role = _sysUserRoleService.GetModels(a => a.user_id == sys_User.id).SingleOrDefault();
+                Sys_Role sys_Role = _baseSysRoleService.GetModels(a => a.id == sys_User_Role.role_id && a.status == false).SingleOrDefault();
+                roleCode = sys_Role.role_code;
+            }
+            catch(Exception ex)
+            {
+                throw new CustomException(500, "用户角色不存在或角色已被禁用");
+            }
+
+            return roleCode;
         }
 
 
@@ -120,10 +130,11 @@ namespace ApiServer.BLL.BLL
                 message = "查询成功！",
                 isok = true
             };
+            TypeAdapterConfig<Sys_Role, SysRole>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.ToCamelCase);
             Dictionary<string, object> dict = new Dictionary<string, object>
             {
                 // 所有角色记录
-                { "roleDatas", _baseSysRoleService.GetModels(null).ToList() },
+                { "roleDatas", _baseSysRoleService.GetModels(a => a.status == false).ToList().BuildAdapter().AdaptToType<List<SysRole>>() },
                 //某用户具有的角色id列表
                 { "checkedRoleIds", _mySystemService.GetCheckedRoleIds(userId) }
             };

@@ -48,14 +48,15 @@ namespace ApiServer.DAL.DAL
             return DbContext.SaveChanges();
         }
 
-        public long InsertUserRoleIds(long userId, List<long> checkedIds)
+        public int InsertUserRoleIds(long userId, List<long> checkedIds)
         {
+            string sql = string.Empty;
             foreach (var checkedId in checkedIds)
             {
-                string sql = $"INSERT INTO Sys_User_Role (role_id, user_id) VALUES({userId}, {checkedId})";
-                DbContext.Database.ExecuteSqlRaw(sql);
+               sql += $"INSERT INTO Sys_User_Role (role_id, user_id) VALUES({checkedId}, {userId});";
+                
             }
-            return DbContext.SaveChanges();
+            return DbContext.Database.ExecuteSqlRaw(sql);
         }
 
         public IQueryable<string> SelectApiCheckedKeys(long roleId)
