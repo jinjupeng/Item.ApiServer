@@ -4,6 +4,7 @@ using ApiServer.JWT;
 using ApiServer.Mapping;
 using ApiServer.Middleware;
 using ApiServer.Model.Model.MsgModel;
+using AspNetCoreRateLimit;
 using Autofac;
 using Item.ApiServer.BLL.BLLModule;
 using Item.ApiServer.DAL.DALModule;
@@ -221,6 +222,29 @@ namespace ApiServer
                 // 注册全局过滤器
                 options.Filters.Add<GlobalExceptionFilter>();
             });
+
+            #region IP限流
+
+            // 将速限计数器资料储存在 Memory 中
+            services.AddMemoryCache();
+
+            // 从 appsettings.json 读取 IpRateLimiting 设置
+            services.Configure<IpRateLimitOptions>(Configuration.GetSection("IpRateLimiting"));
+
+            // 从 appsettings.json 读取 Ip Rule 设置
+            services.Configure<IpRateLimitPolicies>(Configuration.GetSection("IpRateLimitPolicies"));
+
+            // 注入 counter and IP Rules
+            services.AddSingleton<IIpPolicyStore, MemoryCacheIpPolicyStore>();
+            services.AddSingleton<IRateLimitCounterStore, MemoryCacheRateLimitCounterStore>();
+
+            // the clientId/ clientIp resolvers use it.
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
+            // Rate Limit configuration 设置
+            services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
+
+            #endregion
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -233,15 +257,16 @@ namespace ApiServer
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
+                app.UseHsts();
             }
+            // 启用限流,需在UseMvc前面
+            app.UseIpRateLimiting();
 
             app.UseCors("cors");
 
             // app.UseMiddleware<RefererMiddleware>(); // 判断Referer请求来源是否合法
-            app.UseMiddleware<ExceptionMiddleware>(); // 全局异常过滤
+            // app.UseMiddleware<ExceptionMiddleware>(); // 全局异常过滤
             app.UseRouting();
-
 
             // 添加jwt验证
             app.UseAuthentication();

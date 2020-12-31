@@ -34,7 +34,7 @@ namespace ApiServer.DAL.DAL
                 string sql = $"INSERT INTO Sys_Role_Api (role_id, api_id) VALUES({roleId}, {checkedId})";
                 DbContext.Database.ExecuteSqlRaw(sql);
             }
-           
+
             return DbContext.SaveChanges();
         }
 
@@ -53,8 +53,8 @@ namespace ApiServer.DAL.DAL
             string sql = string.Empty;
             foreach (var checkedId in checkedIds)
             {
-               sql += $"INSERT INTO Sys_User_Role (role_id, user_id) VALUES({checkedId}, {userId});";
-                
+                sql += $"INSERT INTO Sys_User_Role (role_id, user_id) VALUES({checkedId}, {userId});";
+
             }
             return DbContext.Database.ExecuteSqlRaw(sql);
         }

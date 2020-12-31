@@ -1,7 +1,6 @@
 ﻿using ApiServer.BLL.IBLL;
 using ApiServer.Model.Entity;
 using ApiServer.Model.Model;
-using ApiServer.Model.Model.MsgModel;
 using ApiServer.Model.Model.ViewModel;
 using Mapster;
 using Microsoft.AspNetCore.Mvc;

@@ -44,7 +44,7 @@ namespace ApiServer.BLL.BLL
                 Sys_Role sys_Role = _baseSysRoleService.GetModels(a => a.id == sys_User_Role.role_id && a.status == false).SingleOrDefault();
                 roleCode = sys_Role.role_code;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw new CustomException(500, "用户角色不存在或角色已被禁用");
             }

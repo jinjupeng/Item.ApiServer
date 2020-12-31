@@ -28,10 +28,10 @@
 
 - [X] ASP.NET Core集成JWT
 - [X] 集成Swagger UI
-- [ ] 基于策略模式的权限分配
+- [X] 基于策略模式的权限分配
 - [X] 添加Serilog日志
 - [X] 配置全局异常过滤ExceptionFilter
-- [ ] Token平滑刷新
+- [X] Token平滑刷新
 - [X] 添加EntityFrameworkCore ORM框架
 - [ ] 性能分析
 - [ ] 配置缓存

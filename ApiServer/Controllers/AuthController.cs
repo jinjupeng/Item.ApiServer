@@ -65,6 +65,13 @@ namespace ApiServer.Controllers
             return Forbid();
         }
 
+        [HttpGet]
+        [Route("api/iplimit")]
+        public IActionResult IpLimit()
+        {
+            return Ok("aaa");
+        }
+
 
         [HttpGet]
         [Route("api/value3")]
