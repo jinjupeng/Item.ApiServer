@@ -1,4 +1,5 @@
-﻿using ApiServer.Common;
+﻿using ApiServer.Cache.MemoryCache;
+using ApiServer.Common;
 using ApiServer.Exception;
 using ApiServer.JWT;
 using ApiServer.Mapping;
@@ -14,6 +15,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
+using Microsoft.Extensions.Caching.Redis;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -67,6 +69,30 @@ namespace ApiServer
                 options.ValueLengthLimit = int.MaxValue;
                 options.MemoryBufferThreshold = int.MaxValue;
             });
+
+            #region MemoryCache缓存
+
+            services.AddMemoryCache(options =>
+            {
+                // SizeLimit缓存是没有大小的，此值设置缓存的份数
+                // 注意：netcore中的缓存是没有单位的，缓存项和缓存的相对关系
+                options.SizeLimit = 2;
+                // 缓存满的时候压缩20%的优先级较低的数据
+                options.CompactionPercentage = 0.2;
+                // 两秒钟查找一次过期项
+                options.ExpirationScanFrequency = TimeSpan.FromSeconds(2);
+            });
+            // 内置缓存注入
+            services.AddTransient<MemoryCacheService>();
+
+            // Redis缓存注入
+            services.AddSingleton(new RedisCacheService(new RedisCacheOptions()
+            {
+                InstanceName = Configuration.GetSection("Redis:InstanceName").Value,
+                Configuration = Configuration.GetSection("Redis:Connection").Value
+            }));
+
+            #endregion
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
@@ -224,6 +250,7 @@ namespace ApiServer
             });
 
             #region IP限流
+            // https://marcus116.blogspot.com/2019/06/netcore-aspnet-core-webapi-aspnetcoreratelimit-throttle.html
 
             // 将速限计数器资料储存在 Memory 中
             services.AddMemoryCache();
@@ -257,20 +284,23 @@ namespace ApiServer
             }
             else
             {
+                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
             // 启用限流,需在UseMvc前面
             app.UseIpRateLimiting();
 
+            // 允许跨域
             app.UseCors("cors");
 
             // app.UseMiddleware<RefererMiddleware>(); // 判断Referer请求来源是否合法
             // app.UseMiddleware<ExceptionMiddleware>(); // 全局异常过滤
             app.UseRouting();
 
-            // 添加jwt验证
+            // 先开启认证
             app.UseAuthentication();
 
+            // 后开启授权
             app.UseAuthorization();
 
             // 添加请求日志中间件

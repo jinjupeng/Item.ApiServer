@@ -4,49 +4,132 @@
         <name>ApiServer</name>
     </assembly>
     <members>
-        <member name="T:ApiServer.Cache.MemoryCache.IMemoryCaching">
+        <member name="T:ApiServer.Cache.MemoryCache.ICacheService">
             <summary>
-            简单的缓存接口，只有查询和添加，以后会进行扩展
+            声明缓存接口
             </summary>
         </member>
-        <member name="M:ApiServer.Cache.MemoryCache.IMemoryCaching.Get(System.String)">
+        <member name="M:ApiServer.Cache.MemoryCache.ICacheService.Add(System.String,System.Object,System.Int32)">
             <summary>
-            
+            新增
             </summary>
-            <param name="cacheKey"></param>
+            <param name="key"></param>
+            <param name="value"></param>
+            <param name="expirationTime"></param>
             <returns></returns>
         </member>
-        <member name="M:ApiServer.Cache.MemoryCache.IMemoryCaching.Set(System.String,System.Object)">
+        <member name="M:ApiServer.Cache.MemoryCache.ICacheService.GetValue(System.String)">
             <summary>
-            
+            获取
             </summary>
-            <param name="cacheKey"></param>
-            <param name="cacheValue"></param>
+            <param name="key"></param>
+            <returns></returns>
         </member>
-        <member name="T:ApiServer.Cache.MemoryCache.MemoryCaching">
+        <member name="M:ApiServer.Cache.MemoryCache.ICacheService.Exists(System.String)">
+            <summary>
+            验证缓存项是否存在
+            </summary>
+            <param name="key">缓存Key</param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiServer.Cache.MemoryCache.ICacheService.Remove(System.String)">
+            <summary>
+            移除
+            </summary>
+            <param name="key"></param>
+            <returns></returns>
+        </member>
+        <member name="T:ApiServer.Cache.MemoryCache.MemoryCacheService">
             <summary>
             实例化缓存接口ICaching
             </summary>
         </member>
-        <member name="M:ApiServer.Cache.MemoryCache.MemoryCaching.#ctor(Microsoft.Extensions.Caching.Memory.IMemoryCache)">
+        <member name="F:ApiServer.Cache.MemoryCache.MemoryCacheService.Cache">
             <summary>
-            构造函数
+            
+            </summary>
+        </member>
+        <member name="M:ApiServer.Cache.MemoryCache.MemoryCacheService.#ctor(Microsoft.Extensions.Caching.Memory.IMemoryCache)">
+            <summary>
+            
             </summary>
             <param name="cache"></param>
         </member>
-        <member name="M:ApiServer.Cache.MemoryCache.MemoryCaching.Get(System.String)">
+        <member name="M:ApiServer.Cache.MemoryCache.MemoryCacheService.Add(System.String,System.Object,System.Int32)">
             <summary>
-            根据缓存key，获取value
+            
             </summary>
-            <param name="cacheKey"></param>
+            <param name="key"></param>
+            <param name="value"></param>
+            <param name="expirationTime"></param>
             <returns></returns>
         </member>
-        <member name="M:ApiServer.Cache.MemoryCache.MemoryCaching.Set(System.String,System.Object)">
+        <member name="M:ApiServer.Cache.MemoryCache.MemoryCacheService.Remove(System.String)">
             <summary>
-            添加缓存
+            
             </summary>
-            <param name="cacheKey"></param>
-            <param name="cacheValue"></param>
+            <param name="key"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiServer.Cache.MemoryCache.MemoryCacheService.GetValue(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="key"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiServer.Cache.MemoryCache.MemoryCacheService.Exists(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="key"></param>
+            <returns></returns>
+        </member>
+        <member name="T:ApiServer.Cache.MemoryCache.RedisCacheService">
+            <summary>
+            Redis缓存接口实现
+            </summary>
+        </member>
+        <member name="F:ApiServer.Cache.MemoryCache.RedisCacheService.RedisCache">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:ApiServer.Cache.MemoryCache.RedisCacheService.#ctor(Microsoft.Extensions.Caching.Redis.RedisCacheOptions)">
+            <summary>
+            构造函数注入
+            </summary>
+            <param name="options"></param>
+        </member>
+        <member name="M:ApiServer.Cache.MemoryCache.RedisCacheService.Add(System.String,System.Object,System.Int32)">
+            <summary>
+            新增
+            </summary>
+            <param name="key"></param>
+            <param name="value"></param>
+            <param name="expirationTime"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiServer.Cache.MemoryCache.RedisCacheService.Remove(System.String)">
+            <summary>
+            移除
+            </summary>
+            <param name="key"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiServer.Cache.MemoryCache.RedisCacheService.GetValue(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="key"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiServer.Cache.MemoryCache.RedisCacheService.Exists(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="key"></param>
+            <returns></returns>
         </member>
         <member name="T:ApiServer.Controllers.AuthController">
             <summary>
