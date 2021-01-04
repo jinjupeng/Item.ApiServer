@@ -36,7 +36,7 @@ namespace ApiServer.BLL.BLL
                 isok = true,
                 message = "查询成功！"
             };
-            TypeAdapterConfig<Sys_Org, SysOrgNode>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.ToCamelCase);
+            //TypeAdapterConfig<Sys_Org, SysOrgNode>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.ToCamelCase);
             List<Sys_Org> sysOrgs = _mySystemService.SelectOrgTree(rootOrgId, orgNameLike, orgStatus);
             List<SysOrgNode> sysOrgNodes = new List<SysOrgNode>();
             foreach (Sys_Org sys_Org in sysOrgs)

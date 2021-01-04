@@ -69,7 +69,7 @@ namespace ApiServer.Controllers
         [Route("update")]
         public async Task<IActionResult> Update([FromBody] SysUser sysUser)
         {
-            TypeAdapterConfig<SysUser, Sys_User>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.FromCamelCase);
+            //TypeAdapterConfig<SysUser, Sys_User>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.FromCamelCase);
             var sys_User = sysUser.BuildAdapter().AdaptToType<Sys_User>();
             return Ok(await Task.FromResult(_sysUserService.UpdateUser(sys_User)));
         }
@@ -83,7 +83,7 @@ namespace ApiServer.Controllers
         [Route("add")]
         public async Task<IActionResult> Add([FromBody] SysUser sysUser)
         {
-            TypeAdapterConfig<SysUser, Sys_User>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.FromCamelCase);
+            //TypeAdapterConfig<SysUser, Sys_User>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.FromCamelCase);
             var sys_User = sysUser.BuildAdapter().AdaptToType<Sys_User>();
             return Ok(await Task.FromResult(_sysUserService.AddUser(sys_User)));
         }

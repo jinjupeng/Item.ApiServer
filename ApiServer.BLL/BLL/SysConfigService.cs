@@ -27,7 +27,7 @@ namespace ApiServer.BLL.BLL
                 message = "查询成功！",
                 isok = true
             };
-            TypeAdapterConfig<Sys_Config, SysConfig>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.ToCamelCase);
+            //TypeAdapterConfig<Sys_Config, SysConfig>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.ToCamelCase);
             List<Sys_Config> list = _baseSysConfigService.GetModels(null).ToList();
             msg.data = list.BuildAdapter().AdaptToType<List<SysConfig>>();
             return msg;
@@ -45,7 +45,7 @@ namespace ApiServer.BLL.BLL
             {
                 express = a => a.param_name.Contains(configLik) || a.param_key.Contains(configLik);
             }
-            TypeAdapterConfig<Sys_Config, SysConfig>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.ToCamelCase);
+            //TypeAdapterConfig<Sys_Config, SysConfig>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.ToCamelCase);
             List<Sys_Config> list = _baseSysConfigService.GetModels(express).ToList();
             msg.data = list.BuildAdapter().AdaptToType<List<SysConfig>>();
             return msg;

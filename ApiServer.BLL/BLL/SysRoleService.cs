@@ -70,7 +70,7 @@ namespace ApiServer.BLL.BLL
             {
                 express = a => a.role_code.Contains(roleLik) || a.role_desc.Contains(roleLik) || a.role_name.Contains(roleLik);
             }
-            TypeAdapterConfig<Sys_Role, SysRole>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.ToCamelCase);
+            //TypeAdapterConfig<Sys_Role, SysRole>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.ToCamelCase);
             var sysRoleList = _baseSysRoleService.GetModels(express).ToList();
             msg.data = sysRoleList.BuildAdapter().AdaptToType<List<SysRole>>();
             return msg;
@@ -130,7 +130,7 @@ namespace ApiServer.BLL.BLL
                 message = "查询成功！",
                 isok = true
             };
-            TypeAdapterConfig<Sys_Role, SysRole>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.ToCamelCase);
+            //TypeAdapterConfig<Sys_Role, SysRole>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.ToCamelCase);
             Dictionary<string, object> dict = new Dictionary<string, object>
             {
                 // 所有角色记录

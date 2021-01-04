@@ -43,7 +43,7 @@ namespace ApiServer.BLL.BLL
             {
                 long rootMenuId = rootSysMenu.id;
                 List<Sys_Menu> sysMenus = _mySystemService.SelectMenuTree(rootMenuId, menuNameLike, menuStatus);
-                TypeAdapterConfig<Sys_Menu, SysMenuNode>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.ToCamelCase);
+                //TypeAdapterConfig<Sys_Menu, SysMenuNode>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.ToCamelCase);
                 List<SysMenuNode> sysMenuNodes = new List<SysMenuNode>();
                 foreach (Sys_Menu sys_Menu in sysMenus)
                 {
@@ -219,7 +219,7 @@ namespace ApiServer.BLL.BLL
                 isok = true,
                 message = "查询成功！"
             };
-            TypeAdapterConfig<Sys_Menu, SysMenuNode>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.ToCamelCase);
+            //TypeAdapterConfig<Sys_Menu, SysMenuNode>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.ToCamelCase);
             List<Sys_Menu> sysMenus = _mySystemService.SelectMenuByUserName(username);
             if (sysMenus.Count > 0)
             {

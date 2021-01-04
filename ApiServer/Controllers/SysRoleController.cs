@@ -46,7 +46,7 @@ namespace ApiServer.Controllers
         [Route("update")]
         public async Task<IActionResult> Update([FromBody] SysRole sysRole)
         {
-            TypeAdapterConfig<SysRole, Sys_Role>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.FromCamelCase);
+            //TypeAdapterConfig<SysRole, Sys_Role>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.FromCamelCase);
             var sys_Role = sysRole.BuildAdapter().AdaptToType<Sys_Role>();
             return Ok(await Task.FromResult(_sysRoleService.UpdateRole(sys_Role)));
 
@@ -61,7 +61,7 @@ namespace ApiServer.Controllers
         [Route("add")]
         public async Task<IActionResult> Add([FromBody] SysRole sysRole)
         {
-            TypeAdapterConfig<SysRole, Sys_Role>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.FromCamelCase);
+            //TypeAdapterConfig<SysRole, Sys_Role>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.FromCamelCase);
             var sys_Role = sysRole.BuildAdapter().AdaptToType<Sys_Role>();
             return Ok(await Task.FromResult(_sysRoleService.AddRole(sys_Role)));
 

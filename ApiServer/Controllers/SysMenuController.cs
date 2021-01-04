@@ -55,7 +55,7 @@ namespace ApiServer.Controllers
         [Route("update")]
         public async Task<IActionResult> Update([FromBody] SysMenu sysMenu)
         {
-            TypeAdapterConfig<SysMenu, Sys_Menu>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.FromCamelCase);
+            //TypeAdapterConfig<SysMenu, Sys_Menu>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.FromCamelCase);
             var sys_Menu = sysMenu.BuildAdapter().AdaptToType<Sys_Menu>();
             return Ok(await Task.FromResult(_sysMenuService.UpdateMenu(sys_Menu)));
 
@@ -70,7 +70,7 @@ namespace ApiServer.Controllers
         [Route("add")]
         public async Task<IActionResult> Add([FromBody] SysMenu sysMenu)
         {
-            TypeAdapterConfig<SysMenu, Sys_Menu>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.FromCamelCase);
+            //TypeAdapterConfig<SysMenu, Sys_Menu>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.FromCamelCase);
             var sys_Menu = sysMenu.BuildAdapter().AdaptToType<Sys_Menu>();
             return Ok(await Task.FromResult(_sysMenuService.AddMenu(sys_Menu)));
 
@@ -85,7 +85,7 @@ namespace ApiServer.Controllers
         [Route("delete")]
         public async Task<IActionResult> Delete([FromBody] SysMenu sysMenu)
         {
-            TypeAdapterConfig<SysMenu, Sys_Menu>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.FromCamelCase);
+            //TypeAdapterConfig<SysMenu, Sys_Menu>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.FromCamelCase);
             var sys_Menu = sysMenu.BuildAdapter().AdaptToType<Sys_Menu>();
             return Ok(await Task.FromResult(_sysMenuService.DeleteMenu(sys_Menu)));
 
