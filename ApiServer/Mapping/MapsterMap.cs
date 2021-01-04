@@ -1,43 +1,52 @@
-﻿
-using ApiServer.Model.Entity;
+﻿using ApiServer.Model.Entity;
 using ApiServer.Model.Model;
 using ApiServer.Model.Model.ViewModel;
 using Mapster;
+using MapsterMapper;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace ApiServer.Mapping
 {
     /// <summary>
-    /// 实体类映射
+    /// Mapster注入
     /// </summary>
-    public class MapsterMap
+    public static class MapsterMap
     {
         /// <summary>
-        /// 
+        /// 自定义扩展service
         /// </summary>
-        public MapsterMap()
+        /// <param name="services"></param>
+        /// <returns></returns>
+        public static IServiceCollection AddMapster(this IServiceCollection services)
         {
+            var config = TypeAdapterConfig.GlobalSettings;
+
             #region 返回前端实体类映射
 
-            TypeAdapterConfig<Sys_Config, SysConfig>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.ToCamelCase);
-            TypeAdapterConfig<Sys_Dict, SysDict>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.ToCamelCase);
-            TypeAdapterConfig<Sys_Menu, SysMenuNode>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.ToCamelCase);
-            TypeAdapterConfig<Sys_Api, SysApiNode>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.ToCamelCase);
-            TypeAdapterConfig<Sys_Role, SysRole>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.ToCamelCase);
-            TypeAdapterConfig<Sys_Org, SysOrgNode>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.ToCamelCase);
+            config.NewConfig<Sys_Config, SysConfig>().NameMatchingStrategy(NameMatchingStrategy.ToCamelCase);
+            config.NewConfig<Sys_Dict, SysDict>().NameMatchingStrategy(NameMatchingStrategy.ToCamelCase);
+            config.NewConfig<Sys_Menu, SysMenuNode>().NameMatchingStrategy(NameMatchingStrategy.ToCamelCase);
+            config.NewConfig<Sys_Api, SysApiNode>().NameMatchingStrategy(NameMatchingStrategy.ToCamelCase);
+            config.NewConfig<Sys_Role, SysRole>().NameMatchingStrategy(NameMatchingStrategy.ToCamelCase);
+            config.NewConfig<Sys_Org, SysOrgNode>().NameMatchingStrategy(NameMatchingStrategy.ToCamelCase);
             #endregion
 
             #region 接收前端实体类映射
 
-            TypeAdapterConfig<SysUser, Sys_User>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.FromCamelCase);
-            TypeAdapterConfig<SysRole, Sys_Role>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.FromCamelCase);
-            TypeAdapterConfig<SysOrg, Sys_Org>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.FromCamelCase);
-            TypeAdapterConfig<SysMenu, Sys_Menu>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.FromCamelCase);
-            TypeAdapterConfig<SysDict, Sys_Dict>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.FromCamelCase);
-            TypeAdapterConfig<SysConfig, Sys_Config>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.FromCamelCase);
-            TypeAdapterConfig<SysApi, Sys_Api>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.FromCamelCase);
+            config.NewConfig<SysUser, Sys_User>().NameMatchingStrategy(NameMatchingStrategy.FromCamelCase);
+            config.NewConfig<SysRole, Sys_Role>().NameMatchingStrategy(NameMatchingStrategy.FromCamelCase);
+            config.NewConfig<SysOrg, Sys_Org>().NameMatchingStrategy(NameMatchingStrategy.FromCamelCase);
+            config.NewConfig<SysMenu, Sys_Menu>().NameMatchingStrategy(NameMatchingStrategy.FromCamelCase);
+            config.NewConfig<SysDict, Sys_Dict>().NameMatchingStrategy(NameMatchingStrategy.FromCamelCase);
+            config.NewConfig<SysConfig, Sys_Config>().NameMatchingStrategy(NameMatchingStrategy.FromCamelCase);
+            config.NewConfig<SysApi, Sys_Api>().NameMatchingStrategy(NameMatchingStrategy.FromCamelCase);
 
             #endregion
-        }
 
+            services.AddSingleton(config);
+            services.AddScoped<IMapper, ServiceMapper>();
+
+            return services;
+        }
     }
 }

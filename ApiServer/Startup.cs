@@ -3,7 +3,6 @@ using ApiServer.Common;
 using ApiServer.Exception;
 using ApiServer.JWT;
 using ApiServer.Mapping;
-using ApiServer.Middleware;
 using ApiServer.Model.Model.MsgModel;
 using AspNetCoreRateLimit;
 using Autofac;
@@ -192,11 +191,13 @@ namespace ApiServer
             });
             #endregion
 
-            // 注入自定义策略
-            services.AddSingleton<IAuthorizationHandler, PermissionHandler>();
-            services.AddSingleton(typeof(MapsterMap));
+            #region 注入自定义策略
 
-            services.AddMvc();
+            services.AddSingleton<IAuthorizationHandler, PermissionHandler>();
+
+            services.AddMapster();
+
+            #endregion
 
             #region Swagger UI
             services.AddSwaggerGen(c =>

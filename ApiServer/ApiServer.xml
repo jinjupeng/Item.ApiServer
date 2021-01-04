@@ -812,13 +812,15 @@
         </member>
         <member name="T:ApiServer.Mapping.MapsterMap">
             <summary>
-            实体类映射
+            Mapster注入
             </summary>
         </member>
-        <member name="M:ApiServer.Mapping.MapsterMap.#ctor">
+        <member name="M:ApiServer.Mapping.MapsterMap.AddMapster(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
             <summary>
-            
+            自定义扩展service
             </summary>
+            <param name="services"></param>
+            <returns></returns>
         </member>
         <member name="T:ApiServer.Middleware.ExceptionMiddleware">
             <summary>
