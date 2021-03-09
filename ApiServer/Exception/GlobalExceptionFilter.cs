@@ -36,20 +36,31 @@ namespace ApiServer.Exception
         /// <param name="context"></param>
         public void OnException(ExceptionContext context)
         {
-            var customException = context.Exception as CustomException;
-            MsgModel json = new MsgModel
+            MsgModel msgModel = new MsgModel
             {
                 isok = false,
-                code = customException.Code,
-                message = customException.Msg // 错误信息
+                code = 500,
+                message = "内部错误" // 错误信息
             };
+            var exception = context.Exception;
+            if (exception is CustomException)
+            {
+                var customException = exception as CustomException;
+                msgModel.code = customException.Code;
+                msgModel.message = customException.Msg; // 错误信息
+            }
+            else
+            {
+                msgModel.message = exception.Message; // 错误信息
+            }
+
             //if (_env.IsDevelopment())
             //{
             //    json.message = context.Exception.StackTrace;// 堆栈信息
             //}
-            context.Result = new InternalServerErrorObjectResult(json);
+            context.Result = new InternalServerErrorObjectResult(msgModel);
             // 采用Serilog日志框架记录
-            _logger.LogError(json.message, WriteLog(json.message, context.Exception));
+            _logger.LogError(msgModel.message, WriteLog(msgModel.message, exception));
             context.ExceptionHandled = true;
         }
 
