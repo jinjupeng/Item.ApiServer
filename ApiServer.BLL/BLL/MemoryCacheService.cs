@@ -1,7 +1,8 @@
-﻿using Microsoft.Extensions.Caching.Memory;
+﻿using ApiServer.BLL.IBLL;
+using Microsoft.Extensions.Caching.Memory;
 using System;
 
-namespace ApiServer.Cache.MemoryCache
+namespace ApiServer.BLL.BLL
 {
     /// <summary>
     /// 实例化缓存接口ICaching

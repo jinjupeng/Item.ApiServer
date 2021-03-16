@@ -10,57 +10,64 @@ namespace ApiServer.DAL.DAL
 {
     public class BaseDal<T> : IBaseDal<T> where T : class
     {
-        public readonly DbContext DbContext = (new ContextProvider()).GetContext();
+        /// <summary>
+        /// EF上下文对象
+        /// </summary>
+        private readonly ContextMySql _context;
 
+        public BaseDal(ContextMySql context)
+        {
+            this._context = context;
+        }
         public void AddRange(IEnumerable<T> t)
         {
-            DbContext.Set<T>().AddRangeAsync(t);
+            _context.AddRangeAsync(t);
         }
         public void AddRange(params T[] t)
         {
-            DbContext.Set<T>().AddRangeAsync(t);
+            _context.AddRangeAsync(t);
         }
         public void DeleteRange(IEnumerable<T> t)
         {
-            DbContext.Set<T>().RemoveRange(t);
+            _context.RemoveRange(t);
         }
         public void DeleteRange(params T[] t)
         {
-            DbContext.Set<T>().RemoveRange(t);
+            _context.RemoveRange(t);
         }
         public void UpdateRange(IEnumerable<T> t)
         {
-            DbContext.Set<T>().UpdateRange(t);
+            _context.UpdateRange(t);
         }
         public void UpdateRange(params T[] t)
         {
-            DbContext.Set<T>().UpdateRange(t);
+            _context.UpdateRange(t);
         }
 
         public IQueryable<T> ExecSql(string sql)
         {
-            return DbContext.Set<T>().FromSqlRaw(sql).AsNoTracking().AsQueryable();
+            return _context.Set<T>().FromSqlRaw(sql).AsNoTracking().AsQueryable();
         }
 
         public int CountAll()
         {
-            return DbContext.Set<T>().AsNoTracking().Count();
+            return _context.Set<T>().AsNoTracking().Count();
         }
 
 
         public IQueryable<T> GetModels(Expression<Func<T, bool>> whereLambda)
         {
-            return whereLambda != null ? DbContext.Set<T>().AsNoTracking().Where(whereLambda) : DbContext.Set<T>().AsNoTracking();
+            return whereLambda != null ? _context.Set<T>().AsNoTracking().Where(whereLambda) : _context.Set<T>().AsNoTracking();
         }
 
         public IQueryable<T> QueryByPage<TKey>(int pageIndex, int pageSize, Expression<Func<T, bool>> whereLambda, Expression<Func<T, TKey>> orderBy)
         {
-            return DbContext.Set<T>().Where(whereLambda.Compile()).AsQueryable().OrderBy(orderBy).Skip((pageIndex - 1) * pageSize).Take(pageSize);
+            return _context.Set<T>().Where(whereLambda.Compile()).AsQueryable().OrderBy(orderBy).Skip((pageIndex - 1) * pageSize).Take(pageSize);
         }
 
         public bool SaveChanges()
         {
-            return DbContext.SaveChangesAsync().Result > 0;
+            return _context.SaveChangesAsync().Result > 0;
         }
     }
 }

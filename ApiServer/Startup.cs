@@ -1,8 +1,10 @@
-﻿using ApiServer.Cache.MemoryCache;
+﻿using ApiServer.BLL.BLL;
+using ApiServer.BLL.IBLL;
 using ApiServer.Common;
 using ApiServer.Exception;
 using ApiServer.JWT;
 using ApiServer.Mapping;
+using ApiServer.Model.Entity;
 using ApiServer.Model.Model.MsgModel;
 using AspNetCoreRateLimit;
 using Autofac;
@@ -14,6 +16,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Redis;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -75,23 +78,31 @@ namespace ApiServer
             {
                 // SizeLimit缓存是没有大小的，此值设置缓存的份数
                 // 注意：netcore中的缓存是没有单位的，缓存项和缓存的相对关系
-                options.SizeLimit = 2;
+                options.SizeLimit = 1024;
                 // 缓存满的时候压缩20%的优先级较低的数据
                 options.CompactionPercentage = 0.2;
                 // 两秒钟查找一次过期项
                 options.ExpirationScanFrequency = TimeSpan.FromSeconds(2);
             });
-            // 内置缓存注入
-            services.AddTransient<MemoryCacheService>();
-
-            // Redis缓存注入
-            services.AddSingleton(new RedisCacheService(new RedisCacheOptions()
-            {
-                InstanceName = Configuration.GetSection("Redis:InstanceName").Value,
-                Configuration = Configuration.GetSection("Redis:Connection").Value
-            }));
+            // MemoryCache缓存注入
+            services.AddTransient<ICacheService, MemoryCacheService>();
 
             #endregion
+
+            #region Redis缓存
+
+            services.AddDistributedRedisCache(options =>
+            {
+                options.InstanceName = Configuration.GetSection("Redis:InstanceName").Value;
+                options.Configuration = Configuration.GetSection("Redis:Connection").Value;
+            });
+            // Redis缓存注入
+            services.AddSingleton<ICacheService, RedisCacheService>();
+
+            #endregion
+
+            // 数据库上下文注入
+            services.AddDbContext<ContextMySql>(option => option.UseMySql(ConfigTool.Configuration["Setting:Conn"]));
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 

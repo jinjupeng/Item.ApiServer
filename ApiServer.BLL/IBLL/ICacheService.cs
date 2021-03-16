@@ -1,4 +1,4 @@
-﻿namespace ApiServer.Cache.MemoryCache
+﻿namespace ApiServer.BLL.IBLL
 {
     /// <summary>
     /// 声明缓存接口

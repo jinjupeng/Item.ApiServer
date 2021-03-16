@@ -1,9 +1,11 @@
-﻿using Microsoft.Extensions.Caching.Distributed;
+﻿using ApiServer.BLL.IBLL;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Redis;
+using Microsoft.Extensions.Options;
 using System;
 using System.Text;
 
-namespace ApiServer.Cache.MemoryCache
+namespace ApiServer.BLL.BLL
 {
     /// <summary>
     /// Redis缓存接口实现
@@ -19,9 +21,9 @@ namespace ApiServer.Cache.MemoryCache
         /// 构造函数注入
         /// </summary>
         /// <param name="options"></param>
-        public RedisCacheService(RedisCacheOptions options)
+        public RedisCacheService(IOptions<RedisCacheOptions> options)
         {
-            RedisCache = new RedisCache(options);
+            RedisCache = new RedisCache(options.Value);
         }
 
 
