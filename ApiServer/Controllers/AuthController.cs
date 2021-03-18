@@ -1,5 +1,4 @@
-﻿using ApiServer.JWT;
-using ApiServer.Model.Model;
+﻿using ApiServer.Common.Auth;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,7 +9,7 @@ using System.Security.Claims;
 namespace ApiServer.Controllers
 {
     /// <summary>
-    /// 
+    /// 测试的接口
     /// </summary>
     [ApiController]
     public class AuthController : ControllerBase
@@ -20,15 +19,17 @@ namespace ApiServer.Controllers
         [Route("api/auth")]
         public IActionResult Get(string userName, string pwd)
         {
-            TokenModelJwt tokenModel = new TokenModelJwt();
 
             if (CheckAccount(userName, pwd, out string role))
             {
-                tokenModel.Name = userName;
-                tokenModel.Role = role;
+                var dict = new Dictionary<string, object>
+                {
+                    { ClaimAttributes.UserName, userName },
+                    { ClaimAttributes.UserId, 0 }
+                };
                 return Ok(new
                 {
-                    token = JwtHelper.IssueJwt(tokenModel)
+                    token = JwtHelper.IssueJwt(dict)
                 });
             }
             else

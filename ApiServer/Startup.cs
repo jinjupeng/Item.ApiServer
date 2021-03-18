@@ -1,6 +1,7 @@
 ﻿using ApiServer.BLL.BLL;
 using ApiServer.BLL.IBLL;
 using ApiServer.Common;
+using ApiServer.Common.Auth;
 using ApiServer.Exception;
 using ApiServer.JWT;
 using ApiServer.Mapping;

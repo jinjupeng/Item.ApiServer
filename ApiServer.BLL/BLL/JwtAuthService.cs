@@ -1,7 +1,9 @@
 ﻿using ApiServer.BLL.IBLL;
 using ApiServer.Common;
+using ApiServer.Common.Auth;
 using ApiServer.Model.Entity;
 using ApiServer.Model.Model.MsgModel;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace ApiServer.BLL.BLL
@@ -41,6 +43,16 @@ namespace ApiServer.BLL.BLL
             {
                 msg.isok = false;
                 msg.message = "账户已被禁用！";
+            }
+
+            if (msg.isok) // 登录成功
+            {
+                var dict = new Dictionary<string, object>
+                {
+                    { ClaimAttributes.UserId, msg.data },
+                    { ClaimAttributes.UserName, username }
+                };
+                msg.data = JwtHelper.IssueJwt(dict);
             }
 
             return msg;

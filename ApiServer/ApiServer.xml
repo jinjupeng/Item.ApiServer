@@ -6,7 +6,7 @@
     <members>
         <member name="T:ApiServer.Controllers.AuthController">
             <summary>
-            
+            测试的接口
             </summary>
         </member>
         <member name="M:ApiServer.Controllers.AuthController.CheckAccount(System.String,System.String,System.String@)">
@@ -16,14 +16,6 @@
             <param name="userName"></param>
             <param name="pwd"></param>
             <param name="role"></param>
-            <returns></returns>
-        </member>
-        <member name="M:ApiServer.Controllers.BlogController.List(System.String,System.String)">
-            <summary>
-            我的所有文章首页
-            </summary>
-            <param name="author">用户名</param>
-            <param name="keyword">关键词</param>
             <returns></returns>
         </member>
         <member name="T:ApiServer.Controllers.ExceptionController">
@@ -514,89 +506,6 @@
             
             </summary>
             <param name="value"></param>
-        </member>
-        <member name="T:ApiServer.JWT.JwtHelper">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="P:ApiServer.JWT.JwtHelper.Settings">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="F:ApiServer.JWT.JwtHelper.SecurityKey">
-            <summary>
-            秘钥，可以从配置文件中获取
-            </summary>
-        </member>
-        <member name="M:ApiServer.JWT.JwtHelper.IssueJwt(ApiServer.Model.Model.TokenModelJwt)">
-            <summary>
-            颁发JWT字符串
-            </summary>
-            <param name="tokenModel"></param>
-            <returns></returns>
-        </member>
-        <member name="M:ApiServer.JWT.JwtHelper.SerializeJwt(System.String)">
-            <summary>
-            解析token
-            </summary>
-            <param name="token"></param>
-            <returns></returns>
-        </member>
-        <member name="M:ApiServer.JWT.JwtHelper.RefreshToken(System.String)">
-            <summary>
-            刷新token值
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:ApiServer.JWT.JwtHelper.Validate(System.String)">
-            <summary>
-            验证身份 验证签名的有效性,
-            </summary>
-            <param name="encodeJwt"></param>
-            例如：payLoad["aud"]?.ToString() == "roberAuddience";
-            例如：验证是否过期 等
-            <returns></returns>
-        </member>
-        <member name="M:ApiServer.JWT.JwtHelper.GetPayLoad(System.String)">
-            <summary>
-            获取jwt中的payload
-            </summary>
-            <param name="encodeJwt"></param>
-            <returns></returns>
-        </member>
-        <member name="M:ApiServer.JWT.JwtHelper.ToUnixEpochDate(System.DateTime)">
-            <summary>
-            datetime转时间戳
-            </summary>
-            <param name="date"></param>
-            <returns></returns>
-        </member>
-        <member name="T:ApiServer.JWT.JwtSettings">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="P:ApiServer.JWT.JwtSettings.Issuer">
-            <summary>
-            证书颁发者
-            </summary>
-        </member>
-        <member name="P:ApiServer.JWT.JwtSettings.Audience">
-            <summary>
-            允许使用的角色
-            </summary>
-        </member>
-        <member name="P:ApiServer.JWT.JwtSettings.SecretKey">
-            <summary>
-            加密字符串
-            </summary>
-        </member>
-        <member name="P:ApiServer.JWT.JwtSettings.ExpireMinutes">
-            <summary>
-            过期时间（分钟）
-            </summary>
         </member>
         <member name="T:ApiServer.JWT.PermissionHandler">
             <summary>

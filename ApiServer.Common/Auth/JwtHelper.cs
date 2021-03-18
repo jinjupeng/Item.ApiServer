@@ -1,5 +1,4 @@
-﻿using ApiServer.Model.Model;
-using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -9,7 +8,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace ApiServer.JWT
+namespace ApiServer.Common.Auth
 {
     /// <summary>
     /// 
@@ -26,30 +25,31 @@ namespace ApiServer.JWT
         /// <summary>
         /// 秘钥，可以从配置文件中获取
         /// </summary>
-        public static string SecurityKey = Common.ConfigTool.Configuration["Jwt:SecurityKey"];
+        public static string SecurityKey = ConfigTool.Configuration["Jwt:SecurityKey"];
 
         /// <summary>
         /// 颁发JWT字符串
         /// </summary>
-        /// <param name="tokenModel"></param>
+        /// <param name="payLoad"></param>
         /// <returns></returns>
-        public static string IssueJwt(TokenModelJwt tokenModel)
+        public static string IssueJwt(Dictionary<string, object> payLoad)
         {
             // 这里就是声明我们的claim
             var claims = new Claim[] {
                     #region token添加自定义参数
-                    new Claim(ClaimTypes.Name, tokenModel.Name),
-                    new Claim(ClaimTypes.Role, tokenModel.Role),
-                    // new Claim(ClaimTypes.Sid,tokenModel.ToString()),
+
+                    new Claim(ClaimAttributes.UserId, payLoad[ClaimAttributes.UserId].ToString()),
+                    new Claim(ClaimAttributes.UserName, payLoad[ClaimAttributes.UserName].ToString()),
+
                     #endregion
-                    new Claim(JwtRegisteredClaimNames.Jti, tokenModel.Sid.ToString()),
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                     new Claim(JwtRegisteredClaimNames.Iat, $"{new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds()}"),
                     new Claim(JwtRegisteredClaimNames.Nbf,$"{new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds()}") ,
                     // 这个就是过期时间，目前是过期60秒，可自定义，注意JWT有自己的缓冲过期时间
                     new Claim (JwtRegisteredClaimNames.Exp,$"{new DateTimeOffset(DateTime.Now.AddSeconds(600)).ToUnixTimeSeconds()}"),
                     new Claim(JwtRegisteredClaimNames.Iss,_settings.Issuer),
                     new Claim(JwtRegisteredClaimNames.Aud,_settings.Audience),
-                    // new Claim(JwtRegisteredClaimNames.Sub, tokenModel.Name)
+                    new Claim(JwtRegisteredClaimNames.Sub, "ApiServer")
                 };
 
             // 密钥(SymmetricSecurityKey 对安全性的要求，密钥的长度太短会报出异常)
@@ -67,30 +67,15 @@ namespace ApiServer.JWT
         }
 
         /// <summary>
-        /// 解析token
+        /// token解码
         /// </summary>
-        /// <param name="token"></param>
+        /// <param name="jwtToken"></param>
         /// <returns></returns>
-        public static TokenModelJwt SerializeJwt(string token)
+        public Claim[] Decode(string jwtToken)
         {
-            var jwtHandler = new JwtSecurityTokenHandler();
-            JwtSecurityToken jwtToken = jwtHandler.ReadJwtToken(token);
-            object role;
-            try
-            {
-                jwtToken.Payload.TryGetValue(ClaimTypes.Role, out role);
-            }
-            catch (System.Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
-            var tm = new TokenModelJwt
-            {
-                Sid = Convert.ToInt64(jwtToken.Id),
-                Role = role != null ? Convert.ToString(role) : "",
-            };
-            return tm;
+            var jwtSecurityTokenHandler = new JwtSecurityTokenHandler();
+            var jwtSecurityToken = jwtSecurityTokenHandler.ReadJwtToken(jwtToken);
+            return jwtSecurityToken?.Claims?.ToArray();
         }
 
         /// <summary>

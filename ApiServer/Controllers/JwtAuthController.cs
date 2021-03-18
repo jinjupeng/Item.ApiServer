@@ -1,4 +1,5 @@
 ﻿using ApiServer.BLL.IBLL;
+using ApiServer.Common.Auth;
 using ApiServer.JWT;
 using ApiServer.Model.Model;
 using ApiServer.Model.Model.MsgModel;
@@ -26,6 +27,7 @@ namespace ApiServer.Controllers
         /// </summary>
         /// <param name="jwtAuthService"></param>
         /// <param name="sysRoleService"></param>
+        /// <param name="accessor"></param>
         public JwtAuthController(IJwtAuthService jwtAuthService, ISysRoleService sysRoleService,
             IHttpContextAccessor accessor)
         {
@@ -46,16 +48,7 @@ namespace ApiServer.Controllers
         {
             var username = pairs["username"];
             var password = pairs["password"];
-            MsgModel msg = _jwtAuthService.Login(username, password);
-            if (msg.isok)
-            {
-                TokenModelJwt tokenModel = new TokenModelJwt
-                {
-                    Name = username,
-                    Role = _sysRoleService.GetRoleByUserName(username)
-                };
-                msg.data = JwtHelper.IssueJwt(tokenModel);
-            }
+            var msg = _jwtAuthService.Login(username, password);
             return Ok(await Task.FromResult(msg));
         }
 

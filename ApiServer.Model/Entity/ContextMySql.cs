@@ -14,7 +14,6 @@ namespace ApiServer.Model.Entity
         {
         }
 
-        public virtual DbSet<Blogs> Blogs { get; set; }
         public virtual DbSet<Sys_Api> Sys_Api { get; set; }
         public virtual DbSet<Sys_Config> Sys_Config { get; set; }
         public virtual DbSet<Sys_Dict> Sys_Dict { get; set; }
@@ -37,45 +36,6 @@ namespace ApiServer.Model.Entity
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Blogs>(entity =>
-            {
-                entity.Property(e => e.Id)
-                    .HasComment("博客id")
-                    .ValueGeneratedNever();
-
-                entity.Property(e => e.Author_Id).HasComment("外键 user的id");
-
-                entity.Property(e => e.Create_Time)
-                    .HasColumnType("datetime")
-                    .HasComment("创建时间");
-
-                entity.Property(e => e.Detail)
-                    .HasColumnType("varchar(450)")
-                    .HasComment("详细内容")
-                    .HasCharSet("utf8")
-                    .HasCollation("utf8_general_ci");
-
-                entity.Property(e => e.Link)
-                    .HasColumnType("varchar(255)")
-                    .HasComment("转载链接")
-                    .HasCharSet("utf8")
-                    .HasCollation("utf8_general_ci");
-
-                entity.Property(e => e.Preview_Number).HasComment("浏览量");
-
-                entity.Property(e => e.Show).HasComment("状态 0 删除 1 展示");
-
-                entity.Property(e => e.State).HasComment("状态 0 删除 1 展示");
-
-                entity.Property(e => e.Title)
-                    .HasColumnType("varchar(45)")
-                    .HasComment("文章标题")
-                    .HasCharSet("utf8")
-                    .HasCollation("utf8_general_ci");
-
-                entity.Property(e => e.Type).HasComment("0 原创  1转载");
-            });
-
             modelBuilder.Entity<Sys_Api>(entity =>
             {
                 entity.HasComment("系统Http接口表，配合Sys_Role_api控制接口访问权限");
