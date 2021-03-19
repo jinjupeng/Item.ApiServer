@@ -42,7 +42,7 @@ namespace ApiServer.Common.Auth
                     new Claim(ClaimAttributes.UserName, payLoad[ClaimAttributes.UserName].ToString()),
 
                     #endregion
-                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString("N")),
                     new Claim(JwtRegisteredClaimNames.Iat, $"{new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds()}"),
                     new Claim(JwtRegisteredClaimNames.Nbf,$"{new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds()}") ,
                     // 这个就是过期时间，目前是过期60秒，可自定义，注意JWT有自己的缓冲过期时间
@@ -67,12 +67,27 @@ namespace ApiServer.Common.Auth
         }
 
         /// <summary>
+        /// 获取jwt中的payLoad
+        /// </summary>
+        /// <param name="encodeJwt">格式：Bearer eyAAA.eyBBB.CCC</param>
+        /// <returns></returns>
+        public static Dictionary<string, string> GetPayLoad(string encodeJwt)
+        {
+            var jwtArr = encodeJwt.Split('.');
+            var jwtToken = jwtArr[1];
+            var claimArr = Decode(jwtToken);
+            return claimArr.ToDictionary(x => x.Type, x => x.Value);
+        }
+
+        /// <summary>
         /// token解码
         /// </summary>
-        /// <param name="jwtToken"></param>
+        /// <param name="encodeJwt">格式：Bearer eyAAA.eyBBB.CCC</param>
         /// <returns></returns>
-        public Claim[] Decode(string jwtToken)
+        public static Claim[] Decode(string encodeJwt)
         {
+            var jwtArr = encodeJwt.Split('.');
+            var jwtToken = jwtArr[1];
             var jwtSecurityTokenHandler = new JwtSecurityTokenHandler();
             var jwtSecurityToken = jwtSecurityTokenHandler.ReadJwtToken(jwtToken);
             return jwtSecurityToken?.Claims?.ToArray();
@@ -81,6 +96,7 @@ namespace ApiServer.Common.Auth
         /// <summary>
         /// 刷新token值
         /// </summary>
+        /// <param name="token"></param>
         /// <returns></returns>
         public static string RefreshToken(string token)
         {
@@ -114,20 +130,16 @@ namespace ApiServer.Common.Auth
         /// <summary>
         /// 验证身份 验证签名的有效性,
         /// </summary>
-        /// <param name="encodeJwt"></param>
+        /// <param name="encodeJwt">格式：Bearer eyAAA.eyBBB.CCC</param>
         /// 例如：payLoad["aud"]?.ToString() == "roberAuddience";
         /// 例如：验证是否过期 等
         /// <returns></returns>
         public static bool Validate(string encodeJwt)
         {
             var success = true;
-            //encodeJwt = encodeJwt.ToString().Substring("Bearer ".Length).Trim();
             var jwtArr = encodeJwt.Split('.');
-            //var header = JsonConvert.DeserializeObject<Dictionary<string, object>>(Base64UrlEncoder.Decode(jwtArr[0]));
             var payLoad = JsonConvert.DeserializeObject<Dictionary<string, object>>(Base64UrlEncoder.Decode(jwtArr[1]));
-
             var hs256 = new HMACSHA256(Encoding.ASCII.GetBytes(SecurityKey));
-
             var encodedSignature = Base64UrlEncoder.Encode(hs256.ComputeHash(Encoding.UTF8.GetBytes(string.Concat(jwtArr[0], ".", jwtArr[1]))));
 
             //首先验证签名是否正确（必须的)
@@ -146,7 +158,7 @@ namespace ApiServer.Common.Auth
         /// <summary>
         /// 获取jwt中的payload
         /// </summary>
-        /// <param name="encodeJwt"></param>
+        /// <param name="encodeJwt">格式：Bearer eyAAA.eyBBB.CCC</param>
         /// <returns></returns>
         public static Dictionary<string, object> GetPayLoad(string encodeJwt)
         {
