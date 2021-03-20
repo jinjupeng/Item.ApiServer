@@ -66,30 +66,26 @@ namespace ApiServer.Common.Auth
             return token;
         }
 
-        /// <summary>
-        /// 获取jwt中的payLoad
-        /// </summary>
-        /// <param name="encodeJwt">格式：Bearer eyAAA.eyBBB.CCC</param>
-        /// <returns></returns>
-        public static Dictionary<string, string> GetPayLoad(string encodeJwt)
-        {
-            var jwtArr = encodeJwt.Split('.');
-            var jwtToken = jwtArr[1];
-            var claimArr = Decode(jwtToken);
-            return claimArr.ToDictionary(x => x.Type, x => x.Value);
-        }
+        ///// <summary>
+        ///// 获取jwt中的payLoad
+        ///// </summary>
+        ///// <param name="encodeJwt">格式：eyAAA.eyBBB.CCC</param>
+        ///// <returns></returns>
+        //public static Dictionary<string, string> GetPayLoad(string encodeJwt)
+        //{
+        //    var claimArr = Decode(encodeJwt);
+        //    return claimArr.ToDictionary(x => x.Type, x => x.Value);
+        //}
 
         /// <summary>
         /// token解码
         /// </summary>
-        /// <param name="encodeJwt">格式：Bearer eyAAA.eyBBB.CCC</param>
+        /// <param name="encodeJwt">格式：eyAAA.eyBBB.CCC</param>
         /// <returns></returns>
         public static Claim[] Decode(string encodeJwt)
         {
-            var jwtArr = encodeJwt.Split('.');
-            var jwtToken = jwtArr[1];
             var jwtSecurityTokenHandler = new JwtSecurityTokenHandler();
-            var jwtSecurityToken = jwtSecurityTokenHandler.ReadJwtToken(jwtToken);
+            var jwtSecurityToken = jwtSecurityTokenHandler.ReadJwtToken(encodeJwt);
             return jwtSecurityToken?.Claims?.ToArray();
         }
 
@@ -130,7 +126,7 @@ namespace ApiServer.Common.Auth
         /// <summary>
         /// 验证身份 验证签名的有效性,
         /// </summary>
-        /// <param name="encodeJwt">格式：Bearer eyAAA.eyBBB.CCC</param>
+        /// <param name="encodeJwt">格式：eyAAA.eyBBB.CCC</param>
         /// 例如：payLoad["aud"]?.ToString() == "roberAuddience";
         /// 例如：验证是否过期 等
         /// <returns></returns>
