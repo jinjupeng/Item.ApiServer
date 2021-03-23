@@ -6,6 +6,7 @@ using ApiServer.Exception;
 using ApiServer.JWT;
 using ApiServer.Mapping;
 using ApiServer.Model.Entity;
+using ApiServer.Model.Enum;
 using ApiServer.Model.Model.Config;
 using ApiServer.Model.Model.MsgModel;
 using AspNetCoreRateLimit;
@@ -19,7 +20,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Redis;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -74,39 +74,55 @@ namespace ApiServer
                 options.MemoryBufferThreshold = int.MaxValue;
             });
 
-            #region MemoryCache缓存
-
-            services.AddMemoryCache(options =>
+            services.Configure<CacheConfig>(Configuration.GetSection("Cache"));
+            var cacheConfig = new CacheConfig();
+            Configuration.Bind("Cache", cacheConfig);
+            if (cacheConfig.IsEnabled)
             {
-                // SizeLimit缓存是没有大小的，此值设置缓存的份数
-                // 注意：netcore中的缓存是没有单位的，缓存项和缓存的相对关系
-                options.SizeLimit = 1024;
-                // 缓存满的时候压缩20%的优先级较低的数据
-                options.CompactionPercentage = 0.2;
-                // 两秒钟查找一次过期项
-                options.ExpirationScanFrequency = TimeSpan.FromSeconds(2);
-            });
-            // MemoryCache缓存注入
-            services.AddTransient<ICacheService, MemoryCacheService>();
+                if(cacheConfig.Provider == CacheProvider.MemoryCache)
+                {
+                    #region MemoryCache缓存
 
-            #endregion
+                    services.AddMemoryCache(options =>
+                    {
+                        // SizeLimit缓存是没有大小的，此值设置缓存的份数
+                        // 注意：netcore中的缓存是没有单位的，缓存项和缓存的相对关系
+                        options.SizeLimit = 1024;
+                        // 缓存满的时候压缩20%的优先级较低的数据
+                        options.CompactionPercentage = 0.2;
+                        // 两秒钟查找一次过期项
+                        options.ExpirationScanFrequency = TimeSpan.FromSeconds(2);
+                    });
+                    // MemoryCache缓存注入
+                    services.AddTransient<ICacheService, MemoryCacheService>();
 
-            #region Redis缓存
+                    #endregion
+                } 
+                else if(cacheConfig.Provider == CacheProvider.Redis)
+                {
+                    #region Redis缓存
 
-            services.AddDistributedRedisCache(options =>
-            {
-                options.InstanceName = Configuration.GetSection("Redis:InstanceName").Value;
-                options.Configuration = Configuration.GetSection("Redis:Connection").Value;
-            });
-            // Redis缓存注入
-            services.AddSingleton<ICacheService, RedisCacheService>();
+                    services.AddDistributedRedisCache(options =>
+                    {
+                        options.InstanceName = cacheConfig.Redis.Prefix;
+                        options.Configuration = cacheConfig.Redis.ConnectionString;
+                        options.ConfigurationOptions.DefaultDatabase = cacheConfig.Redis.DefaultDb;
+                    });
+                    // Redis缓存注入
+                    services.AddSingleton<ICacheService, RedisCacheService>();
 
-            #endregion
+                    #endregion
+                }
+            }
+
+            #region 配置文件绑定
 
             // oss配置绑定
             services.Configure<OSSConfig>(Configuration.GetSection("OSS"));
-            // 文件路径绑定
+            // 文件路径配置绑定
             services.Configure<FilePathConfig>(Configuration.GetSection("FilePath"));
+
+            #endregion
 
             // 数据库上下文注入
             services.AddDbContext<ContextMySql>(option => option.UseMySql(ConfigTool.Configuration["Setting:Conn"]));
@@ -115,9 +131,9 @@ namespace ApiServer
 
             #region JwtSetting类注入
             services.Configure<JwtSettings>(Configuration.GetSection("JwtSettings"));
-            JwtSettings setting = new JwtSettings();
-            Configuration.Bind("JwtSettings", setting);
-            JwtHelper.Settings = setting;
+            var jwtSetting = new JwtSettings();
+            Configuration.Bind("JwtSettings", jwtSetting);
+            JwtHelper.Settings = jwtSetting;
             #endregion
 
             #region 基于策略模式的授权
@@ -149,9 +165,9 @@ namespace ApiServer
                     ValidateLifetime = true,// 是否验证失效时间
                     ClockSkew = TimeSpan.FromSeconds(30),
                     ValidateIssuerSigningKey = true,// 是否验证SecurityKey
-                    ValidAudience = setting.Audience,// Audience
-                    ValidIssuer = setting.Issuer,// Issuer，这两项和前面签发jwt的设置一致
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(setting.SecretKey))// 拿到SecurityKey
+                    ValidAudience = jwtSetting.Audience,// Audience
+                    ValidIssuer = jwtSetting.Issuer,// Issuer，这两项和前面签发jwt的设置一致
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSetting.SecretKey))// 拿到SecurityKey
                 };
                 config.Events = new JwtBearerEvents
                 {
