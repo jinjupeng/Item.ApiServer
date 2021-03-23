@@ -103,7 +103,10 @@ namespace ApiServer
 
             #endregion
 
+            // oss配置绑定
             services.Configure<OSSConfig>(Configuration.GetSection("OSS"));
+            // 文件路径绑定
+            services.Configure<FilePathConfig>(Configuration.GetSection("FilePath"));
 
             // 数据库上下文注入
             services.AddDbContext<ContextMySql>(option => option.UseMySql(ConfigTool.Configuration["Setting:Conn"]));

@@ -29,6 +29,26 @@
             </summary>
             <param name="logger"></param>
         </member>
+        <member name="T:ApiServer.Controllers.FileController">
+            <summary>
+            文件接口
+            </summary>
+        </member>
+        <member name="M:ApiServer.Controllers.FileController.#ctor(ApiServer.BLL.IBLL.IFileStorageService,ApiServer.BLL.IBLL.IFileUploadService,Microsoft.Extensions.Options.IOptions{ApiServer.Model.Model.Config.FilePathConfig})">
+            <summary>
+            构造函数
+            </summary>
+            <param name="fileStorageService"></param>
+            <param name="fileUploadService"></param>
+            <param name="filePathConfig"></param>
+        </member>
+        <member name="M:ApiServer.Controllers.FileController.Upload(Microsoft.AspNetCore.Http.IFormCollection)">
+            <summary>
+            单文件上传
+            </summary>
+            <param name="form"></param>
+            <returns></returns>
+        </member>
         <member name="T:ApiServer.Controllers.JwtAuthController">
             <summary>
             
