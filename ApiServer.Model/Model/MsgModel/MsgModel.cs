@@ -24,6 +24,11 @@
 
         public MsgModel() { }
 
+        public MsgModel(string message)
+        {
+            this.message = message;
+        }
+
         /// <summary>
         /// 请求出现异常时的响应数据封装
         /// </summary>
@@ -105,6 +110,11 @@
                 data = obj
             };
             return msg;
+        }
+
+        public static MsgModel Fail(string message)
+        {
+            return new MsgModel(message);
         }
     }
 }

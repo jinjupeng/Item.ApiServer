@@ -47,9 +47,10 @@ namespace ApiServer.BLL.BLL
 
             if (msg.isok) // 登录成功
             {
+                // 将一些个人数据写入token中
                 var dict = new Dictionary<string, object>
                 {
-                    { ClaimAttributes.UserId, msg.data },
+                    { ClaimAttributes.UserId, sys_User.id },
                     { ClaimAttributes.UserName, username }
                 };
                 msg.data = JwtHelper.IssueJwt(dict);

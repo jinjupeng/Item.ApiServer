@@ -40,6 +40,7 @@
             </summary>
             <param name="jwtAuthService"></param>
             <param name="sysRoleService"></param>
+            <param name="accessor"></param>
         </member>
         <member name="M:ApiServer.Controllers.JwtAuthController.Login(System.Collections.Generic.Dictionary{System.String,System.String})">
             <summary>
