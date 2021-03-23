@@ -6,6 +6,7 @@ using ApiServer.Exception;
 using ApiServer.JWT;
 using ApiServer.Mapping;
 using ApiServer.Model.Entity;
+using ApiServer.Model.Model.Config;
 using ApiServer.Model.Model.MsgModel;
 using AspNetCoreRateLimit;
 using Autofac;
@@ -101,6 +102,8 @@ namespace ApiServer
             services.AddSingleton<ICacheService, RedisCacheService>();
 
             #endregion
+
+            services.Configure<OSSConfig>(Configuration.GetSection("OSS"));
 
             // 数据库上下文注入
             services.AddDbContext<ContextMySql>(option => option.UseMySql(ConfigTool.Configuration["Setting:Conn"]));
