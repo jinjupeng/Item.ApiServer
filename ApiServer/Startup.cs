@@ -77,14 +77,13 @@ namespace ApiServer
             services.Configure<CacheConfig>(Configuration.GetSection("Cache"));
             var cacheConfig = new CacheConfig();
             Configuration.Bind("Cache", cacheConfig);
-            if (cacheConfig.IsEnabled)
-            {
-                if(cacheConfig.Provider == CacheProvider.MemoryCache)
-                {
-                    #region MemoryCache缓存
 
-                    services.AddMemoryCache(options =>
-                    {
+            if (cacheConfig.Provider == CacheProvider.MemoryCache)
+            {
+                #region MemoryCache缓存
+
+                services.AddMemoryCache(options =>
+                {
                         // SizeLimit缓存是没有大小的，此值设置缓存的份数
                         // 注意：netcore中的缓存是没有单位的，缓存项和缓存的相对关系
                         options.SizeLimit = 1024;
@@ -92,28 +91,28 @@ namespace ApiServer
                         options.CompactionPercentage = 0.2;
                         // 两秒钟查找一次过期项
                         options.ExpirationScanFrequency = TimeSpan.FromSeconds(2);
-                    });
-                    // MemoryCache缓存注入
-                    services.AddTransient<ICacheService, MemoryCacheService>();
+                });
+                // MemoryCache缓存注入
+                services.AddTransient<ICacheService, MemoryCacheService>();
 
-                    #endregion
-                } 
-                else if(cacheConfig.Provider == CacheProvider.Redis)
-                {
-                    #region Redis缓存
-
-                    services.AddDistributedRedisCache(options =>
-                    {
-                        options.InstanceName = cacheConfig.Redis.Prefix;
-                        options.Configuration = cacheConfig.Redis.ConnectionString;
-                        options.ConfigurationOptions.DefaultDatabase = cacheConfig.Redis.DefaultDb;
-                    });
-                    // Redis缓存注入
-                    services.AddSingleton<ICacheService, RedisCacheService>();
-
-                    #endregion
-                }
+                #endregion
             }
+            else if (cacheConfig.Provider == CacheProvider.Redis)
+            {
+                #region Redis缓存
+
+                services.AddDistributedRedisCache(options =>
+                {
+                    options.InstanceName = cacheConfig.Redis.Prefix;
+                    options.Configuration = cacheConfig.Redis.ConnectionString;
+                    options.ConfigurationOptions.DefaultDatabase = cacheConfig.Redis.DefaultDb;
+                });
+                // Redis缓存注入
+                services.AddSingleton<ICacheService, RedisCacheService>();
+
+                #endregion
+            }
+
 
             #region 配置文件绑定
 

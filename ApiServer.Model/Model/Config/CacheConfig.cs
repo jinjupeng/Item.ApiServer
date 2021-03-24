@@ -9,10 +9,6 @@ namespace ApiServer.Model.Model.Config
     public class CacheConfig
     {
         /// <summary>
-        /// 默认不启用缓存
-        /// </summary>
-        public bool IsEnabled { get; set; } = false;
-        /// <summary>
         /// 缓存提供器
         /// </summary>
         public CacheProvider Provider { get; set; } = CacheProvider.MemoryCache;

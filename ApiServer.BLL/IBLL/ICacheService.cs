@@ -10,7 +10,7 @@
         /// </summary>
         /// <param name="key"></param>
         /// <param name="value"></param>
-        /// <param name="expirationTime"></param>
+        /// <param name="expirationTime">单位：分钟</param>
         /// <returns></returns>
         bool Add(string key, object value, int expirationTime = 20);
 
@@ -34,5 +34,6 @@
         /// <param name="key"></param>
         /// <returns></returns>
         bool Remove(string key);
+
     }
 }

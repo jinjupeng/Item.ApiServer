@@ -8,11 +8,25 @@ namespace ApiServer.Common.Cache
     public static class CacheKey
     {
         /// <summary>
-        /// 验证码
+        /// 登录验证码
         /// <para>Admin:Auth:VerifyCode:用户id</para>
         /// </summary>
-        [Description("验证码")]
+        [Description("登录验证码")]
         public const string VerifyCodeKey = "Admin:Auth:VerifyCode:{0}";
+
+        /// <summary>
+        /// 邮箱验证码
+        /// <para>Admin:Email:VerifyCode:用户id</para>
+        /// </summary>
+        [Description("邮箱验证码")]
+        public const string EmailVerifyCodeKey = "Admin:Email:VerifyCode:{0}";
+
+        /// <summary>
+        /// 手机号验证码
+        /// <para>Admin:Phone:VerifyCode:用户id</para>
+        /// </summary>
+        [Description("手机号验证码")]
+        public const string PhoneVerifyCodeKey = "Admin:Phone:VerifyCode:{0}";
 
         /// <summary>
         /// 刷新令牌 
