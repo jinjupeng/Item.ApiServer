@@ -11,7 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApiServer.BLL", "ApiServer.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApiServer.DAL", "ApiServer.DAL\ApiServer.DAL.csproj", "{8EF6CA57-415E-49C0-95A7-BBBE12DE8774}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApiServer.Model", "ApiServer.Model\ApiServer.Model.csproj", "{13821624-9784-4DD8-BB03-A8CBF719AFF3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApiServer.Model", "ApiServer.Model\ApiServer.Model.csproj", "{13821624-9784-4DD8-BB03-A8CBF719AFF3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApiServer.RabbitMQ", "ApiServer.RabbitMQ\ApiServer.RabbitMQ.csproj", "{6B7B084D-89C2-4F37-B0AB-8CFAC2DB9F1B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{13821624-9784-4DD8-BB03-A8CBF719AFF3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{13821624-9784-4DD8-BB03-A8CBF719AFF3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{13821624-9784-4DD8-BB03-A8CBF719AFF3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6B7B084D-89C2-4F37-B0AB-8CFAC2DB9F1B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6B7B084D-89C2-4F37-B0AB-8CFAC2DB9F1B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6B7B084D-89C2-4F37-B0AB-8CFAC2DB9F1B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6B7B084D-89C2-4F37-B0AB-8CFAC2DB9F1B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

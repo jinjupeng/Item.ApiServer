@@ -31,6 +31,7 @@
   <ItemGroup>
     <ProjectReference Include="..\ApiServer.BLL\ApiServer.BLL.csproj" />
     <ProjectReference Include="..\ApiServer.Common\ApiServer.Common.csproj" />
+    <ProjectReference Include="..\ApiServer.RabbitMQ\ApiServer.RabbitMQ.csproj" />
   </ItemGroup>
 
   <ItemGroup>

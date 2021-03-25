@@ -488,6 +488,13 @@
             <param name="enabled"></param>
             <returns></returns>
         </member>
+        <member name="M:ApiServer.Controllers.WxController.AuthLogin(ApiServer.Model.Model.WX.WXAuth)">
+            <summary>
+            微信登录
+            </summary>
+            <param name="wxAuth"></param>
+            <returns></returns>
+        </member>
         <member name="T:ApiServer.Exception.GlobalExceptionFilter">
             <summary>
             自定义全局异常过滤器：当程序发生异常时，处理系统出现的未捕获的异常
