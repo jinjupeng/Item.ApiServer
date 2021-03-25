@@ -3,6 +3,8 @@ using ApiServer.Common;
 using ApiServer.Common.Auth;
 using ApiServer.Model.Entity;
 using ApiServer.Model.Model.MsgModel;
+using ApiServer.Model.Model.ViewModel;
+using Mapster;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -17,18 +19,17 @@ namespace ApiServer.BLL.BLL
             _baseService = baseService;
         }
 
+        /// <summary>
+        /// 用户登录
+        /// </summary>
+        /// <param name="username"></param>
+        /// <param name="password"></param>
+        /// <returns></returns>
         public MsgModel Login(string username, string password)
         {
-            MsgModel msg = new MsgModel()
-            {
-                isok = true,
-                message = "登录成功！"
-            };
             if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
             {
-                msg.isok = false;
-                msg.message = "用户名或密码为空！";
-                return msg;
+                return MsgModel.Fail("用户名或密码为空！");
             }
             // 加密登陆密码
             string encodePassword = PasswordEncoder.Encode(password);
@@ -36,28 +37,65 @@ namespace ApiServer.BLL.BLL
             Sys_User sys_User = _baseService.GetModels(a => a.username == username && a.password == encodePassword).SingleOrDefault();
             if (sys_User == null)
             {
-                msg.isok = false;
-                msg.message = "用户名或密码不正确！";
+                return MsgModel.Fail("用户名或密码不正确！");
             }
             else if (sys_User.enabled == false)
             {
-                msg.isok = false;
-                msg.message = "账户已被禁用！";
+                return MsgModel.Fail("账户已被禁用！");
             }
 
-            if (msg.isok) // 登录成功
-            {
-                // 将一些个人数据写入token中
-                var dict = new Dictionary<string, object>
+            // 将一些个人数据写入token中
+            var dict = new Dictionary<string, object>
                 {
                     { ClaimAttributes.UserId, sys_User.id },
                     { ClaimAttributes.UserName, username }
                 };
-                msg.data = JwtHelper.IssueJwt(dict);
-            }
 
-            return msg;
+            var data = JwtHelper.IssueJwt(dict);
+            return MsgModel.Success(data);
         }
 
+        /// <summary>
+        /// 注册
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        public MsgModel SignUp(SysUser user)
+        {
+            var dict = new Dictionary<string, object>();
+            var stringRandom = CommonUtils.GetStringRandom(10);
+            user.username = stringRandom;
+            //user.nickname = stringRandom;
+            if (user.phone != null)
+            {
+                var queryUser = _baseService.GetModels(a => a.phone == user.phone).SingleOrDefault();
+                if (queryUser == null)
+                {
+                    var sysUser = new Sys_User();
+                    sysUser = user.BuildAdapter().AdaptToType<Sys_User>();
+                    _baseService.AddRange(sysUser);
+                    var playLoad = new Dictionary<string, object>
+                    {
+                        { ClaimAttributes.UserId, queryUser.id },
+                        { ClaimAttributes.UserName, queryUser.username }
+                    };
+
+                    var token = JwtHelper.IssueJwt(playLoad);
+                    dict.Add("token", token);
+                    return MsgModel.Success(dict);
+                }
+                else
+                {
+                    var userDto = new SysUser();
+                    userDto = queryUser.BuildAdapter().AdaptToType<SysUser>();
+                    // 用户存在直接登录
+                    return Login(userDto.username, userDto.password);
+                }
+            }
+            else
+            {
+                return MsgModel.Fail("参数格式错误！");
+            }
+        }
     }
 }

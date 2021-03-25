@@ -19,7 +19,7 @@
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        string GetValue(string key);
+        object GetValue(string key);
 
         /// <summary>
         /// 验证缓存项是否存在

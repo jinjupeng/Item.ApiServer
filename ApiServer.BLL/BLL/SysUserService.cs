@@ -1,7 +1,6 @@
 ﻿using ApiServer.BLL.IBLL;
 using ApiServer.Common;
 using ApiServer.Model.Entity;
-using ApiServer.Model.Enum;
 using ApiServer.Model.Model.MsgModel;
 using Microsoft.AspNetCore.Http;
 using System;
@@ -69,17 +68,11 @@ namespace ApiServer.BLL.BLL
         /// <param name="sys_User"></param>
         public MsgModel UpdateUser(Sys_User sys_User)
         {
-            MsgModel msg = new MsgModel
-            {
-                message = "更新用户成功！"
-            };
             if (!_baseSysUserService.UpdateRange(sys_User))
             {
-                msg.isok = false;
-                msg.code = StatusCodes.Status500InternalServerError;
-                msg.message = "更新用户失败！";
+                return MsgModel.Fail(StatusCodes.Status500InternalServerError, "更新用户失败！");
             }
-            return msg;
+            return MsgModel.Success("更新用户成功");
         }
 
         /// <summary>
@@ -94,7 +87,7 @@ namespace ApiServer.BLL.BLL
             sys_User.enabled = true;//新增用户激活
             if (_baseSysUserService.GetModels(a => a.username == sys_User.username).Any())
             {
-                return MsgModel.Error(new CustomException((int)HttpStatusCode.Status500InternalServerError, "用户名已存在，不能重复"));
+                return MsgModel.Fail(StatusCodes.Status500InternalServerError, "用户名已存在，不能重复");
             }
             if (_baseSysUserService.AddRange(sys_User))
             {
@@ -109,17 +102,11 @@ namespace ApiServer.BLL.BLL
         /// <param name="userId"></param>
         public MsgModel DeleteUser(long userId)
         {
-            MsgModel msg = new MsgModel
-            {
-                message = "删除用户成功！"
-            };
             if (!_baseSysUserService.DeleteRange(_baseSysUserService.GetModels(a => a.id == userId)))
             {
-                msg.isok = false;
-                msg.code = StatusCodes.Status500InternalServerError;
-                msg.message = "删除用户失败！";
+                return MsgModel.Fail(StatusCodes.Status500InternalServerError, "删除用户失败！");
             }
-            return msg;
+            return MsgModel.Success("删除用户成功！");
         }
 
         /// <summary>
@@ -128,11 +115,6 @@ namespace ApiServer.BLL.BLL
         /// <param name="userId"></param>
         public MsgModel PwdReset(long userId)
         {
-            MsgModel msg = new MsgModel
-            {
-                message = "密码重置成功！",
-                isok = true
-            };
             Sys_User sys_User = _baseSysUserService.GetModels(a => a.id == userId).ToList().SingleOrDefault();
             sys_User.id = userId;
             sys_User.password = PasswordEncoder.Encode(_sysConfigService.GetConfigItem("user.init.password"));
@@ -140,11 +122,9 @@ namespace ApiServer.BLL.BLL
             bool result = _baseSysUserService.UpdateRange(sys_User);
             if (!result)
             {
-                msg.message = "密码重置失败！";
-                msg.code = StatusCodes.Status500InternalServerError;
-                msg.isok = false;
+                return MsgModel.Fail(StatusCodes.Status500InternalServerError, "密码重置失败！");
             }
-            return msg;
+            return MsgModel.Success("密码重置成功！");
         }
 
         /// <summary>
@@ -163,7 +143,7 @@ namespace ApiServer.BLL.BLL
             //判断数据库密码是否是默认密码
             msg.data = PasswordEncoder.IsMatch(sys_User.password, _sysConfigService.GetConfigItem("user.init.password"));
             //判断数据库密码是否是默认密码
-            return msg;
+            return MsgModel.Success();
         }
 
         /// <summary>

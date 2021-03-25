@@ -24,43 +24,6 @@
 
         public MsgModel() { }
 
-        public MsgModel(string message)
-        {
-            this.message = message;
-        }
-
-        /// <summary>
-        /// 请求出现异常时的响应数据封装
-        /// </summary>
-        /// <param name="e"></param>
-        /// <returns></returns>
-        public static MsgModel Error(CustomException e)
-        {
-            MsgModel msg = new MsgModel
-            {
-                isok = false,
-                code = e.Code,
-                message = e.Msg
-            };
-            return msg;
-        }
-
-        /// <summary>
-        /// 请求出现异常时的响应数据封装
-        /// </summary>
-        /// <param name="e"></param>
-        /// <param name="errorMessage"></param>
-        /// <returns></returns>
-        public static MsgModel Error(CustomException e, string errorMessage)
-        {
-            MsgModel msg = new MsgModel
-            {
-                isok = false,
-                code = e.Code,
-                message = errorMessage
-            };
-            return msg;
-        }
 
         /// <summary>
         /// 请求成功的响应，不带查询数据（用于删除、修改、新增接口）
@@ -68,7 +31,7 @@
         /// <returns></returns>
         public static MsgModel Success()
         {
-            MsgModel msg = new MsgModel
+            var msg = new MsgModel
             {
                 isok = true,
                 code = 200,
@@ -84,7 +47,7 @@
         /// <returns></returns>
         public static MsgModel Success(object obj)
         {
-            MsgModel msg = new MsgModel
+            var msg = new MsgModel
             {
                 isok = true,
                 code = 200,
@@ -94,19 +57,30 @@
             return msg;
         }
 
+        public static MsgModel Success(string message)
+        {
+            var msg = new MsgModel
+            {
+                isok = true,
+                code = 200,
+                message = message
+            };
+            return msg;
+        }
+
         /// <summary>
         /// 请求成功的响应，带有查询数据（用于数据查询接口）
         /// </summary>
         /// <param name="obj"></param>
-        /// <param name="responseMessage"></param>
+        /// <param name="message"></param>
         /// <returns></returns>
-        public static MsgModel Success(object obj, string responseMessage)
+        public static MsgModel Success(object obj, string message)
         {
-            MsgModel msg = new MsgModel
+            var msg = new MsgModel
             {
                 isok = true,
                 code = 200,
-                message = responseMessage,
+                message = message,
                 data = obj
             };
             return msg;
@@ -114,7 +88,24 @@
 
         public static MsgModel Fail(string message)
         {
-            return new MsgModel(message);
+            var msg = new MsgModel
+            {
+                isok = false,
+                code = 200,
+                message = message
+            };
+            return msg;
+        }
+
+        public static MsgModel Fail(int code, string message)
+        {
+            var msg = new MsgModel
+            {
+                isok = false,
+                code = code,
+                message = message
+            };
+            return msg;
         }
     }
 }

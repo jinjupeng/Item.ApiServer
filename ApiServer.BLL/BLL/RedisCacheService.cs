@@ -71,7 +71,7 @@ namespace ApiServer.BLL.BLL
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public string GetValue(string key)
+        public object GetValue(string key)
         {
             if (string.IsNullOrEmpty(key))
             {
@@ -79,7 +79,7 @@ namespace ApiServer.BLL.BLL
             }
             if (Exists(key))
             {
-                return RedisCache.GetString(key);
+                return Convert.ToBase64String(RedisCache.Get(key));
             }
             return null;
         }

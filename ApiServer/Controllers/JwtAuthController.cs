@@ -66,7 +66,7 @@ namespace ApiServer.Controllers
             //判断token是否为空
             if (!result || string.IsNullOrEmpty(oldToken.ToString()))
             {
-                return Ok(await Task.FromResult(MsgModel.Error(new CustomException(StatusCodes.Status401Unauthorized, "用户登录信息已失效，请重新登录！"))));
+                return Ok(await Task.FromResult(MsgModel.Fail(StatusCodes.Status401Unauthorized, "用户登录信息已失效，请重新登录！")));
             }
             string refreshToken = JwtHelper.RefreshToken(oldToken);
             return Ok(await Task.FromResult(MsgModel.Success(refreshToken)));

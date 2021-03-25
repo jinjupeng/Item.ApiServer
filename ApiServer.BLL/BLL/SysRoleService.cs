@@ -5,6 +5,7 @@ using ApiServer.Model.Enum;
 using ApiServer.Model.Model.MsgModel;
 using ApiServer.Model.Model.ViewModel;
 using Mapster;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -95,7 +96,7 @@ namespace ApiServer.BLL.BLL
             {
                 customException.Code = (int)HttpStatusCode.Status500InternalServerError;
 
-                return MsgModel.Error(new CustomException((int)HttpStatusCode.Status500InternalServerError, "角色编码已存在，不能重复！"));
+                return MsgModel.Fail(StatusCodes.Status500InternalServerError, "角色编码已存在，不能重复！");
             }
             if (_baseSysRoleService.AddRange(sys_Role))
             {
