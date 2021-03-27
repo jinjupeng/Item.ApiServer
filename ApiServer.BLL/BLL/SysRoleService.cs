@@ -61,11 +61,6 @@ namespace ApiServer.BLL.BLL
         /// <returns>角色记录列表</returns>
         public MsgModel QueryRoles(string roleLik)
         {
-            MsgModel msg = new MsgModel
-            {
-                message = "查询成功！",
-                isok = true
-            };
             Expression<Func<Sys_Role, bool>> express = null;
             if (!string.IsNullOrWhiteSpace(roleLik))
             {
@@ -73,18 +68,17 @@ namespace ApiServer.BLL.BLL
             }
             //TypeAdapterConfig<Sys_Role, SysRole>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.ToCamelCase);
             var sysRoleList = _baseSysRoleService.GetModels(express).ToList();
-            msg.data = sysRoleList.BuildAdapter().AdaptToType<List<SysRole>>();
-            return msg;
-
+            var data = sysRoleList.BuildAdapter().AdaptToType<List<SysRole>>();
+            return MsgModel.Success(data, "查询成功！");
         }
 
         public MsgModel UpdateRole(Sys_Role sys_Role)
         {
-            if (_baseSysRoleService.UpdateRange(sys_Role))
+            if (!_baseSysRoleService.UpdateRange(sys_Role))
             {
-                return MsgModel.Success("角色更新成功！");
+                return MsgModel.Fail("角色更新失败！");
             }
-            return MsgModel.Success("角色更新失败！");
+            return MsgModel.Success("角色更新成功！");
         }
 
         public MsgModel AddRole(Sys_Role sys_Role)
@@ -98,25 +92,20 @@ namespace ApiServer.BLL.BLL
 
                 return MsgModel.Fail(StatusCodes.Status500InternalServerError, "角色编码已存在，不能重复！");
             }
-            if (_baseSysRoleService.AddRange(sys_Role))
+            if (!_baseSysRoleService.AddRange(sys_Role))
             {
-                return MsgModel.Success("新增角色成功！");
+                return MsgModel.Fail("新增角色失败！");
             }
-            return MsgModel.Success("新增角色失败！");
+            return MsgModel.Success("新增角色成功！");
         }
 
         public MsgModel DeleteRole(long id)
         {
-            MsgModel msg = new MsgModel
-            {
-                message = "删除角色成功！"
-            };
             if (!_baseSysRoleService.DeleteRange(_baseSysRoleService.GetModels(a => a.id == id)))
             {
-                msg.isok = false;
-                msg.message = "删除角色失败！";
+                return MsgModel.Fail("删除角色失败！");
             }
-            return msg;
+            return MsgModel.Success("删除角色成功！");
         }
 
         /// <summary>
@@ -126,11 +115,6 @@ namespace ApiServer.BLL.BLL
         /// <returns></returns>
         public MsgModel GetRolesAndChecked(long userId)
         {
-            MsgModel msg = new MsgModel
-            {
-                message = "查询成功！",
-                isok = true
-            };
             //TypeAdapterConfig<Sys_Role, SysRole>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.ToCamelCase);
             Dictionary<string, object> dict = new Dictionary<string, object>
             {
@@ -139,8 +123,7 @@ namespace ApiServer.BLL.BLL
                 //某用户具有的角色id列表
                 { "checkedRoleIds", _mySystemService.GetCheckedRoleIds(userId) }
             };
-            msg.data = dict;
-            return msg;
+            return MsgModel.Success(dict, "查询成功！");
         }
 
         /// <summary>
@@ -150,13 +133,9 @@ namespace ApiServer.BLL.BLL
         /// <param name="checkedIds"></param>
         public MsgModel SaveCheckedKeys(long userId, List<long> checkedIds)
         {
-            MsgModel msg = new MsgModel
-            {
-                message = "用户角色保存成功！"
-            };
             _sysUserRoleService.DeleteRange(_sysUserRoleService.GetModels(a => a.user_id == userId).ToList());
             _mySystemService.InsertUserRoleIds(userId, checkedIds);
-            return msg;
+            return MsgModel.Success("用户角色保存成功！"); ;
         }
 
         /// <summary>
@@ -170,7 +149,7 @@ namespace ApiServer.BLL.BLL
             sys_Role.status = status;
             bool result = _baseSysRoleService.UpdateRange(sys_Role);
 
-            return MsgModel.Success(result ? "角色禁用状态更新成功！" : "角色禁用状态更新失败！");
+            return result ? MsgModel.Success("角色禁用状态更新成功！") : MsgModel.Fail("角色禁用状态更新失败！");
         }
 
     }

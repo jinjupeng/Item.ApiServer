@@ -22,24 +22,14 @@ namespace ApiServer.BLL.BLL
 
         public MsgModel GetSysConfigList()
         {
-            MsgModel msg = new MsgModel
-            {
-                message = "查询成功！",
-                isok = true
-            };
             //TypeAdapterConfig<Sys_Config, SysConfig>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.ToCamelCase);
             List<Sys_Config> list = _baseSysConfigService.GetModels(null).ToList();
-            msg.data = list.BuildAdapter().AdaptToType<List<SysConfig>>();
-            return msg;
+            var data = list.BuildAdapter().AdaptToType<List<SysConfig>>();
+            return MsgModel.Success(data, "查询成功！");
         }
 
         public MsgModel QueryConfigs(string configLik)
         {
-            MsgModel msg = new MsgModel()
-            {
-                isok = true,
-                message = "查询成功！"
-            };
             Expression<Func<Sys_Config, bool>> express = null;
             if (!string.IsNullOrEmpty(configLik))
             {
@@ -47,8 +37,8 @@ namespace ApiServer.BLL.BLL
             }
             //TypeAdapterConfig<Sys_Config, SysConfig>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.ToCamelCase);
             List<Sys_Config> list = _baseSysConfigService.GetModels(express).ToList();
-            msg.data = list.BuildAdapter().AdaptToType<List<SysConfig>>();
-            return msg;
+            var data = list.BuildAdapter().AdaptToType<List<SysConfig>>();
+            return MsgModel.Success(data, "查询成功！");
         }
 
         public string GetConfigItem(string paramKey)
@@ -58,36 +48,21 @@ namespace ApiServer.BLL.BLL
 
         public MsgModel UpdateConfig(Sys_Config sys_Config)
         {
-            MsgModel msg = new MsgModel
-            {
-                isok = true,
-                message = "更新配置成功！"
-            };
-            _baseSysConfigService.UpdateRange(sys_Config);
-            return msg;
+            var result = _baseSysConfigService.UpdateRange(sys_Config);
+            return result ? MsgModel.Success("更新配置成功！") : MsgModel.Fail("更新配置失败！");
         }
 
         public MsgModel AddConfig(Sys_Config sys_Config)
         {
-            MsgModel msg = new MsgModel
-            {
-                isok = true,
-                message = "新增配置成功！"
-            };
             sys_Config.id = new Snowflake().GetId();
-            _baseSysConfigService.AddRange(sys_Config);
-            return msg;
+            var result = _baseSysConfigService.AddRange(sys_Config);
+            return result ? MsgModel.Success("新增配置成功！") : MsgModel.Fail("新增配置失败！");
         }
 
         public MsgModel DeleteConfig(long configId)
         {
-            MsgModel msg = new MsgModel
-            {
-                isok = true,
-                message = "删除配置成功！"
-            };
-            _baseSysConfigService.DeleteRange(_baseSysConfigService.GetModels(a => a.id == configId));
-            return msg;
+            var result = _baseSysConfigService.DeleteRange(_baseSysConfigService.GetModels(a => a.id == configId));
+            return result ? MsgModel.Success("删除配置成功！") : MsgModel.Fail("删除配置失败！");
         }
     }
 }

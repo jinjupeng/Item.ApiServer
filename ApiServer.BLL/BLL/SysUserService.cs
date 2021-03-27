@@ -89,11 +89,11 @@ namespace ApiServer.BLL.BLL
             {
                 return MsgModel.Fail(StatusCodes.Status500InternalServerError, "用户名已存在，不能重复");
             }
-            if (_baseSysUserService.AddRange(sys_User))
+            if (!_baseSysUserService.AddRange(sys_User))
             {
-                return MsgModel.Success("新增用户成功！");
+                return MsgModel.Fail("新增用户失败！");
             }
-            return MsgModel.Success("新增用户失败！");
+            return MsgModel.Success("新增用户成功！");
         }
 
         /// <summary>
@@ -134,16 +134,11 @@ namespace ApiServer.BLL.BLL
         /// <returns></returns>
         public MsgModel IsDefault(string userName)
         {
-            MsgModel msg = new MsgModel
-            {
-                message = "获取成功！",
-                isok = true
-            };
             Sys_User sys_User = _baseSysUserService.GetModels(a => a.username == userName).SingleOrDefault();
             //判断数据库密码是否是默认密码
-            msg.data = PasswordEncoder.IsMatch(sys_User.password, _sysConfigService.GetConfigItem("user.init.password"));
+            var result = PasswordEncoder.IsMatch(sys_User.password, _sysConfigService.GetConfigItem("user.init.password"));
             //判断数据库密码是否是默认密码
-            return MsgModel.Success();
+            return MsgModel.Success(result, "获取成功！");
         }
 
         /// <summary>
@@ -154,23 +149,16 @@ namespace ApiServer.BLL.BLL
         /// <param name="newPass"></param>
         public MsgModel ChangePwd(string userName, string oldPass, string newPass)
         {
-            MsgModel msg = new MsgModel
-            {
-                message = "密码修改成功！",
-                isok = true
-            };
             Sys_User sys_User = _baseSysUserService.GetModels(a => a.username == userName).SingleOrDefault();
             // 判断旧密码是否正确
             bool isMatch = PasswordEncoder.IsMatch(sys_User.password, oldPass);
             if (!isMatch)
             {
-                msg.message = "原密码输入错误，请确认后重新输入！";
-                msg.isok = false;
-                return msg;
+                return MsgModel.Fail("原密码输入错误，请确认后重新输入！");
             }
             sys_User.password = PasswordEncoder.Encode(newPass);
-            _baseSysUserService.UpdateRange(sys_User);
-            return msg;
+            var result = _baseSysUserService.UpdateRange(sys_User);
+            return result ? MsgModel.Success("密码修改成功！") : MsgModel.Fail("密码修改失败！");
         }
 
         /// <summary>
@@ -184,7 +172,7 @@ namespace ApiServer.BLL.BLL
             sys_User.enabled = enabled;
             bool result = _baseSysUserService.UpdateRange(sys_User);
 
-            return MsgModel.Success(result ? "用户状态更新成功！" : "用户状态更新失败！");
+            return result ? MsgModel.Success("用户状态更新成功！") : MsgModel.Fail("用户状态更新失败！");
 
         }
     }

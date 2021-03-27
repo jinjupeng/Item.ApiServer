@@ -88,22 +88,12 @@ namespace ApiServer.BLL.BLL
 
         public MsgModel UpdateMenu(Sys_Menu sys_Menu)
         {
-            MsgModel msg = new MsgModel
-            {
-                isok = true,
-                message = "更新菜单项成功！"
-            };
             _baseSysMenuService.UpdateRange(sys_Menu);
-            return msg;
+            return MsgModel.Success("更新菜单项成功！");
         }
 
         public MsgModel AddMenu(Sys_Menu sys_Menu)
         {
-            MsgModel msg = new MsgModel
-            {
-                isok = true,
-                message = "新增菜单项成功！"
-            };
             sys_Menu.id = new Snowflake().GetId();
             SetMenuIdsAndLevel(sys_Menu);
             sys_Menu.is_leaf = true;//新增的菜单节点都是子节点，没有下级
@@ -115,24 +105,18 @@ namespace ApiServer.BLL.BLL
 
             sys_Menu.status = false;//设置是否禁用，新增节点默认可用
             _baseSysMenuService.AddRange(sys_Menu);
-            return msg;
+            return MsgModel.Success("新增菜单项成功！");
         }
 
         public MsgModel DeleteMenu(Sys_Menu sys_Menu)
         {
-            MsgModel msg = new MsgModel
-            {
-                isok = true,
-                message = "删除菜单项成功！"
-            };
             //查找被删除节点的子节点
             List<Sys_Menu> myChilds = _baseSysMenuService.GetModels(a => a.menu_pids.Contains("[" + sys_Menu.id + "]")).ToList();
 
             if (myChilds.Count > 0)
             {
                 // "不能删除含有下级菜单的菜单"
-                msg.message = "不能删除含有下级菜单的菜单";
-                return msg;
+                return MsgModel.Fail("不能删除含有下级菜单的菜单");
             }
             //查找被删除节点的父节点
             List<Sys_Menu> myFatherChilds = _baseSysMenuService.GetModels(a => a.menu_pids.Contains("[" + sys_Menu.menu_pid + "]")).ToList();
@@ -147,7 +131,7 @@ namespace ApiServer.BLL.BLL
             }
             // 删除节点
             _baseSysMenuService.DeleteRange(sys_Menu);
-            return msg;
+            return MsgModel.Success("删除菜单项成功！");
         }
 
         /// <summary>
@@ -196,15 +180,10 @@ namespace ApiServer.BLL.BLL
         /// <param name="checkedIds"></param>
         public MsgModel SaveCheckedKeys(long roleId, List<long> checkedIds)
         {
-            MsgModel msg = new MsgModel
-            {
-                isok = true,
-                message = "保存菜单权限成功！"
-            };
             // 保存之前先删除
             _baseSysRoleMenuService.DeleteRange(_baseSysRoleMenuService.GetModels(a => a.role_id == roleId).ToList());
             _mySystemService.InsertRoleMenuIds(roleId, checkedIds);
-            return msg;
+            return MsgModel.Success("保存菜单权限成功！");
         }
 
         /// <summary>
@@ -262,8 +241,8 @@ namespace ApiServer.BLL.BLL
             Sys_Menu sys_Menu = _baseSysMenuService.GetModels(a => a.id == id).SingleOrDefault();
             sys_Menu.id = id;
             sys_Menu.status = status;
-            _baseSysMenuService.UpdateRange(sys_Menu);
-            return MsgModel.Success("菜单禁用状态更新成功！");
+            var result = _baseSysMenuService.UpdateRange(sys_Menu);
+            return result ? MsgModel.Success("菜单禁用状态更新成功！") : MsgModel.Fail("菜单禁用状态更新失败！");
         }
 
     }

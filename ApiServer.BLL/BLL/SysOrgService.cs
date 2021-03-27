@@ -76,28 +76,16 @@ namespace ApiServer.BLL.BLL
 
         public MsgModel UpdateOrg(Sys_Org sys_Org)
         {
-            MsgModel msg = new MsgModel
-            {
-                isok = true,
-                message = "更新组织机构成功！"
-            };
             if (!_baseSysOrgService.UpdateRange(sys_Org))
             {
-                msg.isok = false;
-                msg.message = "更新组织机构失败！";
-
+                return MsgModel.Fail("更新组织机构失败！");
             }
 
-            return msg;
+            return MsgModel.Success("更新组织机构成功！");
         }
 
         public MsgModel AddOrg(Sys_Org sys_Org)
         {
-            MsgModel msg = new MsgModel
-            {
-                isok = true,
-                message = "新增组织机构成功！"
-            };
             sys_Org.id = new Snowflake().GetId();
             SetOrgIdsAndLevel(sys_Org);
             sys_Org.is_leaf = true;//新增的组织节点都是子节点，没有下级
@@ -108,24 +96,17 @@ namespace ApiServer.BLL.BLL
 
             sys_Org.status = false;//设置是否禁用，新增节点默认可用
             _baseSysOrgService.AddRange(sys_Org);
-            return msg;
+            return MsgModel.Success("新增组织机构成功！");
         }
 
         public MsgModel DeleteOrg(Sys_Org sys_Org)
         {
-            MsgModel msg = new MsgModel
-            {
-                isok = true,
-                message = "删除组织机构成功！"
-            };
             List<Sys_Org> myChilds = _baseSysOrgService.GetModels(a => a.org_pids.Contains("[" + sys_Org.org_pid + "]")).ToList();
             if (myChilds.Count > 0)
             {
                 // "不能删除有下级组织的组织机构"
                 throw new CustomException((int)HttpStatusCode.Status500InternalServerError, "不能删除有下级组织的组织机构");
             }
-
-
             List<Sys_Org> myFatherChilds = _baseSysOrgService.GetModels(a => a.org_pids.Contains("[" + "]")).ToList();
             //我的父节点只有我这一个子节点，而我还要被删除，更新父节点为叶子节点。
             if (myFatherChilds.Count == 1)
@@ -139,7 +120,7 @@ namespace ApiServer.BLL.BLL
             }
             // 删除节点
             _baseSysOrgService.DeleteRange(sys_Org);
-            return msg;
+            return MsgModel.Success("删除组织机构成功！");
         }
 
         /// <summary>
@@ -173,7 +154,7 @@ namespace ApiServer.BLL.BLL
             sys_Org.status = status;
             bool result = _baseSysOrgService.UpdateRange(sys_Org);
 
-            return MsgModel.Success(result ? "更新组织机构状态成功！" : "更新组织机构状态失败！");
+            return result ? MsgModel.Success("更新组织机构状态成功！") : MsgModel.Fail("更新组织机构状态失败！");
         }
     }
 }

@@ -26,15 +26,10 @@ namespace ApiServer.BLL.BLL
         /// <returns></returns>
         public MsgModel All()
         {
-            MsgModel msg = new MsgModel
-            {
-                message = "查询成功！",
-                isok = true
-            };
             //TypeAdapterConfig<Sys_Dict, SysDict>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.ToCamelCase);
             List<Sys_Dict> list = _baseSysDictService.GetModels(null).ToList();
-            msg.data = list.BuildAdapter().AdaptToType<List<SysDict>>();
-            return msg;
+            var data = list.BuildAdapter().AdaptToType<List<SysDict>>();
+            return MsgModel.Success(data, "查询成功！");
         }
 
         /// <summary>
@@ -66,13 +61,8 @@ namespace ApiServer.BLL.BLL
         /// <param name="sys_Dict"></param>
         public MsgModel Update(Sys_Dict sys_Dict)
         {
-            MsgModel msg = new MsgModel
-            {
-                isok = true,
-                message = "更新数据字典项成功！"
-            };
-            _baseSysDictService.UpdateRange(sys_Dict);
-            return msg;
+            var result = _baseSysDictService.UpdateRange(sys_Dict);
+            return result ? MsgModel.Success("更新数据字典项成功！") : MsgModel.Fail("更新数据字典项失败！");
         }
 
         /// <summary>
@@ -81,14 +71,9 @@ namespace ApiServer.BLL.BLL
         /// <param name="sys_Dict"></param>
         public MsgModel Add(Sys_Dict sys_Dict)
         {
-            MsgModel msg = new MsgModel
-            {
-                isok = true,
-                message = "新增数据字典项成功！"
-            };
             sys_Dict.id = new Snowflake().GetId();
-            _baseSysDictService.AddRange(sys_Dict);
-            return msg;
+            var result = _baseSysDictService.AddRange(sys_Dict);
+            return result ? MsgModel.Success("新增数据字典项成功！") : MsgModel.Fail("新增数据字典项失败！");
         }
 
         /// <summary>
@@ -97,12 +82,8 @@ namespace ApiServer.BLL.BLL
         /// <param name="id"></param>
         public MsgModel Delete(long id)
         {
-            MsgModel msg = new MsgModel
-            {
-                message = "删除数据字典项成功！"
-            };
-            _baseSysDictService.DeleteRange(_baseSysDictService.GetModels(a => a.id == id));
-            return msg;
+            var result = _baseSysDictService.DeleteRange(_baseSysDictService.GetModels(a => a.id == id));
+            return result ? MsgModel.Success("删除数据字典项成功！") : MsgModel.Fail("删除数据字典项失败！");
         }
     }
 }

@@ -108,13 +108,8 @@ namespace ApiServer.BLL.BLL
 
         public MsgModel UpdateApi(Sys_Api sys_Api)
         {
-            MsgModel msg = new MsgModel
-            {
-                isok = true,
-                message = "修改接口配置成功！"
-            };
-            _baseService.UpdateRange(sys_Api);
-            return msg;
+            var result = _baseService.UpdateRange(sys_Api);
+            return result ? MsgModel.Success("修改接口配置成功！") : MsgModel.Fail("修改接口配置失败！");
         }
 
         public MsgModel AddApi(Sys_Api sys_Api)
@@ -140,11 +135,6 @@ namespace ApiServer.BLL.BLL
 
         public MsgModel DeleteApi(Sys_Api sys_Api)
         {
-            MsgModel msg = new MsgModel
-            {
-                isok = true,
-                message = "删除接口配置成功！"
-            };
             // 查找被删除节点的子节点
             List<Sys_Api> myChild = _baseService.GetModels(s => s.api_pids.Contains("[" + sys_Api.id + "]")).ToList();
             if (myChild.Count > 0)
@@ -165,7 +155,7 @@ namespace ApiServer.BLL.BLL
             }
             // 删除节点
             _baseService.DeleteRange(sys_Api);
-            return msg;
+            return MsgModel.Success("删除接口配置成功！");
         }
 
         /// <summary>
@@ -214,16 +204,11 @@ namespace ApiServer.BLL.BLL
         /// <param name="checkedIds"></param>
         public MsgModel SaveCheckedKeys(long roleId, List<long> checkedIds)
         {
-            MsgModel msg = new MsgModel
-            {
-                isok = true,
-                message = "保存接口权限成功！"
-            };
             // 保存之前先删除
             var sysRoleApiList = _baseSysRoleApiService.GetModels(a => a.role_id == roleId);
             _baseSysRoleApiService.DeleteRange(sysRoleApiList);
             _mySystemService.InsertRoleApiIds(roleId, checkedIds);
-            return msg;
+            return MsgModel.Success("保存接口权限成功！");
         }
 
         /// <summary>
