@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ApiServer.DAL\ApiServer.DAL.csproj" />
+    <ProjectReference Include="..\ApiServer.Extensions\ApiServer.Extensions.csproj" />
   </ItemGroup>
 
 </Project>

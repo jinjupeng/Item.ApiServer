@@ -1,10 +1,12 @@
-﻿using ApiServer.Model.Entity;
+﻿using ApiServer.Extensions.Attributes;
+using ApiServer.Model.Entity;
 using ApiServer.Model.Model.MsgModel;
 using System;
 using System.Collections.Generic;
 
 namespace ApiServer.BLL.IBLL
 {
+    [TransactionSerivce]
     public interface IMySystemService
     {
         List<Sys_Org> SelectOrgTree(long rootOrgId, string orgNameLike, bool? orgStatus);
@@ -13,8 +15,10 @@ namespace ApiServer.BLL.IBLL
 
         List<Sys_Api> SelectApiTree(long rootApiId, string apiNameLike, bool apiStatus);
 
+        [Transaction]
         int InsertRoleMenuIds(long roleId, List<long> checkedIds);
 
+        [Transaction]
         int InsertRoleApiIds(long roleId, List<long> checkedIds);
 
         List<string> SelectApiExpandedKeys();
@@ -27,6 +31,7 @@ namespace ApiServer.BLL.IBLL
 
         List<string> GetCheckedRoleIds(long userId);
 
+        [Transaction]
         long InsertUserRoleIds(long userId, List<long> checkedIds);
 
         List<Sys_Menu> SelectMenuByUserName(string userName);

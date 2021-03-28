@@ -42,6 +42,7 @@ namespace ApiServer
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
             .UseServiceProviderFactory(new AutofacServiceProviderFactory())
+
             .ConfigureWebHostDefaults(webBuilder =>
             {
                 webBuilder
@@ -57,6 +58,5 @@ namespace ApiServer
                 // 将Serilog设置为日志提供程序
                 .UseSerilog(); // Add this line;
             });
-
     }
 }

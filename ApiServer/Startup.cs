@@ -1,10 +1,11 @@
-﻿using ApiServer.BLL.BLL;
+﻿using ApiServer.AutofacModule;
+using ApiServer.BLL.BLL;
 using ApiServer.BLL.IBLL;
 using ApiServer.Common;
 using ApiServer.Common.Auth;
-using ApiServer.Exception;
 using ApiServer.JWT;
 using ApiServer.Mapping;
+using ApiServer.Middleware;
 using ApiServer.Model.Entity;
 using ApiServer.Model.Enum;
 using ApiServer.Model.Model.Config;
@@ -365,9 +366,9 @@ namespace ApiServer
         /// <param name="builder"></param>
         public void ConfigureContainer(ContainerBuilder builder)
         {
-            builder.RegisterModule(new BllModule());
-            builder.RegisterModule(new DalModule());
-
+            //builder.RegisterModule(new BllModule());
+            //builder.RegisterModule(new DalModule());
+            builder.RegisterModule(new AutofacModuleRegister());
         }
     }
 }

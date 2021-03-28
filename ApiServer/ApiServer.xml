@@ -4,6 +4,11 @@
         <name>ApiServer</name>
     </assembly>
     <members>
+        <member name="T:ApiServer.AutofacModule.AutofacModuleRegister">
+            <summary>
+            多个模块注入
+            </summary>
+        </member>
         <member name="T:ApiServer.Controllers.AuthController">
             <summary>
             测试的接口
@@ -495,46 +500,6 @@
             <param name="wxAuth"></param>
             <returns></returns>
         </member>
-        <member name="T:ApiServer.Exception.GlobalExceptionFilter">
-            <summary>
-            自定义全局异常过滤器：当程序发生异常时，处理系统出现的未捕获的异常
-            自定义一个全局异常过滤器需要实现IExceptionFilter接口
-            </summary>
-        </member>
-        <member name="M:ApiServer.Exception.GlobalExceptionFilter.#ctor(Microsoft.Extensions.Logging.ILogger{ApiServer.Exception.GlobalExceptionFilter},Microsoft.AspNetCore.Hosting.IWebHostEnvironment)">
-            <summary>
-            构造函数
-            </summary>
-            <param name="logger"></param>
-            <param name="env"></param>
-        </member>
-        <member name="M:ApiServer.Exception.GlobalExceptionFilter.OnException(Microsoft.AspNetCore.Mvc.Filters.ExceptionContext)">
-            <summary>
-            IExceptionFilter接口会要求实现OnException方法，当系统发生未捕获异常时就会触发这个方法。
-            OnException方法有一个ExceptionContext异常上下文，其中包含了具体的异常信息，HttpContext及mvc路由信息。
-            系统一旦出现未捕获异常后，比较常见的做法就是使用日志工具，将异常的详细信息记录下来，方便调试
-            </summary>
-            <param name="context"></param>
-        </member>
-        <member name="M:ApiServer.Exception.GlobalExceptionFilter.WriteLog(System.String,System.Exception)">
-            <summary>
-            自定义返回格式
-            </summary>
-            <param name="throwMsg"></param>
-            <param name="ex"></param>
-            <returns></returns>
-        </member>
-        <member name="T:ApiServer.Exception.GlobalExceptionFilter.InternalServerErrorObjectResult">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="M:ApiServer.Exception.GlobalExceptionFilter.InternalServerErrorObjectResult.#ctor(System.Object)">
-            <summary>
-            
-            </summary>
-            <param name="value"></param>
-        </member>
         <member name="T:ApiServer.JWT.PermissionHandler">
             <summary>
             权限授权处理器
@@ -650,6 +615,46 @@
             </summary>
             <param name="context"></param>
             <returns></returns>
+        </member>
+        <member name="T:ApiServer.Middleware.GlobalExceptionFilter">
+            <summary>
+            自定义全局异常过滤器：当程序发生异常时，处理系统出现的未捕获的异常
+            自定义一个全局异常过滤器需要实现IExceptionFilter接口
+            </summary>
+        </member>
+        <member name="M:ApiServer.Middleware.GlobalExceptionFilter.#ctor(Microsoft.Extensions.Logging.ILogger{ApiServer.Middleware.GlobalExceptionFilter},Microsoft.AspNetCore.Hosting.IWebHostEnvironment)">
+            <summary>
+            构造函数
+            </summary>
+            <param name="logger"></param>
+            <param name="env"></param>
+        </member>
+        <member name="M:ApiServer.Middleware.GlobalExceptionFilter.OnException(Microsoft.AspNetCore.Mvc.Filters.ExceptionContext)">
+            <summary>
+            IExceptionFilter接口会要求实现OnException方法，当系统发生未捕获异常时就会触发这个方法。
+            OnException方法有一个ExceptionContext异常上下文，其中包含了具体的异常信息，HttpContext及mvc路由信息。
+            系统一旦出现未捕获异常后，比较常见的做法就是使用日志工具，将异常的详细信息记录下来，方便调试
+            </summary>
+            <param name="context"></param>
+        </member>
+        <member name="M:ApiServer.Middleware.GlobalExceptionFilter.WriteLog(System.String,System.Exception)">
+            <summary>
+            自定义返回格式
+            </summary>
+            <param name="throwMsg"></param>
+            <param name="ex"></param>
+            <returns></returns>
+        </member>
+        <member name="T:ApiServer.Middleware.GlobalExceptionFilter.InternalServerErrorObjectResult">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:ApiServer.Middleware.GlobalExceptionFilter.InternalServerErrorObjectResult.#ctor(System.Object)">
+            <summary>
+            
+            </summary>
+            <param name="value"></param>
         </member>
         <member name="T:ApiServer.Middleware.RefererMiddleware">
             <summary>
