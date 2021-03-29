@@ -1,10 +1,11 @@
-﻿using ApiServer.AutofacModule;
-using ApiServer.BLL.BLL;
+﻿using ApiServer.BLL.BLL;
 using ApiServer.BLL.IBLL;
 using ApiServer.Common;
 using ApiServer.Common.Auth;
-using ApiServer.JWT;
-using ApiServer.Mapping;
+using ApiServer.Common.Config;
+using ApiServer.Extensions.Auth;
+using ApiServer.Extensions.AutofacModule;
+using ApiServer.Extensions.Mapping;
 using ApiServer.Middleware;
 using ApiServer.Model.Entity;
 using ApiServer.Model.Enum;
@@ -13,8 +14,6 @@ using ApiServer.Model.Model.MsgModel;
 using ApiServer.RabbitMQ;
 using AspNetCoreRateLimit;
 using Autofac;
-using Item.ApiServer.BLL.BLLModule;
-using Item.ApiServer.DAL.DALModule;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -368,7 +367,7 @@ namespace ApiServer
         {
             //builder.RegisterModule(new BllModule());
             //builder.RegisterModule(new DalModule());
-            builder.RegisterModule(new AutofacModuleRegister());
+            builder.RegisterModule(new ModuleRegister());
         }
     }
 }

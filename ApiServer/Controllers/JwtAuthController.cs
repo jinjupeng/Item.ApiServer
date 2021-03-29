@@ -1,7 +1,5 @@
 ﻿using ApiServer.BLL.IBLL;
 using ApiServer.Common.Auth;
-using ApiServer.JWT;
-using ApiServer.Model.Model;
 using ApiServer.Model.Model.MsgModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;

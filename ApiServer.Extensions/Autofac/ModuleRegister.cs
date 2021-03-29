@@ -2,6 +2,7 @@
 using ApiServer.BLL.IBLL;
 using ApiServer.DAL.DAL;
 using ApiServer.DAL.IDAL;
+using ApiServer.DAL.UnitOfWork;
 using ApiServer.Extensions.AOP;
 using Autofac;
 using Autofac.Extras.DynamicProxy;
@@ -10,12 +11,12 @@ using System.Collections.Generic;
 using System.Linq;
 using Module = Autofac.Module;
 
-namespace ApiServer.AutofacModule
+namespace ApiServer.Extensions.AutofacModule
 {
     /// <summary>
     /// 多个模块注入
     /// </summary>
-    public class AutofacModuleRegister : Module
+    public class ModuleRegister : Module
     {
 
         protected override void Load(ContainerBuilder builder)
@@ -38,6 +39,8 @@ namespace ApiServer.AutofacModule
                     .Where(a => a.Name.EndsWith("Dal"))
                     .AsImplementedInterfaces()
                     .InstancePerLifetimeScope();
+
+                builder.RegisterType<UnitOfWork>().As<IUnitOfWork>();
 
                 builder.RegisterType<TransactionInterceptor>(); // 配置事务拦截器
 

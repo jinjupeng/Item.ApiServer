@@ -5,7 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 
-namespace ApiServer.JWT
+namespace ApiServer.Extensions.Auth
 {
     /// <summary>
     /// 必要参数类，类似一个订单信息

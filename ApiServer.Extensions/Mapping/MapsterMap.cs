@@ -5,7 +5,7 @@ using Mapster;
 using MapsterMapper;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace ApiServer.Mapping
+namespace ApiServer.Extensions.Mapping
 {
     /// <summary>
     /// Mapster注入

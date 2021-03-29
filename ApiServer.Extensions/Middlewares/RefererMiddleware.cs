@@ -2,7 +2,7 @@
 using Newtonsoft.Json;
 using System.Threading.Tasks;
 
-namespace ApiServer.Middleware
+namespace ApiServer.Extensions.Middlewares
 {
     /// <summary>
     /// 对请求头Referer判断过滤

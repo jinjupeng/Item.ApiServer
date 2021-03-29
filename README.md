@@ -1,8 +1,8 @@
-# ASP.NET Core 集成JWT
+# ASP.NET Core 学习
 
-> JWT的学习Demo
+> DotNetCore的学习项目
 
-学习JWT
+学习DotNetCore
 
 ## 使用指南
 
@@ -30,12 +30,14 @@
 - [X] 集成Swagger UI
 - [X] 基于策略模式的权限分配
 - [X] 添加Serilog日志
-- [X] 配置全局异常过滤ExceptionFilter
 - [X] Token平滑刷新
-- [X] 添加EntityFrameworkCore ORM框架
-- [ ] 性能分析
-- [ ] 配置缓存
-- [x] 升级到Core 3.1
+- [X] 添加EntityFrameworkCore ORM框架、事务一致性
+- [X] 集成MemoryCache、Redis缓存
+- [X] 升级到Core 3.1
+- [X] 集成消息队列RabbitMQ
+- [X] 集成阿里云OSS
+- [X] 实现微信登录接口
+- [X] 请求限流
 
 ## 关于作者
 

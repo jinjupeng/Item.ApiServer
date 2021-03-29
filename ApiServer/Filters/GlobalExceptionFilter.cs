@@ -13,7 +13,6 @@ namespace ApiServer.Middleware
     /// </summary>
     public class GlobalExceptionFilter : IExceptionFilter
     {
-        #region 属性注入
         private readonly ILogger _logger;
         private readonly IWebHostEnvironment _env;
 
@@ -27,7 +26,7 @@ namespace ApiServer.Middleware
             _logger = logger;
             _env = env;
         }
-        #endregion
+
         /// <summary>
         /// IExceptionFilter接口会要求实现OnException方法，当系统发生未捕获异常时就会触发这个方法。
         /// OnException方法有一个ExceptionContext异常上下文，其中包含了具体的异常信息，HttpContext及mvc路由信息。
@@ -36,28 +35,23 @@ namespace ApiServer.Middleware
         /// <param name="context"></param>
         public void OnException(ExceptionContext context)
         {
-            MsgModel msgModel = new MsgModel
-            {
-                isok = false,
-                code = 500,
-                message = "内部错误" // 错误信息
-            };
+            MsgModel msgModel;
             var exception = context.Exception;
             if (exception is CustomException)
             {
                 var customException = exception as CustomException;
-                msgModel.code = customException.Code;
-                msgModel.message = customException.Msg; // 错误信息
+                msgModel = MsgModel.Fail(customException.Code, customException.Msg);
             }
             else
             {
-                msgModel.message = exception.Message; // 错误信息
+                msgModel = MsgModel.Fail(exception.Message);
             }
 
             //if (_env.IsDevelopment())
             //{
             //    json.message = context.Exception.StackTrace;// 堆栈信息
             //}
+
             context.Result = new InternalServerErrorObjectResult(msgModel);
             // 采用Serilog日志框架记录
             _logger.LogError(msgModel.message, WriteLog(msgModel.message, exception));
@@ -90,6 +84,5 @@ namespace ApiServer.Middleware
                 StatusCode = StatusCodes.Status500InternalServerError;
             }
         }
-
     }
 }

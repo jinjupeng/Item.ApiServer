@@ -2,7 +2,7 @@
 using System.Net;
 using System.Text;
 
-namespace ApiServer.Common
+namespace ApiServer.Common.Http
 {
     public class HttpUtil
     {

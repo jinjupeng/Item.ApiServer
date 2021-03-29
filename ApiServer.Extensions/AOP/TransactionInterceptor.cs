@@ -1,5 +1,5 @@
-﻿using ApiServer.DAL.UnitOfWork;
-using ApiServer.Extensions.Attributes;
+﻿using ApiServer.Common.Attributes;
+using ApiServer.DAL.UnitOfWork;
 using Castle.DynamicProxy;
 using Microsoft.Extensions.Logging;
 using System.Data;
@@ -33,24 +33,28 @@ namespace ApiServer.Extensions.AOP
             {
                 trans = this._unitOfWork.CurrentTransaction;
                 _logger.LogInformation(new EventId(trans.GetHashCode()), "Use Transaction");
-            }
-            try
-            {
-                invocation.Proceed(); // 就是调用我们原本的方法
-                if (trans != null)
+                try
                 {
-                    _logger.LogInformation(new EventId(trans.GetHashCode()), "Transaction Commit");
-                    trans.Commit();
+                    invocation.Proceed(); // 就是调用我们原本的方法
+                    if (trans != null)
+                    {
+                        _logger.LogInformation(new EventId(trans.GetHashCode()), "Transaction Commit");
+                        trans.Commit();
+                    }
+                }
+                catch
+                {
+                    if (trans != null)
+                    {
+                        _logger.LogInformation(new EventId(trans.GetHashCode()), "Transaction Rollback");
+                        trans.Rollback();
+                    }
+                    throw;
                 }
             }
-            catch
+            else
             {
-                if (trans != null)
-                {
-                    _logger.LogInformation(new EventId(trans.GetHashCode()), "Transaction Rollback");
-                    trans.Rollback();
-                }
-                throw;
+                invocation.Proceed();//直接执行被拦截方法
             }
         }
     }

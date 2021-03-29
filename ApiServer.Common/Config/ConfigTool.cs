@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.Json;
 
-namespace ApiServer.Common
+namespace ApiServer.Common.Config
 {
     /// <summary>
     /// 读取配置文件

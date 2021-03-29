@@ -6,7 +6,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
-namespace ApiServer.JWT
+namespace ApiServer.Extensions.Auth
 {
     /// <summary>
     /// 权限授权处理器
