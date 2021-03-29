@@ -1,5 +1,6 @@
 ﻿using ApiServer.Model.Entity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Data;
@@ -21,7 +22,7 @@ namespace ApiServer.DAL.UnitOfWork
         /// <summary>
         /// 获取 当前开启的事务
         /// </summary>
-        public IDbTransaction CurrentTransaction { get; private set; }
+        public IDbContextTransaction CurrentTransaction { get; private set; }
 
         /// <summary>
         /// 获取 事务是否已提交
@@ -40,7 +41,7 @@ namespace ApiServer.DAL.UnitOfWork
         {
             if (!IsEnabledTransaction)
             {
-                CurrentTransaction = (IDbTransaction)myDbContext.Database.BeginTransaction();
+                CurrentTransaction = myDbContext.Database.BeginTransaction();
             }
             HasCommitted = false;
         }

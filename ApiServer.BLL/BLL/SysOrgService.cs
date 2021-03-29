@@ -1,5 +1,6 @@
 ﻿using ApiServer.BLL.IBLL;
 using ApiServer.Common;
+using ApiServer.Common.Attributes;
 using ApiServer.Model;
 using ApiServer.Model.Entity;
 using ApiServer.Model.Enum;
@@ -84,6 +85,7 @@ namespace ApiServer.BLL.BLL
             return MsgModel.Success("更新组织机构成功！");
         }
 
+        [Transaction]
         public MsgModel AddOrg(Sys_Org sys_Org)
         {
             sys_Org.id = new Snowflake().GetId();
@@ -99,6 +101,7 @@ namespace ApiServer.BLL.BLL
             return MsgModel.Success("新增组织机构成功！");
         }
 
+        [Transaction]
         public MsgModel DeleteOrg(Sys_Org sys_Org)
         {
             List<Sys_Org> myChilds = _baseSysOrgService.GetModels(a => a.org_pids.Contains("[" + sys_Org.org_pid + "]")).ToList();

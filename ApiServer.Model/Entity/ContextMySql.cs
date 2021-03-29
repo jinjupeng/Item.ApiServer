@@ -1,4 +1,5 @@
 ﻿using ApiServer.Common;
+using ApiServer.Common.Config;
 using Microsoft.EntityFrameworkCore;
 
 namespace ApiServer.Model.Entity

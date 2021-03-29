@@ -81,11 +81,6 @@ namespace ApiServer.BLL.BLL
 
         public MsgModel SelectUser(int pageIndex, int pageSize, long? orgId, string userName, string phone, string email, bool? enabled, DateTime? createStartTime, DateTime? createEndTime)
         {
-            MsgModel msg = new MsgModel()
-            {
-                isok = true,
-                message = "查询成功！"
-            };
             var result = _mySystemDal.SelectUser(orgId, userName, phone, email, enabled, createStartTime, createEndTime);
             int items = result.Count();
             PageModel<SysUserOrg> pageModel = new PageModel<SysUserOrg>
@@ -96,8 +91,7 @@ namespace ApiServer.BLL.BLL
                 total = items,
                 pageSize = items % pageSize > 0 ? items / pageSize + 1 : items / pageSize // 分页
             };
-            msg.data = pageModel;
-            return msg;
+            return MsgModel.Success(pageModel);
         }
     }
 }

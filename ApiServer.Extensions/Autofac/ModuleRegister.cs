@@ -25,7 +25,15 @@ namespace ApiServer.Extensions.AutofacModule
             {
                 var assemblys = AppDomain.CurrentDomain.GetAssemblies();
                 var interceptorServiceTypes = new List<Type>();
+                builder.RegisterType<UnitOfWork>().As<IUnitOfWork>().InstancePerLifetimeScope();
+
+                // 注意：不能在BaseService类中使用[Transaction]，因为无效
+                builder.RegisterType<TransactionInterceptor>(); // 配置事务拦截器
+                interceptorServiceTypes.Add(typeof(TransactionInterceptor));
+
                 builder.RegisterGeneric(typeof(BaseService<>)).As(typeof(IBaseService<>)).InstancePerDependency();
+
+                // 获取 Service 程序集服务，并注册，可以在实现方法中使用[Transaction]
                 builder.RegisterAssemblyTypes(assemblys).InNamespace("ApiServer.BLL.BLL")
                     .Where(a => a.Name.EndsWith("Service"))
                     .AsImplementedInterfaces()
@@ -35,14 +43,11 @@ namespace ApiServer.Extensions.AutofacModule
 
 
                 builder.RegisterGeneric(typeof(BaseDal<>)).As(typeof(IBaseDal<>)).InstancePerDependency();
+                // 获取 Dal 程序集服务，并注册
                 builder.RegisterAssemblyTypes(assemblys).InNamespace("ApiServer.DAL.DAL")
                     .Where(a => a.Name.EndsWith("Dal"))
                     .AsImplementedInterfaces()
                     .InstancePerLifetimeScope();
-
-                builder.RegisterType<UnitOfWork>().As<IUnitOfWork>();
-
-                builder.RegisterType<TransactionInterceptor>(); // 配置事务拦截器
 
             }
             catch(Exception ex)

@@ -1,5 +1,6 @@
 ﻿using ApiServer.BLL.IBLL;
 using ApiServer.Common;
+using ApiServer.Common.Attributes;
 using ApiServer.Model;
 using ApiServer.Model.Entity;
 using ApiServer.Model.Model;
@@ -92,6 +93,7 @@ namespace ApiServer.BLL.BLL
             return MsgModel.Success("更新菜单项成功！");
         }
 
+        [Transaction]
         public MsgModel AddMenu(Sys_Menu sys_Menu)
         {
             sys_Menu.id = new Snowflake().GetId();
@@ -108,6 +110,7 @@ namespace ApiServer.BLL.BLL
             return MsgModel.Success("新增菜单项成功！");
         }
 
+        [Transaction]
         public MsgModel DeleteMenu(Sys_Menu sys_Menu)
         {
             //查找被删除节点的子节点
@@ -178,6 +181,7 @@ namespace ApiServer.BLL.BLL
         /// </summary>
         /// <param name="roleId"></param>
         /// <param name="checkedIds"></param>
+        [Transaction]
         public MsgModel SaveCheckedKeys(long roleId, List<long> checkedIds)
         {
             // 保存之前先删除

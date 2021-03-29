@@ -1,4 +1,4 @@
-﻿using System.Data;
+﻿using Microsoft.EntityFrameworkCore.Storage;
 using System.Threading.Tasks;
 
 namespace ApiServer.DAL.UnitOfWork
@@ -8,7 +8,7 @@ namespace ApiServer.DAL.UnitOfWork
     /// </summary>
     public interface IUnitOfWork
     {
-        IDbTransaction CurrentTransaction { get; }
+        IDbContextTransaction CurrentTransaction { get; }
 
         /// <summary>
         /// 获取 是否已提交

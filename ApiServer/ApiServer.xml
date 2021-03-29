@@ -23,7 +23,7 @@
             异常
             </summary>
         </member>
-        <member name="M:ApiServer.Controllers.ExceptionController.#ctor(Microsoft.Extensions.Logging.ILogger{ApiServer.Controllers.ExceptionController})">
+        <member name="M:ApiServer.Controllers.ExceptionController.#ctor(Microsoft.Extensions.Logging.ILogger{ApiServer.Controllers.ExceptionController},ApiServer.BLL.IBLL.IBaseService{ApiServer.Model.Entity.Sys_User})">
             <summary>
             构造函数
             </summary>

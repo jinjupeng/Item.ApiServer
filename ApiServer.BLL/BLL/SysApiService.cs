@@ -1,5 +1,6 @@
 ﻿using ApiServer.BLL.IBLL;
 using ApiServer.Common;
+using ApiServer.Common.Attributes;
 using ApiServer.Model;
 using ApiServer.Model.Entity;
 using ApiServer.Model.Model;
@@ -112,6 +113,7 @@ namespace ApiServer.BLL.BLL
             return result ? MsgModel.Success("修改接口配置成功！") : MsgModel.Fail("修改接口配置失败！");
         }
 
+        [Transaction]
         public MsgModel AddApi(Sys_Api sys_Api)
         {
             MsgModel msg = new MsgModel
@@ -133,6 +135,7 @@ namespace ApiServer.BLL.BLL
             return msg;
         }
 
+        [Transaction]
         public MsgModel DeleteApi(Sys_Api sys_Api)
         {
             // 查找被删除节点的子节点
@@ -202,6 +205,7 @@ namespace ApiServer.BLL.BLL
         /// </summary>
         /// <param name="roleId"></param>
         /// <param name="checkedIds"></param>
+        [Transaction]
         public MsgModel SaveCheckedKeys(long roleId, List<long> checkedIds)
         {
             // 保存之前先删除

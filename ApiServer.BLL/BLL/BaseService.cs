@@ -34,7 +34,6 @@ namespace ApiServer.BLL.BLL
             return _baseDal.SaveChanges();
         }
 
-
         public bool DeleteRange(IEnumerable<T> t)
         {
             _baseDal.DeleteRange(t);
@@ -77,7 +76,6 @@ namespace ApiServer.BLL.BLL
 
             return pageModel;
         }
-
 
         public async Task<int> Insert(T entity)
         {

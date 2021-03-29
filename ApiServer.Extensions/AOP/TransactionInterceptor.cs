@@ -2,7 +2,8 @@
 using ApiServer.DAL.UnitOfWork;
 using Castle.DynamicProxy;
 using Microsoft.Extensions.Logging;
-using System.Data;
+using System;
+using System.Linq;
 
 namespace ApiServer.Extensions.AOP
 {
@@ -12,8 +13,7 @@ namespace ApiServer.Extensions.AOP
     public class TransactionInterceptor : IInterceptor
     {
         /**
-         * [给Service套上事务](https://www.daemonwow.com/article/net-core-aop)
-         * 
+         * 参考：老张的哲学，关于事务的一篇文章介绍
          */
         private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger<TransactionInterceptor> _logger;
@@ -26,12 +26,15 @@ namespace ApiServer.Extensions.AOP
 
         public void Intercept(IInvocation invocation)
         {
-            IDbTransaction trans = default;
-            // invocation.Method用来获取我们调用方法的MethodInfo
-            // 判断方法是否使用了Transaction注解，如果使用了才给他加事务
-            if (invocation.Method.GetCustomAttributes(typeof(TransactionAttribute), true).Length != 0)
+            var method = invocation.MethodInvocationTarget ?? invocation.Method;
+            // 判断方法是否使用了Transaction注解，如果使用了才给它加事务
+            if (method.GetCustomAttributes(true).FirstOrDefault(x => x.GetType() == typeof(TransactionAttribute)) is TransactionAttribute)
             {
-                trans = this._unitOfWork.CurrentTransaction;
+                if (!_unitOfWork.IsEnabledTransaction)
+                {
+                    _unitOfWork.BeginTransaction();
+                }
+                var trans = _unitOfWork.CurrentTransaction;
                 _logger.LogInformation(new EventId(trans.GetHashCode()), "Use Transaction");
                 try
                 {
@@ -42,14 +45,14 @@ namespace ApiServer.Extensions.AOP
                         trans.Commit();
                     }
                 }
-                catch
+                catch(Exception ex)
                 {
                     if (trans != null)
                     {
                         _logger.LogInformation(new EventId(trans.GetHashCode()), "Transaction Rollback");
                         trans.Rollback();
                     }
-                    throw;
+                    throw new Exception(ex.InnerException.Message);
                 }
             }
             else
