@@ -44,24 +44,9 @@ namespace ApiServer.BLL.BLL
             {
                 long rootMenuId = rootSysMenu.id;
                 List<Sys_Menu> sysMenus = _mySystemService.SelectMenuTree(rootMenuId, menuNameLike, menuStatus);
-                //TypeAdapterConfig<Sys_Menu, SysMenuNode>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.ToCamelCase);
                 List<SysMenuNode> sysMenuNodes = new List<SysMenuNode>();
                 foreach (Sys_Menu sys_Menu in sysMenus)
                 {
-                    //SysMenuNode sysMenuNode = new SysMenuNode
-                    //{
-                    //    id = sys_Menu.id,
-                    //    menu_pid = sys_Menu.menu_pid,
-                    //    menu_pids = sys_Menu.menu_pids,
-                    //    is_leaf = sys_Menu.is_leaf,
-                    //    menu_name = sys_Menu.menu_name,
-                    //    url = sys_Menu.url,
-                    //    icon = sys_Menu.icon,
-                    //    sort = sys_Menu.sort,
-                    //    level = sys_Menu.level,
-                    //    status = sys_Menu.status,
-                    //};
-                    // SysMenuNode sysMenuNode = sys_Menu.Adapt<SysMenuNode>();
                     SysMenuNode sysMenuNode = sys_Menu.BuildAdapter().AdaptToType<SysMenuNode>();
                     sysMenuNodes.Add(sysMenuNode);
                 }
@@ -202,7 +187,6 @@ namespace ApiServer.BLL.BLL
                 isok = true,
                 message = "查询成功！"
             };
-            //TypeAdapterConfig<Sys_Menu, SysMenuNode>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.ToCamelCase);
             List<Sys_Menu> sysMenus = _mySystemService.SelectMenuByUserName(username);
             if (sysMenus.Count > 0)
             {
@@ -211,20 +195,6 @@ namespace ApiServer.BLL.BLL
                 List<SysMenuNode> sysMenuNodes = new List<SysMenuNode>();
                 foreach (Sys_Menu sys_Menu in sysMenus)
                 {
-                    //SysMenuNode sysMenuNode = new SysMenuNode
-                    //{
-                    //    id = sys_Menu.id,
-                    //    menu_pid = sys_Menu.menu_pid,
-                    //    menu_pids = sys_Menu.menu_pids,
-                    //    is_leaf = sys_Menu.is_leaf,
-                    //    menu_name = sys_Menu.menu_name,
-                    //    url = sys_Menu.url,
-                    //    icon = sys_Menu.icon,
-                    //    sort = sys_Menu.sort,
-                    //    level = sys_Menu.level,
-                    //    status = sys_Menu.status,
-                    //};
-                    // SysMenuNode sysMenuNode = sys_Menu.Adapt<SysMenuNode>();
                     SysMenuNode sysMenuNode = sys_Menu.BuildAdapter().AdaptToType<SysMenuNode>();
                     sysMenuNodes.Add(sysMenuNode);
                 }

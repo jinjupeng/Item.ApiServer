@@ -537,7 +537,7 @@
         </member>
         <member name="M:ApiServer.Startup.ConfigureContainer(Autofac.ContainerBuilder)">
             <summary>
-            自动注册
+            Autofac注册
             </summary>
             <param name="builder"></param>
         </member>

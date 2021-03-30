@@ -37,26 +37,10 @@ namespace ApiServer.BLL.BLL
                 isok = true,
                 message = "查询成功！"
             };
-            //TypeAdapterConfig<Sys_Org, SysOrgNode>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.ToCamelCase);
             List<Sys_Org> sysOrgs = _mySystemService.SelectOrgTree(rootOrgId, orgNameLike, orgStatus);
             List<SysOrgNode> sysOrgNodes = new List<SysOrgNode>();
             foreach (Sys_Org sys_Org in sysOrgs)
             {
-                //SysOrgNode sysOrgNode = new SysOrgNode
-                //{
-                //    id = sys_Org.id,
-                //    org_pid = sys_Org.org_pid,
-                //    org_pids = sys_Org.org_pids,
-                //    is_leaf = sys_Org.is_leaf,
-                //    org_name = sys_Org.org_name,
-                //    address = sys_Org.address,
-                //    phone = sys_Org.phone,
-                //    email = sys_Org.email,
-                //    sort = sys_Org.sort,
-                //    level = sys_Org.level,
-                //    status = sys_Org.status,
-                //};
-                // SysOrgNode sysOrgNode = sys_Org.Adapt<SysOrgNode>();
                 SysOrgNode sysOrgNode = sys_Org.BuildAdapter().AdaptToType<SysOrgNode>();
                 sysOrgNodes.Add(sysOrgNode);
             }

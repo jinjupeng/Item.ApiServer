@@ -73,22 +73,9 @@ namespace ApiServer.BLL.BLL
             {
                 long rootApiId = rootSysApi.id;
                 List<Sys_Api> sysApis = _mySystemService.SelectApiTree(rootApiId, apiNameLike, apiStatus);
-                //TypeAdapterConfig<Sys_Api, SysApiNode>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.ToCamelCase);
                 List<SysApiNode> sysApiNodes = new List<SysApiNode>();
                 foreach (Sys_Api sys_Api in sysApis)
                 {
-                    //SysApiNode sysApiNode = new SysApiNode
-                    //{
-                    //    id = sys_Api.id,
-                    //    api_pid = sys_Api.api_pid,
-                    //    api_pids = sys_Api.api_pids,
-                    //    is_leaf = sys_Api.is_leaf,
-                    //    api_name = sys_Api.api_name,
-                    //    url = sys_Api.url,
-                    //    sort = sys_Api.sort,
-                    //    level = sys_Api.level,
-                    //    status = sys_Api.status
-                    //};
                     SysApiNode sysApiNode = sys_Api.BuildAdapter().AdaptToType<SysApiNode>();
                     sysApiNodes.Add(sysApiNode);
                 }

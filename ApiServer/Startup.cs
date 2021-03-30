@@ -360,13 +360,11 @@ namespace ApiServer
         }
 
         /// <summary>
-        /// 自动注册
+        /// Autofac注册
         /// </summary>
         /// <param name="builder"></param>
         public void ConfigureContainer(ContainerBuilder builder)
         {
-            //builder.RegisterModule(new BllModule());
-            //builder.RegisterModule(new DalModule());
             builder.RegisterModule(new ModuleRegister());
         }
     }

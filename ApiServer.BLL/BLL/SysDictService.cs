@@ -26,7 +26,6 @@ namespace ApiServer.BLL.BLL
         /// <returns></returns>
         public MsgModel All()
         {
-            //TypeAdapterConfig<Sys_Dict, SysDict>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.ToCamelCase);
             List<Sys_Dict> list = _baseSysDictService.GetModels(null).ToList();
             var data = list.BuildAdapter().AdaptToType<List<SysDict>>();
             return MsgModel.Success(data, "查询成功！");
@@ -49,7 +48,6 @@ namespace ApiServer.BLL.BLL
             {
                 where = where.And(a => a.group_name.Contains(groupCode));
             }
-            //TypeAdapterConfig<Sys_Dict, SysDict>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.ToCamelCase);
             var sysDictList = _baseSysDictService.GetModels(where).ToList();
 
             return MsgModel.Success(sysDictList.BuildAdapter().AdaptToType<List<SysDict>>(), "查询成功！");

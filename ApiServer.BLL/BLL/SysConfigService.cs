@@ -22,7 +22,6 @@ namespace ApiServer.BLL.BLL
 
         public MsgModel GetSysConfigList()
         {
-            //TypeAdapterConfig<Sys_Config, SysConfig>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.ToCamelCase);
             List<Sys_Config> list = _baseSysConfigService.GetModels(null).ToList();
             var data = list.BuildAdapter().AdaptToType<List<SysConfig>>();
             return MsgModel.Success(data, "查询成功！");
@@ -35,7 +34,6 @@ namespace ApiServer.BLL.BLL
             {
                 express = a => a.param_name.Contains(configLik) || a.param_key.Contains(configLik);
             }
-            //TypeAdapterConfig<Sys_Config, SysConfig>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.ToCamelCase);
             List<Sys_Config> list = _baseSysConfigService.GetModels(express).ToList();
             var data = list.BuildAdapter().AdaptToType<List<SysConfig>>();
             return MsgModel.Success(data, "查询成功！");

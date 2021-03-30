@@ -66,7 +66,6 @@ namespace ApiServer.BLL.BLL
             {
                 express = a => a.role_code.Contains(roleLik) || a.role_desc.Contains(roleLik) || a.role_name.Contains(roleLik);
             }
-            //TypeAdapterConfig<Sys_Role, SysRole>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.ToCamelCase);
             var sysRoleList = _baseSysRoleService.GetModels(express).ToList();
             var data = sysRoleList.BuildAdapter().AdaptToType<List<SysRole>>();
             return MsgModel.Success(data, "查询成功！");
@@ -115,7 +114,6 @@ namespace ApiServer.BLL.BLL
         /// <returns></returns>
         public MsgModel GetRolesAndChecked(long userId)
         {
-            //TypeAdapterConfig<Sys_Role, SysRole>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.ToCamelCase);
             Dictionary<string, object> dict = new Dictionary<string, object>
             {
                 // 所有角色记录
