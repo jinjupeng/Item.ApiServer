@@ -18,7 +18,10 @@ namespace ApiServer.Extensions.AutofacModule
     /// </summary>
     public class ModuleRegister : Module
     {
-
+        /// <summary>
+        /// https://cloud.tencent.com/developer/article/1511929
+        /// </summary>
+        /// <param name="builder"></param>
         protected override void Load(ContainerBuilder builder)
         {
             try

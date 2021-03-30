@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Logging;
 
-namespace ApiServer.Middleware
+namespace ApiServer.Extensions.Filters
 {
     /// <summary>
     /// 自定义全局异常过滤器：当程序发生异常时，处理系统出现的未捕获的异常

@@ -57,7 +57,6 @@ namespace ApiServer.Controllers
         [Route("update")]
         public async Task<IActionResult> Update([FromBody] SysDict sysDict)
         {
-            //TypeAdapterConfig<SysDict, Sys_Dict>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.FromCamelCase);
             var sys_Dict = sysDict.BuildAdapter().AdaptToType<Sys_Dict>();
             return Ok(await Task.FromResult(_sysDictService.Update(sys_Dict)));
 
@@ -72,7 +71,6 @@ namespace ApiServer.Controllers
         [Route("add")]
         public async Task<IActionResult> Add([FromBody] SysDict sysDict)
         {
-            //TypeAdapterConfig<SysDict, Sys_Dict>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.FromCamelCase);
             var sys_Dict = sysDict.BuildAdapter().AdaptToType<Sys_Dict>();
             return Ok(await Task.FromResult(_sysDictService.Add(sys_Dict)));
 

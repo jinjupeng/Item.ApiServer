@@ -59,7 +59,6 @@ namespace ApiServer.Controllers
         [Route("update")]
         public async Task<IActionResult> Update([FromBody] SysOrg sysOrg)
         {
-            //TypeAdapterConfig<SysOrg, Sys_Org>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.FromCamelCase);
             var sys_Org = sysOrg.BuildAdapter().AdaptToType<Sys_Org>();
             return Ok(await Task.FromResult(_sysOrgService.UpdateOrg(sys_Org)));
 
@@ -74,7 +73,6 @@ namespace ApiServer.Controllers
         [Route("add")]
         public async Task<IActionResult> Add([FromBody] SysOrg sysOrg)
         {
-            //TypeAdapterConfig<SysOrg, Sys_Org>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.FromCamelCase);
             var sys_Org = sysOrg.BuildAdapter().AdaptToType<Sys_Org>();
             return Ok(await Task.FromResult(_sysOrgService.AddOrg(sys_Org)));
 
@@ -89,7 +87,6 @@ namespace ApiServer.Controllers
         [Route("delete")]
         public async Task<IActionResult> Delete([FromBody] SysOrg sysOrg)
         {
-            //TypeAdapterConfig<SysOrg, Sys_Org>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.FromCamelCase);
             var sys_Org = sysOrg.BuildAdapter().AdaptToType<Sys_Org>();
             return Ok(await Task.FromResult(_sysOrgService.DeleteOrg(sys_Org)));
 

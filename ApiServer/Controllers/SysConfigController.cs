@@ -66,7 +66,6 @@ namespace ApiServer.Controllers
         [Route("update")]
         public async Task<IActionResult> Update([FromBody] SysConfig sysConfig)
         {
-            //TypeAdapterConfig<SysConfig, Sys_Config>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.FromCamelCase);
             var sys_Config = sysConfig.BuildAdapter().AdaptToType<Sys_Config>();
             return Ok(await Task.FromResult(_sysConfigService.UpdateConfig(sys_Config)));
 
@@ -81,7 +80,6 @@ namespace ApiServer.Controllers
         [Route("add")]
         public async Task<IActionResult> Add([FromBody] SysConfig sysConfig)
         {
-            //TypeAdapterConfig<SysConfig, Sys_Config>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.FromCamelCase);
             var sys_Config = sysConfig.BuildAdapter().AdaptToType<Sys_Config>();
             return Ok(await Task.FromResult(_sysConfigService.AddConfig(sys_Config)));
 

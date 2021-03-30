@@ -3,10 +3,12 @@ using ApiServer.BLL.IBLL;
 using ApiServer.Common;
 using ApiServer.Common.Auth;
 using ApiServer.Common.Config;
+using ApiServer.Extensions.Attributes;
 using ApiServer.Extensions.Auth;
 using ApiServer.Extensions.AutofacModule;
 using ApiServer.Extensions.Mapping;
-using ApiServer.Middleware;
+using ApiServer.Extensions.Filters;
+using ApiServer.Extensions.ServiceExensions;
 using ApiServer.Model.Entity;
 using ApiServer.Model.Enum;
 using ApiServer.Model.Model.Config;
@@ -20,6 +22,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -283,6 +286,12 @@ namespace ApiServer
             {
                 // 注册全局过滤器
                 options.Filters.Add<GlobalExceptionFilter>();
+                options.Filters.Add(typeof(ValidateModelStateAttribute));
+            }).AddValidation(services); // 添加验证器
+
+            services.Configure<ApiBehaviorOptions>(options =>
+            {
+                options.SuppressModelStateInvalidFilter = true;
             });
 
             #region IP限流

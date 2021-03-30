@@ -38,6 +38,7 @@
 - [X] 集成阿里云OSS
 - [X] 实现微信登录接口
 - [X] 请求限流
+- [X] 集成FluentValidation
 
 ## 关于作者
 

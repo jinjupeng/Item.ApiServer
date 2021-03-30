@@ -51,7 +51,6 @@ namespace ApiServer.Controllers
         [Route("add")]
         public async Task<IActionResult> Add([FromBody] SysApi sysApi)
         {
-            //TypeAdapterConfig<SysApi, Sys_Api>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.FromCamelCase);
             var sys_Api = sysApi.BuildAdapter().AdaptToType<Sys_Api>();
             return Ok(await Task.FromResult(_sysApiService.AddApi(sys_Api)));
         }
@@ -65,7 +64,6 @@ namespace ApiServer.Controllers
         [Route("update")]
         public async Task<IActionResult> Update([FromBody] SysApi sysApi)
         {
-            //TypeAdapterConfig<SysApi, Sys_Api>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.FromCamelCase);
             var sys_Api = sysApi.BuildAdapter().AdaptToType<Sys_Api>();
             return Ok(await Task.FromResult(_sysApiService.UpdateApi(sys_Api)));
         }
@@ -79,7 +77,6 @@ namespace ApiServer.Controllers
         [Route("delete")]
         public async Task<IActionResult> Delete([FromBody] SysApi sysApi)
         {
-            //TypeAdapterConfig<SysApi, Sys_Api>.NewConfig().NameMatchingStrategy(NameMatchingStrategy.FromCamelCase);
             var sys_Api = sysApi.BuildAdapter().AdaptToType<Sys_Api>();
             return Ok(await Task.FromResult(_sysApiService.DeleteApi(sys_Api)));
         }

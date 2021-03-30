@@ -30,6 +30,8 @@ namespace ApiServer.Extensions.AOP
             // 判断方法是否使用了Transaction注解，如果使用了才给它加事务
             if (method.GetCustomAttributes(true).FirstOrDefault(x => x.GetType() == typeof(TransactionAttribute)) is TransactionAttribute)
             {
+                //执行原有方法之前
+                _logger.LogInformation("执行原有方法之前");
                 if (!_unitOfWork.IsEnabledTransaction)
                 {
                     _unitOfWork.BeginTransaction();
@@ -38,7 +40,8 @@ namespace ApiServer.Extensions.AOP
                 _logger.LogInformation(new EventId(trans.GetHashCode()), "Use Transaction");
                 try
                 {
-                    invocation.Proceed(); // 就是调用我们原本的方法
+                    // 执行原有被拦截的方法
+                    invocation.Proceed();
                     if (trans != null)
                     {
                         _logger.LogInformation(new EventId(trans.GetHashCode()), "Transaction Commit");
@@ -54,10 +57,14 @@ namespace ApiServer.Extensions.AOP
                     }
                     throw new Exception(ex.InnerException.Message);
                 }
+
+                // 执行原有方法之后
+                _logger.LogInformation("执行原有方法之后");
             }
             else
             {
-                invocation.Proceed();//直接执行被拦截方法
+                // 执行原有被拦截的方法
+                invocation.Proceed();
             }
         }
     }
