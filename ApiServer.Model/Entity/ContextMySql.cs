@@ -352,6 +352,20 @@ namespace ApiServer.Model.Entity
                     .HasCharSet("utf8")
                     .HasCollation("utf8_general_ci");
 
+                entity.Property(e => e.nickname)
+                    .IsRequired()
+                    .HasColumnType("varchar(64)")
+                    .HasComment("昵称")
+                    .HasCharSet("utf8")
+                    .HasCollation("utf8_general_ci");
+
+                entity.Property(e => e.portrait)
+                    .IsRequired()
+                    .HasColumnType("varchar(255)")
+                    .HasComment("头像图片路径")
+                    .HasCharSet("utf8")
+                    .HasCollation("utf8_general_ci");
+
                 entity.Property(e => e.phone)
                     .HasColumnType("varchar(16)")
                     .HasComment("手机号")

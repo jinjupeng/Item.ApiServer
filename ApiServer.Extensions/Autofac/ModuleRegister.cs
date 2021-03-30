@@ -33,8 +33,8 @@ namespace ApiServer.Extensions.AutofacModule
                 builder.RegisterType<UnitOfWork>().As<IUnitOfWork>()
                     .AsImplementedInterfaces();
 
-                // 注意：不能在BaseService类中使用[Transaction]，因为无效
-                builder.RegisterType<TransactionInterceptor>(); 
+                // 注册拦截器，注意：不能在BaseService类中使用[Transaction]，因为无效
+                builder.RegisterType<TransactionInterceptor>().AsSelf(); 
                 interceptorServiceTypes.Add(typeof(TransactionInterceptor)); // 配置事务拦截器
 
                 // 泛型注册
@@ -45,8 +45,8 @@ namespace ApiServer.Extensions.AutofacModule
                     .Where(a => a.Name.EndsWith("Service"))
                     .AsImplementedInterfaces()
                     .InstancePerLifetimeScope()
-                    .EnableInterfaceInterceptors()//引用Autofac.Extras.DynamicProxy;动态代理
-                    .InterceptedBy(interceptorServiceTypes.ToArray()); // 允许将拦截器服务的列表分配给注册。
+                    .EnableInterfaceInterceptors()//启用接口拦截
+                    .InterceptedBy(interceptorServiceTypes.ToArray()); // 指定拦截器
 
                 // 泛型注册
                 builder.RegisterGeneric(typeof(BaseDal<>)).As(typeof(IBaseDal<>)).InstancePerDependency();

@@ -17,6 +17,17 @@ namespace ApiServer.Model.Model.ViewModel
         public string password { get; set; }
 
         /// <summary>
+        /// 昵称
+        /// </summary>
+        public string nickname { get; set; }
+
+        /// <summary>
+        /// 头像图片路径
+        /// </summary>
+        public string portrait { get; set; }
+
+
+        /// <summary>
         /// 组织id
         /// </summary>
         public long orgId { get; set; }
