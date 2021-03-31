@@ -62,12 +62,12 @@ namespace ApiServer.Controllers
             //获取请求头部信息token
             var result = httpContext.Request.Headers.TryGetValue("Authorization", out StringValues oldToken);
             //判断token是否为空
-            if (!result || string.IsNullOrEmpty(oldToken.ToString()))
+            if (!result || !oldToken.ToString().StartsWith("ey"))
             {
                 return Ok(await Task.FromResult(MsgModel.Fail(StatusCodes.Status401Unauthorized, "用户登录信息已失效，请重新登录！")));
             }
             string refreshToken = JwtHelper.RefreshToken(oldToken);
-            return Ok(await Task.FromResult(MsgModel.Success(refreshToken)));
+            return Ok(await Task.FromResult(MsgModel.Success((object)refreshToken)));
         }
     }
 }

@@ -51,7 +51,7 @@
             {
                 isok = true,
                 code = 200,
-                message = "请求响应成功!",
+                message = "请求响应成功",
                 data = obj
             };
             return msg;

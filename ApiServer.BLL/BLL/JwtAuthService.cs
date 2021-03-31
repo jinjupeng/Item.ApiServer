@@ -53,7 +53,7 @@ namespace ApiServer.BLL.BLL
                 };
 
             var data = JwtHelper.IssueJwt(dict);
-            return MsgModel.Success(data);
+            return MsgModel.Success((object)data);
         }
 
         /// <summary>
