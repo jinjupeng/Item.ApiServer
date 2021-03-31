@@ -13,9 +13,9 @@ namespace ApiServer.BLL.BLL
 {
     public class JwtAuthService : IJwtAuthService
     {
-        private readonly IBaseService<Sys_User> _baseService;
+        private readonly IBaseService<sys_user> _baseService;
 
-        public JwtAuthService(IBaseService<Sys_User> baseService)
+        public JwtAuthService(IBaseService<sys_user> baseService)
         {
             _baseService = baseService;
         }
@@ -35,12 +35,12 @@ namespace ApiServer.BLL.BLL
             // 加密登陆密码
             string encodePassword = PasswordEncoder.Encode(password);
 
-            Sys_User sys_User = _baseService.GetModels(a => a.username == username && a.password == encodePassword).SingleOrDefault();
-            if (sys_User == null)
+            sys_user sys_user = _baseService.GetModels(a => a.username == username && a.password == encodePassword).SingleOrDefault();
+            if (sys_user == null)
             {
                 return MsgModel.Fail("用户名或密码不正确！");
             }
-            else if (sys_User.enabled == false)
+            else if (sys_user.enabled == false)
             {
                 return MsgModel.Fail("账户已被禁用！");
             }
@@ -48,7 +48,7 @@ namespace ApiServer.BLL.BLL
             // 将一些个人数据写入token中
             var dict = new Dictionary<string, object>
                 {
-                    { ClaimAttributes.UserId, sys_User.id },
+                    { ClaimAttributes.UserId, sys_user.id },
                     { ClaimAttributes.UserName, username }
                 };
 
@@ -72,8 +72,8 @@ namespace ApiServer.BLL.BLL
                 var queryUser = _baseService.GetModels(a => a.phone == user.phone).SingleOrDefault();
                 if (queryUser == null)
                 {
-                    var sysUser = new Sys_User();
-                    sysUser = user.BuildAdapter().AdaptToType<Sys_User>();
+                    var sysUser = new sys_user();
+                    sysUser = user.BuildAdapter().AdaptToType<sys_user>();
                     _baseService.AddRange(sysUser);
                     var playLoad = new Dictionary<string, object>
                     {

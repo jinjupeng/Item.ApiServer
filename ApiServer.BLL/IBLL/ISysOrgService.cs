@@ -7,11 +7,11 @@ namespace ApiServer.BLL.IBLL
     {
         MsgModel GetOrgTreeById(long rootOrgId, string orgNameLike, bool? orgStatus);
 
-        MsgModel UpdateOrg(Sys_Org sys_Org);
+        MsgModel UpdateOrg(sys_org sys_org);
 
-        MsgModel AddOrg(Sys_Org sys_Org);
+        MsgModel AddOrg(sys_org sys_org);
 
-        MsgModel DeleteOrg(Sys_Org sys_Org);
+        MsgModel DeleteOrg(sys_org sys_org);
 
         MsgModel UpdateStatus(long id, bool status);
     }

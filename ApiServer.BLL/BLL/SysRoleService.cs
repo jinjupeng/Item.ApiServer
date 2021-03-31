@@ -15,14 +15,14 @@ namespace ApiServer.BLL.BLL
 {
     public class SysRoleService : ISysRoleService
     {
-        private readonly IBaseService<Sys_Role> _baseSysRoleService;
+        private readonly IBaseService<sys_role> _baseSysRoleService;
         private readonly IMySystemService _mySystemService;
-        private readonly IBaseService<Sys_User_Role> _sysUserRoleService;
-        private readonly IBaseService<Sys_User> _sysUserService;
+        private readonly IBaseService<sys_user_role> _sysUserRoleService;
+        private readonly IBaseService<sys_user> _sysUserService;
 
-        public SysRoleService(IBaseService<Sys_Role> baseSysRoleService,
-            IMySystemService mySystemService, IBaseService<Sys_User_Role> sysUserRoleService,
-            IBaseService<Sys_User> sysUserService)
+        public SysRoleService(IBaseService<sys_role> baseSysRoleService,
+            IMySystemService mySystemService, IBaseService<sys_user_role> sysUserRoleService,
+            IBaseService<sys_user> sysUserService)
         {
             _baseSysRoleService = baseSysRoleService;
             _mySystemService = mySystemService;
@@ -40,10 +40,10 @@ namespace ApiServer.BLL.BLL
             string roleCode = string.Empty;
             try
             {
-                Sys_User sys_User = _sysUserService.GetModels(a => a.username == userName).SingleOrDefault();
-                Sys_User_Role sys_User_Role = _sysUserRoleService.GetModels(a => a.user_id == sys_User.id).SingleOrDefault();
-                Sys_Role sys_Role = _baseSysRoleService.GetModels(a => a.id == sys_User_Role.role_id && a.status == false).SingleOrDefault();
-                roleCode = sys_Role.role_code;
+                sys_user sys_user = _sysUserService.GetModels(a => a.username == userName).SingleOrDefault();
+                sys_user_role sys_user_role = _sysUserRoleService.GetModels(a => a.user_id == sys_user.id).SingleOrDefault();
+                sys_role sys_role = _baseSysRoleService.GetModels(a => a.id == sys_user_role.role_id && a.status == false).SingleOrDefault();
+                roleCode = sys_role.role_code;
             }
             catch (Exception ex)
             {
@@ -61,7 +61,7 @@ namespace ApiServer.BLL.BLL
         /// <returns>角色记录列表</returns>
         public MsgModel QueryRoles(string roleLik)
         {
-            Expression<Func<Sys_Role, bool>> express = null;
+            Expression<Func<sys_role, bool>> express = null;
             if (!string.IsNullOrWhiteSpace(roleLik))
             {
                 express = a => a.role_code.Contains(roleLik) || a.role_desc.Contains(roleLik) || a.role_name.Contains(roleLik);
@@ -71,27 +71,27 @@ namespace ApiServer.BLL.BLL
             return MsgModel.Success(data, "查询成功！");
         }
 
-        public MsgModel UpdateRole(Sys_Role sys_Role)
+        public MsgModel UpdateRole(sys_role sys_role)
         {
-            if (!_baseSysRoleService.UpdateRange(sys_Role))
+            if (!_baseSysRoleService.UpdateRange(sys_role))
             {
                 return MsgModel.Fail("角色更新失败！");
             }
             return MsgModel.Success("角色更新成功！");
         }
 
-        public MsgModel AddRole(Sys_Role sys_Role)
+        public MsgModel AddRole(sys_role sys_role)
         {
             CustomException customException = new CustomException();
-            sys_Role.id = new Snowflake().GetId();
-            sys_Role.status = false;// 是否禁用:false
-            if (_baseSysRoleService.GetModels(a => a.role_code == sys_Role.role_code).Any())
+            sys_role.id = new Snowflake().GetId();
+            sys_role.status = false;// 是否禁用:false
+            if (_baseSysRoleService.GetModels(a => a.role_code == sys_role.role_code).Any())
             {
                 customException.Code = (int)HttpStatusCode.Status500InternalServerError;
 
                 return MsgModel.Fail(StatusCodes.Status500InternalServerError, "角色编码已存在，不能重复！");
             }
-            if (!_baseSysRoleService.AddRange(sys_Role))
+            if (!_baseSysRoleService.AddRange(sys_role))
             {
                 return MsgModel.Fail("新增角色失败！");
             }
@@ -143,9 +143,9 @@ namespace ApiServer.BLL.BLL
         /// <param name="status"></param>
         public MsgModel UpdateStatus(long id, bool status)
         {
-            Sys_Role sys_Role = _baseSysRoleService.GetModels(a => a.id == id).SingleOrDefault();
-            sys_Role.status = status;
-            bool result = _baseSysRoleService.UpdateRange(sys_Role);
+            sys_role sys_role = _baseSysRoleService.GetModels(a => a.id == id).SingleOrDefault();
+            sys_role.status = status;
+            bool result = _baseSysRoleService.UpdateRange(sys_role);
 
             return result ? MsgModel.Success("角色禁用状态更新成功！") : MsgModel.Fail("角色禁用状态更新失败！");
         }

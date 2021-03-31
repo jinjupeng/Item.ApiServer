@@ -23,7 +23,7 @@
             异常
             </summary>
         </member>
-        <member name="M:ApiServer.Controllers.ExceptionController.#ctor(Microsoft.Extensions.Logging.ILogger{ApiServer.Controllers.ExceptionController},ApiServer.BLL.IBLL.IBaseService{ApiServer.Model.Entity.Sys_User})">
+        <member name="M:ApiServer.Controllers.ExceptionController.#ctor(Microsoft.Extensions.Logging.ILogger{ApiServer.Controllers.ExceptionController},ApiServer.BLL.IBLL.IBaseService{ApiServer.Model.Entity.sys_user})">
             <summary>
             构造函数
             </summary>
@@ -122,7 +122,7 @@
             <param name="roleId"></param>
             <returns></returns>
         </member>
-        <member name="M:ApiServer.Controllers.SysApiController.SaveKeys(ApiServer.Model.Model.RoleCheckedIds)">
+        <member name="M:ApiServer.Controllers.SysApiController.SaveKeys(ApiServer.Model.Model.Nodes.RoleCheckedIds)">
             <summary>
             角色管理：保存API权限勾选结果
             </summary>
@@ -280,7 +280,7 @@
             <param name="roleId"></param>
             <returns></returns>
         </member>
-        <member name="M:ApiServer.Controllers.SysMenuController.SaveKeys(ApiServer.Model.Model.RoleCheckedIds)">
+        <member name="M:ApiServer.Controllers.SysMenuController.SaveKeys(ApiServer.Model.Model.Nodes.RoleCheckedIds)">
             <summary>
             角色管理：保存菜单勾选结果
             </summary>
@@ -307,7 +307,7 @@
             部门管理
             </summary>
         </member>
-        <member name="M:ApiServer.Controllers.SysOrgController.#ctor(ApiServer.BLL.IBLL.ISysOrgService,ApiServer.BLL.IBLL.IBaseService{ApiServer.Model.Entity.Sys_User})">
+        <member name="M:ApiServer.Controllers.SysOrgController.#ctor(ApiServer.BLL.IBLL.ISysOrgService,ApiServer.BLL.IBLL.IBaseService{ApiServer.Model.Entity.sys_user})">
             <summary>
             构造函数
             </summary>
@@ -396,7 +396,7 @@
             <param name="userId"></param>
             <returns></returns>
         </member>
-        <member name="M:ApiServer.Controllers.SysRoleController.Savekeys(ApiServer.Model.Model.UserRoleCheckedIds)">
+        <member name="M:ApiServer.Controllers.SysRoleController.Savekeys(ApiServer.Model.Model.Nodes.UserRoleCheckedIds)">
             <summary>
             用户管理：保存用户角色
             </summary>

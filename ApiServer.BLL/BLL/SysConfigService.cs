@@ -13,28 +13,28 @@ namespace ApiServer.BLL.BLL
 {
     public class SysConfigService : ISysConfigService
     {
-        private readonly IBaseService<Sys_Config> _baseSysConfigService;
+        private readonly IBaseService<sys_config> _baseSysConfigService;
 
-        public SysConfigService(IBaseService<Sys_Config> baseSysConfigService)
+        public SysConfigService(IBaseService<sys_config> baseSysConfigService)
         {
             _baseSysConfigService = baseSysConfigService;
         }
 
         public MsgModel GetSysConfigList()
         {
-            List<Sys_Config> list = _baseSysConfigService.GetModels(null).ToList();
+            List<sys_config> list = _baseSysConfigService.GetModels(null).ToList();
             var data = list.BuildAdapter().AdaptToType<List<SysConfig>>();
             return MsgModel.Success(data, "查询成功！");
         }
 
         public MsgModel QueryConfigs(string configLik)
         {
-            Expression<Func<Sys_Config, bool>> express = null;
+            Expression<Func<sys_config, bool>> express = null;
             if (!string.IsNullOrEmpty(configLik))
             {
                 express = a => a.param_name.Contains(configLik) || a.param_key.Contains(configLik);
             }
-            List<Sys_Config> list = _baseSysConfigService.GetModels(express).ToList();
+            List<sys_config> list = _baseSysConfigService.GetModels(express).ToList();
             var data = list.BuildAdapter().AdaptToType<List<SysConfig>>();
             return MsgModel.Success(data, "查询成功！");
         }
@@ -44,13 +44,13 @@ namespace ApiServer.BLL.BLL
             return _baseSysConfigService.GetModels(a => a.param_key == paramKey).ToList().SingleOrDefault()?.param_value;
         }
 
-        public MsgModel UpdateConfig(Sys_Config sys_Config)
+        public MsgModel UpdateConfig(sys_config sys_Config)
         {
             var result = _baseSysConfigService.UpdateRange(sys_Config);
             return result ? MsgModel.Success("更新配置成功！") : MsgModel.Fail("更新配置失败！");
         }
 
-        public MsgModel AddConfig(Sys_Config sys_Config)
+        public MsgModel AddConfig(sys_config sys_Config)
         {
             sys_Config.id = new Snowflake().GetId();
             var result = _baseSysConfigService.AddRange(sys_Config);

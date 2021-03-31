@@ -1,5 +1,6 @@
 ﻿using ApiServer.Model.Entity;
 using ApiServer.Model.Model;
+using ApiServer.Model.Model.AuthModel;
 using ApiServer.Model.Model.MsgModel;
 using System.Collections.Generic;
 
@@ -10,11 +11,11 @@ namespace ApiServer.BLL.IBLL
         List<PermissionItem> GetAllApiOfRole();
         MsgModel GetApiTreeById(string apiNameLike, bool apiStatus);
 
-        MsgModel UpdateApi(Sys_Api sys_Api);
+        MsgModel UpdateApi(sys_api sys_Api);
 
-        MsgModel AddApi(Sys_Api sys_Api);
+        MsgModel AddApi(sys_api sys_Api);
 
-        MsgModel DeleteApi(Sys_Api sys_Api);
+        MsgModel DeleteApi(sys_api sys_Api);
 
         List<string> GetCheckedKeys(long roleId);
 

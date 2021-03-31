@@ -1,6 +1,7 @@
 ﻿using ApiServer.BLL.IBLL;
 using ApiServer.Model.Entity;
 using ApiServer.Model.Model;
+using ApiServer.Model.Model.Nodes;
 using ApiServer.Model.Model.ViewModel;
 using Mapster;
 using Microsoft.AspNetCore.Mvc;
@@ -46,8 +47,8 @@ namespace ApiServer.Controllers
         [Route("update")]
         public async Task<IActionResult> Update([FromBody] SysRole sysRole)
         {
-            var sys_Role = sysRole.BuildAdapter().AdaptToType<Sys_Role>();
-            return Ok(await Task.FromResult(_sysRoleService.UpdateRole(sys_Role)));
+            var sys_role = sysRole.BuildAdapter().AdaptToType<sys_role>();
+            return Ok(await Task.FromResult(_sysRoleService.UpdateRole(sys_role)));
 
         }
 
@@ -60,8 +61,8 @@ namespace ApiServer.Controllers
         [Route("add")]
         public async Task<IActionResult> Add([FromBody] SysRole sysRole)
         {
-            var sys_Role = sysRole.BuildAdapter().AdaptToType<Sys_Role>();
-            return Ok(await Task.FromResult(_sysRoleService.AddRole(sys_Role)));
+            var sys_role = sysRole.BuildAdapter().AdaptToType<sys_role>();
+            return Ok(await Task.FromResult(_sysRoleService.AddRole(sys_role)));
 
         }
 

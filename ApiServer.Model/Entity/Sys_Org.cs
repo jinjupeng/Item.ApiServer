@@ -1,6 +1,9 @@
-﻿namespace ApiServer.Model.Entity
+﻿using System;
+using System.Collections.Generic;
+
+namespace ApiServer.Model.Entity
 {
-    public partial class Sys_Org
+    public partial class sys_org
     {
         public long id { get; set; }
         public long org_pid { get; set; }

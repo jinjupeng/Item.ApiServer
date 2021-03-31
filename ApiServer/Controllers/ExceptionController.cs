@@ -12,13 +12,13 @@ namespace ApiServer.Controllers
     public class ExceptionController : BaseController
     {
         private readonly ILogger _logger;
-        private readonly IBaseService<Sys_User> _baseService;
+        private readonly IBaseService<sys_user> _baseService;
 
         /// <summary>
         /// 构造函数
         /// </summary>
         /// <param name="logger"></param>
-        public ExceptionController(ILogger<ExceptionController> logger, IBaseService<Sys_User> baseService)
+        public ExceptionController(ILogger<ExceptionController> logger, IBaseService<sys_user> baseService)
         {
             _logger = logger;
             _baseService = baseService;
@@ -28,7 +28,7 @@ namespace ApiServer.Controllers
         [Route("api/exception")]
         public IEnumerable<string> Get()
         {
-            var sysUser = new Sys_User
+            var sysUser = new sys_user
             {
                 id = 1297873308628307970
             };

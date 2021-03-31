@@ -23,9 +23,9 @@ namespace ApiServer.DAL.DAL
 
         public IQueryable<string> GetCheckedRoleIds(long userId)
         {
-            // FormattableString sql = $"SELECT distinct role_id FROM Sys_User_Role ra WHERE ra.user_id = {userId};";
-            // var userRoles = DbContext.Set<Sys_User_Role>().FromSqlInterpolated(sql).AsNoTracking().AsQueryable();
-            var userRoles = _context.Set<Sys_User_Role>().Where(a => a.user_id == userId);
+            // FormattableString sql = $"SELECT distinct role_id FROM sys_user_role ra WHERE ra.user_id = {userId};";
+            // var userRoles = DbContext.Set<sys_user_role>().FromSqlInterpolated(sql).AsNoTracking().AsQueryable();
+            var userRoles = _context.Set<sys_user_role>().Where(a => a.user_id == userId);
             var list = new List<string>();
             foreach (var userRole in userRoles)
             {
@@ -39,7 +39,7 @@ namespace ApiServer.DAL.DAL
         {
             foreach (var checkedId in checkedIds)
             {
-                string sql = $"INSERT INTO Sys_Role_Api (role_id, api_id) VALUES({roleId}, {checkedId})";
+                string sql = $"INSERT INTO sys_role_api (role_id, api_id) VALUES({roleId}, {checkedId})";
                 _context.Database.ExecuteSqlRaw(sql);
             }
 
@@ -50,7 +50,7 @@ namespace ApiServer.DAL.DAL
         {
             foreach (var checkedId in checkedIds)
             {
-                string sql = $"INSERT INTO Sys_Role_Menu (role_id, menu_id) VALUES({roleId}, {checkedId})";
+                string sql = $"INSERT INTO sys_role_menu (role_id, menu_id) VALUES({roleId}, {checkedId})";
                 _context.Database.ExecuteSqlRaw(sql);
             }
             return _context.SaveChanges();
@@ -61,7 +61,7 @@ namespace ApiServer.DAL.DAL
             string sql = string.Empty;
             foreach (var checkedId in checkedIds)
             {
-                sql += $"INSERT INTO Sys_User_Role (role_id, user_id) VALUES({checkedId}, {userId});";
+                sql += $"INSERT INTO sys_user_role (role_id, user_id) VALUES({checkedId}, {userId});";
 
             }
             return _context.Database.ExecuteSqlRaw(sql);
@@ -69,9 +69,9 @@ namespace ApiServer.DAL.DAL
 
         public IQueryable<string> SelectApiCheckedKeys(long roleId)
         {
-            // FormattableString sql = $"SELECT distinct api_id FROM Sys_Role_api ra WHERE role_id = {roleId}";
-            // var roleApis = DbContext.Set<Sys_Role_Api>().FromSqlInterpolated(sql).AsNoTracking().AsQueryable();
-            var roleApis = _context.Set<Sys_Role_Api>().Where(a => a.role_id == roleId);
+            // FormattableString sql = $"SELECT distinct api_id FROM sys_role_api ra WHERE role_id = {roleId}";
+            // var roleApis = DbContext.Set<sys_role_api>().FromSqlInterpolated(sql).AsNoTracking().AsQueryable();
+            var roleApis = _context.Set<sys_role_api>().Where(a => a.role_id == roleId);
             var list = new List<string>();
             foreach (var sysRoleApi in roleApis)
             {
@@ -82,9 +82,9 @@ namespace ApiServer.DAL.DAL
 
         public IQueryable<string> SelectApiExpandedKeys()
         {
-            // string sql = "SELECT distinct id FROM Sys_Api a WHERE a.level = 2";
-            // var sysApis = DbContext.Set<Sys_Api>().FromSqlRaw(sql).AsNoTracking().AsQueryable();
-            var sysApis = _context.Set<Sys_Api>().Where(a => a.level == 2);
+            // string sql = "SELECT distinct id FROM sys_api a WHERE a.level = 2";
+            // var sysApis = DbContext.Set<sys_api>().FromSqlRaw(sql).AsNoTracking().AsQueryable();
+            var sysApis = _context.Set<sys_api>().Where(a => a.level == 2);
             var list = new List<string>();
             foreach (var sysApi in sysApis)
             {
@@ -93,9 +93,9 @@ namespace ApiServer.DAL.DAL
             return list.AsQueryable();
         }
 
-        public IQueryable<Sys_Api> SelectApiTree(long rootApiId, string apiNameLike, bool apiStatus)
+        public IQueryable<sys_api> SelectApiTree(long rootApiId, string apiNameLike, bool apiStatus)
         {
-            string sql = $"SELECT id,api_pid,api_pids,is_leaf,api_name,url,sort,level,status FROM Sys_Api o " +
+            string sql = $"SELECT id,api_pid,api_pids,is_leaf,api_name,url,sort,level,status FROM sys_api o " +
             $"WHERE (api_pids like CONCAT('%[{rootApiId}]%') OR id = {rootApiId}) ";
             if (apiNameLike != null && apiNameLike != "")
             {
@@ -105,31 +105,31 @@ namespace ApiServer.DAL.DAL
             sql += $"AND status = {(apiStatus ? 1 : 0)} ";
             sql += $"ORDER BY level,sort";
 
-            return _context.Set<Sys_Api>().FromSqlRaw(sql).AsNoTracking().AsQueryable();
+            return _context.Set<sys_api>().FromSqlRaw(sql).AsNoTracking().AsQueryable();
 
         }
 
-        public IQueryable<Sys_Menu> SelectMenuByUserName(string userName)
+        public IQueryable<sys_menu> SelectMenuByUserName(string userName)
         {
             FormattableString sql = $@"
             SELECT distinct m.id,menu_pid,menu_pids,is_leaf,menu_name,url,icon,sort,level,status
-            FROM Sys_Menu m
-            LEFT JOIN Sys_Role_Menu rm ON m.id = rm.menu_id
-            LEFT JOIN Sys_User_Role ur ON ur.role_id = rm.role_id
-            LEFT JOIN Sys_User u ON u.id = ur.user_id
+            FROM sys_menu m
+            LEFT JOIN sys_role_menu rm ON m.id = rm.menu_id
+            LEFT JOIN sys_user_role ur ON ur.role_id = rm.role_id
+            LEFT JOIN sys_user u ON u.id = ur.user_id
             WHERE u.username = {userName}
             AND m.status = 0
             ORDER BY level,sort
             ";
-            return _context.Set<Sys_Menu>().FromSqlInterpolated(sql).AsNoTracking().AsQueryable();
+            return _context.Set<sys_menu>().FromSqlInterpolated(sql).AsNoTracking().AsQueryable();
 
         }
 
         public IQueryable<string> SelectMenuCheckedKeys(long roleId)
         {
-            // FormattableString sql = $"SELECT distinct menu_id FROM Sys_Role_Menu ra WHERE ra.role_id = {roleId}";
-            // var roleMenus = DbContext.Set<Sys_Role_Menu>().FromSqlInterpolated(sql).AsNoTracking().AsQueryable();
-            var roleMenus = _context.Set<Sys_Role_Menu>().Where(a => a.role_id == roleId);
+            // FormattableString sql = $"SELECT distinct menu_id FROM sys_role_menu ra WHERE ra.role_id = {roleId}";
+            // var roleMenus = DbContext.Set<sys_role_menu>().FromSqlInterpolated(sql).AsNoTracking().AsQueryable();
+            var roleMenus = _context.Set<sys_role_menu>().Where(a => a.role_id == roleId);
             var list = new List<string>();
             foreach (var roleMenu in roleMenus)
             {
@@ -141,9 +141,9 @@ namespace ApiServer.DAL.DAL
 
         public IQueryable<string> SelectMenuExpandedKeys()
         {
-            // FormattableString sql = $"SELECT distinct id FROM Sys_Menu a WHERE a.level = 2";
-            // var sysMenus = DbContext.Set<Sys_Menu>().FromSqlInterpolated(sql).AsNoTracking().AsQueryable();
-            var sysMenus = _context.Set<Sys_Menu>().Where(a => a.level == 2);
+            // FormattableString sql = $"SELECT distinct id FROM sys_menu a WHERE a.level = 2";
+            // var sysMenus = DbContext.Set<sys_menu>().FromSqlInterpolated(sql).AsNoTracking().AsQueryable();
+            var sysMenus = _context.Set<sys_menu>().Where(a => a.level == 2);
             var list = new List<string>();
             foreach (var sysMenu in sysMenus)
             {
@@ -152,9 +152,9 @@ namespace ApiServer.DAL.DAL
             return list.AsQueryable();
         }
 
-        public IQueryable<Sys_Menu> SelectMenuTree(long rootMenuId, string menuNameLike, bool? menuStatus)
+        public IQueryable<sys_menu> SelectMenuTree(long rootMenuId, string menuNameLike, bool? menuStatus)
         {
-            string sql = $"SELECT id,menu_pid,menu_pids,is_leaf,menu_name,url,icon,sort,level,status FROM Sys_Menu o " +
+            string sql = $"SELECT id,menu_pid,menu_pids,is_leaf,menu_name,url,icon,sort,level,status FROM sys_menu o " +
             $"WHERE (menu_pids like CONCAT('%[{rootMenuId}]%') OR id = {rootMenuId}) ";
             if (menuNameLike != null && menuNameLike != "")
             {
@@ -166,13 +166,13 @@ namespace ApiServer.DAL.DAL
             }
             sql += $"ORDER BY level,sort";
 
-            return _context.Set<Sys_Menu>().FromSqlRaw(sql).AsNoTracking().AsQueryable();
+            return _context.Set<sys_menu>().FromSqlRaw(sql).AsNoTracking().AsQueryable();
 
         }
 
-        public IQueryable<Sys_Org> SelectOrgTree(long rootOrgId, string orgNameLike, bool? orgStatus)
+        public IQueryable<sys_org> SelectOrgTree(long rootOrgId, string orgNameLike, bool? orgStatus)
         {
-            string sql = $"SELECT id,org_pid,org_pids,is_leaf,org_name,address,phone,email,sort,level,status FROM Sys_Org o " +
+            string sql = $"SELECT id,org_pid,org_pids,is_leaf,org_name,address,phone,email,sort,level,status FROM sys_org o " +
             $"WHERE (org_pids like CONCAT('%[{rootOrgId}]%') OR id = {rootOrgId}) ";
             if (orgNameLike != null && orgNameLike != "")
             {
@@ -185,15 +185,15 @@ namespace ApiServer.DAL.DAL
 
             sql += $"ORDER BY level,sort";
 
-            return _context.Set<Sys_Org>().FromSqlRaw(sql).AsNoTracking().AsQueryable();
+            return _context.Set<sys_org>().FromSqlRaw(sql).AsNoTracking().AsQueryable();
 
         }
 
         //public IQueryable<string> GetCheckedRoleIds(long userId)
         //{
-        //    // FormattableString sql = $"SELECT distinct role_id FROM Sys_User_Role ra WHERE ra.user_id = {userId};";
+        //    // FormattableString sql = $"SELECT distinct role_id FROM sys_user_role ra WHERE ra.user_id = {userId};";
         //    // return DbContext.Set<string>().FromSqlInterpolated(sql).AsNoTracking().AsQueryable();
-        //    var sysMenus = DbContext.Set<Sys_User_Role>().Where(a => a.user_id == userId);
+        //    var sysMenus = DbContext.Set<sys_user_role>().Where(a => a.user_id == userId);
         //    var list = new List<string>();
         //    foreach (var sysMenu in sysMenus)
         //    {
@@ -212,8 +212,8 @@ namespace ApiServer.DAL.DAL
         {
             // https://www.cnblogs.com/wanghaibin/p/6494309.html
 
-            var userList = _context.Set<Sys_User>().AsNoTracking();
-            var orgList = _context.Set<Sys_Org>().AsNoTracking();
+            var userList = _context.Set<sys_user>().AsNoTracking();
+            var orgList = _context.Set<sys_org>().AsNoTracking();
             var userOrgList = (from u in userList
                                join o in orgList on u.org_id equals o.id
                                where string.IsNullOrEmpty(userName) || u.username.Contains(userName)
@@ -236,8 +236,8 @@ namespace ApiServer.DAL.DAL
 
             return userOrgList;
             //string sql = @"SELECT u.id,u.username,u.org_id,o.org_name,u.enabled,u.phone,u.email,u.create_time
-            //            FROM Sys_User u
-            //            LEFT JOIN Sys_Org o ON u.org_id = o.id";
+            //            FROM sys_user u
+            //            LEFT JOIN sys_org o ON u.org_id = o.id";
 
             //var result = DbContext.Set<SysUserOrg>().FromSqlRaw(sql).AsNoTracking().AsQueryable();
             //if (!string.IsNullOrWhiteSpace(userName))

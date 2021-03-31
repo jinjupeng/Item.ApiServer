@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace ApiServer.Model.Model
+namespace ApiServer.Model.Model.DataTree
 {
     public interface IDataTree<T, ID>
     {

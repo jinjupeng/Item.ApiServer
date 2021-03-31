@@ -1,6 +1,9 @@
-﻿namespace ApiServer.Model.Entity
+﻿using System;
+using System.Collections.Generic;
+
+namespace ApiServer.Model.Entity
 {
-    public partial class Sys_Role
+    public partial class sys_role
     {
         public long id { get; set; }
         public string role_name { get; set; }

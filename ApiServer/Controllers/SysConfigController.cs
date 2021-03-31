@@ -66,7 +66,7 @@ namespace ApiServer.Controllers
         [Route("update")]
         public async Task<IActionResult> Update([FromBody] SysConfig sysConfig)
         {
-            var sys_Config = sysConfig.BuildAdapter().AdaptToType<Sys_Config>();
+            var sys_Config = sysConfig.BuildAdapter().AdaptToType<sys_config>();
             return Ok(await Task.FromResult(_sysConfigService.UpdateConfig(sys_Config)));
 
         }
@@ -80,7 +80,7 @@ namespace ApiServer.Controllers
         [Route("add")]
         public async Task<IActionResult> Add([FromBody] SysConfig sysConfig)
         {
-            var sys_Config = sysConfig.BuildAdapter().AdaptToType<Sys_Config>();
+            var sys_Config = sysConfig.BuildAdapter().AdaptToType<sys_config>();
             return Ok(await Task.FromResult(_sysConfigService.AddConfig(sys_Config)));
 
         }

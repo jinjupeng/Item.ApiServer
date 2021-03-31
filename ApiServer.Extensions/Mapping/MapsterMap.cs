@@ -1,5 +1,6 @@
 ﻿using ApiServer.Model.Entity;
 using ApiServer.Model.Model;
+using ApiServer.Model.Model.Nodes;
 using ApiServer.Model.Model.ViewModel;
 using Mapster;
 using MapsterMapper;
@@ -23,23 +24,23 @@ namespace ApiServer.Extensions.Mapping
 
             #region 返回前端实体类映射
 
-            config.NewConfig<Sys_Config, SysConfig>().NameMatchingStrategy(NameMatchingStrategy.ToCamelCase);
-            config.NewConfig<Sys_Dict, SysDict>().NameMatchingStrategy(NameMatchingStrategy.ToCamelCase);
-            config.NewConfig<Sys_Menu, SysMenuNode>().NameMatchingStrategy(NameMatchingStrategy.ToCamelCase);
-            config.NewConfig<Sys_Api, SysApiNode>().NameMatchingStrategy(NameMatchingStrategy.ToCamelCase);
-            config.NewConfig<Sys_Role, SysRole>().NameMatchingStrategy(NameMatchingStrategy.ToCamelCase);
-            config.NewConfig<Sys_Org, SysOrgNode>().NameMatchingStrategy(NameMatchingStrategy.ToCamelCase);
+            config.NewConfig<sys_config, SysConfig>().NameMatchingStrategy(NameMatchingStrategy.ToCamelCase);
+            config.NewConfig<sys_dict, SysDict>().NameMatchingStrategy(NameMatchingStrategy.ToCamelCase);
+            config.NewConfig<sys_menu, SysMenuNode>().NameMatchingStrategy(NameMatchingStrategy.ToCamelCase);
+            config.NewConfig<sys_api, SysApiNode>().NameMatchingStrategy(NameMatchingStrategy.ToCamelCase);
+            config.NewConfig<sys_role, SysRole>().NameMatchingStrategy(NameMatchingStrategy.ToCamelCase);
+            config.NewConfig<sys_org, SysOrgNode>().NameMatchingStrategy(NameMatchingStrategy.ToCamelCase);
             #endregion
 
             #region 接收前端实体类映射
 
-            config.NewConfig<SysUser, Sys_User>().NameMatchingStrategy(NameMatchingStrategy.FromCamelCase);
-            config.NewConfig<SysRole, Sys_Role>().NameMatchingStrategy(NameMatchingStrategy.FromCamelCase);
-            config.NewConfig<SysOrg, Sys_Org>().NameMatchingStrategy(NameMatchingStrategy.FromCamelCase);
-            config.NewConfig<SysMenu, Sys_Menu>().NameMatchingStrategy(NameMatchingStrategy.FromCamelCase);
-            config.NewConfig<SysDict, Sys_Dict>().NameMatchingStrategy(NameMatchingStrategy.FromCamelCase);
-            config.NewConfig<SysConfig, Sys_Config>().NameMatchingStrategy(NameMatchingStrategy.FromCamelCase);
-            config.NewConfig<SysApi, Sys_Api>().NameMatchingStrategy(NameMatchingStrategy.FromCamelCase);
+            config.NewConfig<SysUser, sys_user>().NameMatchingStrategy(NameMatchingStrategy.FromCamelCase);
+            config.NewConfig<SysRole, sys_role>().NameMatchingStrategy(NameMatchingStrategy.FromCamelCase);
+            config.NewConfig<SysOrg, sys_org>().NameMatchingStrategy(NameMatchingStrategy.FromCamelCase);
+            config.NewConfig<SysMenu, sys_menu>().NameMatchingStrategy(NameMatchingStrategy.FromCamelCase);
+            config.NewConfig<SysDict, sys_dict>().NameMatchingStrategy(NameMatchingStrategy.FromCamelCase);
+            config.NewConfig<SysConfig, sys_config>().NameMatchingStrategy(NameMatchingStrategy.FromCamelCase);
+            config.NewConfig<SysApi, sys_api>().NameMatchingStrategy(NameMatchingStrategy.FromCamelCase);
 
             #endregion
 

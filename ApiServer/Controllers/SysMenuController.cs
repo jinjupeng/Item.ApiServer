@@ -2,6 +2,7 @@
 using ApiServer.Model.Entity;
 using ApiServer.Model.Model;
 using ApiServer.Model.Model.MsgModel;
+using ApiServer.Model.Model.Nodes;
 using ApiServer.Model.Model.ViewModel;
 using Mapster;
 using Microsoft.AspNetCore.Mvc;
@@ -55,8 +56,8 @@ namespace ApiServer.Controllers
         [Route("update")]
         public async Task<IActionResult> Update([FromBody] SysMenu sysMenu)
         {
-            var sys_Menu = sysMenu.BuildAdapter().AdaptToType<Sys_Menu>();
-            return Ok(await Task.FromResult(_sysMenuService.UpdateMenu(sys_Menu)));
+            var sys_menu = sysMenu.BuildAdapter().AdaptToType<sys_menu>();
+            return Ok(await Task.FromResult(_sysMenuService.UpdateMenu(sys_menu)));
 
         }
 
@@ -69,8 +70,8 @@ namespace ApiServer.Controllers
         [Route("add")]
         public async Task<IActionResult> Add([FromBody] SysMenu sysMenu)
         {
-            var sys_Menu = sysMenu.BuildAdapter().AdaptToType<Sys_Menu>();
-            return Ok(await Task.FromResult(_sysMenuService.AddMenu(sys_Menu)));
+            var sys_menu = sysMenu.BuildAdapter().AdaptToType<sys_menu>();
+            return Ok(await Task.FromResult(_sysMenuService.AddMenu(sys_menu)));
 
         }
 
@@ -83,8 +84,8 @@ namespace ApiServer.Controllers
         [Route("delete")]
         public async Task<IActionResult> Delete([FromBody] SysMenu sysMenu)
         {
-            var sys_Menu = sysMenu.BuildAdapter().AdaptToType<Sys_Menu>();
-            return Ok(await Task.FromResult(_sysMenuService.DeleteMenu(sys_Menu)));
+            var sys_menu = sysMenu.BuildAdapter().AdaptToType<sys_menu>();
+            return Ok(await Task.FromResult(_sysMenuService.DeleteMenu(sys_menu)));
 
         }
 

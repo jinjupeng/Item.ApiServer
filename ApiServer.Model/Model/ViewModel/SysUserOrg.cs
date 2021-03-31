@@ -2,7 +2,7 @@
 
 namespace ApiServer.Model.Model.ViewModel
 {
-    public class SysUserOrg : Sys_User
+    public class SysUserOrg : sys_user
     {
         public string OrgName { get; set; }
 

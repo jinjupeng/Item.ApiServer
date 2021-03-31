@@ -2,6 +2,7 @@
 using ApiServer.Model.Entity;
 using ApiServer.Model.Model;
 using ApiServer.Model.Model.MsgModel;
+using ApiServer.Model.Model.Nodes;
 using ApiServer.Model.Model.ViewModel;
 using Mapster;
 using Microsoft.AspNetCore.Mvc;
@@ -51,7 +52,7 @@ namespace ApiServer.Controllers
         [Route("add")]
         public async Task<IActionResult> Add([FromBody] SysApi sysApi)
         {
-            var sys_Api = sysApi.BuildAdapter().AdaptToType<Sys_Api>();
+            var sys_Api = sysApi.BuildAdapter().AdaptToType<sys_api>();
             return Ok(await Task.FromResult(_sysApiService.AddApi(sys_Api)));
         }
 
@@ -64,7 +65,7 @@ namespace ApiServer.Controllers
         [Route("update")]
         public async Task<IActionResult> Update([FromBody] SysApi sysApi)
         {
-            var sys_Api = sysApi.BuildAdapter().AdaptToType<Sys_Api>();
+            var sys_Api = sysApi.BuildAdapter().AdaptToType<sys_api>();
             return Ok(await Task.FromResult(_sysApiService.UpdateApi(sys_Api)));
         }
 
@@ -77,7 +78,7 @@ namespace ApiServer.Controllers
         [Route("delete")]
         public async Task<IActionResult> Delete([FromBody] SysApi sysApi)
         {
-            var sys_Api = sysApi.BuildAdapter().AdaptToType<Sys_Api>();
+            var sys_Api = sysApi.BuildAdapter().AdaptToType<sys_api>();
             return Ok(await Task.FromResult(_sysApiService.DeleteApi(sys_Api)));
         }
 

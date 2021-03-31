@@ -4,7 +4,10 @@ using ApiServer.Common.Attributes;
 using ApiServer.Model;
 using ApiServer.Model.Entity;
 using ApiServer.Model.Model;
+using ApiServer.Model.Model.AuthModel;
+using ApiServer.Model.Model.DataTree;
 using ApiServer.Model.Model.MsgModel;
+using ApiServer.Model.Model.Nodes;
 using Mapster;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,13 +16,13 @@ namespace ApiServer.BLL.BLL
 {
     public class SysApiService : ISysApiService
     {
-        private readonly IBaseService<Sys_Api> _baseService;
-        private readonly IBaseService<Sys_Role_Api> _baseSysRoleApiService;
-        private readonly IBaseService<Sys_Role> _baseSysRoleService;
+        private readonly IBaseService<sys_api> _baseService;
+        private readonly IBaseService<sys_role_api> _baseSysRoleApiService;
+        private readonly IBaseService<sys_role> _baseSysRoleService;
         private readonly IMySystemService _mySystemService;
 
-        public SysApiService(IBaseService<Sys_Api> baseService, IMySystemService mySystemService,
-            IBaseService<Sys_Role_Api> baseSysRoleApiService, IBaseService<Sys_Role> baseSysRoleService)
+        public SysApiService(IBaseService<sys_api> baseService, IMySystemService mySystemService,
+            IBaseService<sys_role_api> baseSysRoleApiService, IBaseService<sys_role> baseSysRoleService)
         {
             _baseService = baseService;
             _mySystemService = mySystemService;
@@ -34,16 +37,16 @@ namespace ApiServer.BLL.BLL
         public List<PermissionItem> GetAllApiOfRole()
         {
             List<PermissionItem> permissionItems = new List<PermissionItem>();
-            List<Sys_Role> sysRoles = _baseSysRoleService.GetModels(a => a.status == false).ToList(); // 获取所有未禁用的角色
-            List<Sys_Api> sysApis = _baseService.GetModels(a => a.status == false).ToList(); // 获取所有未禁用的接口
-            List<Sys_Role_Api> sysRoleApis = _baseSysRoleApiService.GetModels(null).ToList();
+            List<sys_role> sysRoles = _baseSysRoleService.GetModels(a => a.status == false).ToList(); // 获取所有未禁用的角色
+            List<sys_api> sysApis = _baseService.GetModels(a => a.status == false).ToList(); // 获取所有未禁用的接口
+            List<sys_role_api> sysRoleApis = _baseSysRoleApiService.GetModels(null).ToList();
             foreach (var sysRole in sysRoles)
             {
                 foreach (var sysRoleApi in sysRoleApis)
                 {
                     if (sysRole.id == sysRoleApi.role_id)
                     {
-                        Sys_Api sysApi = sysApis.SingleOrDefault(a => a.id == sysRoleApi.api_id);
+                        sys_api sysApi = sysApis.SingleOrDefault(a => a.id == sysRoleApi.api_id);
                         if (!string.IsNullOrEmpty(sysApi.url))
                         {
                             PermissionItem permissionItem = new PermissionItem
@@ -68,13 +71,13 @@ namespace ApiServer.BLL.BLL
                 message = "查询成功！"
             };
             //查找level=1的API节点，即：根节点
-            Sys_Api rootSysApi = _baseService.GetModels(s => s.level == 1).Single();
+            sys_api rootSysApi = _baseService.GetModels(s => s.level == 1).Single();
             if (rootSysApi != null)
             {
                 long rootApiId = rootSysApi.id;
-                List<Sys_Api> sysApis = _mySystemService.SelectApiTree(rootApiId, apiNameLike, apiStatus);
+                List<sys_api> sysApis = _mySystemService.SelectApiTree(rootApiId, apiNameLike, apiStatus);
                 List<SysApiNode> sysApiNodes = new List<SysApiNode>();
-                foreach (Sys_Api sys_Api in sysApis)
+                foreach (sys_api sys_Api in sysApis)
                 {
                     SysApiNode sysApiNode = sys_Api.BuildAdapter().AdaptToType<SysApiNode>();
                     sysApiNodes.Add(sysApiNode);
@@ -94,14 +97,14 @@ namespace ApiServer.BLL.BLL
             return msg;
         }
 
-        public MsgModel UpdateApi(Sys_Api sys_Api)
+        public MsgModel UpdateApi(sys_api sys_Api)
         {
             var result = _baseService.UpdateRange(sys_Api);
             return result ? MsgModel.Success("修改接口配置成功！") : MsgModel.Fail("修改接口配置失败！");
         }
 
         [Transaction]
-        public MsgModel AddApi(Sys_Api sys_Api)
+        public MsgModel AddApi(sys_api sys_Api)
         {
             MsgModel msg = new MsgModel
             {
@@ -111,7 +114,7 @@ namespace ApiServer.BLL.BLL
             sys_Api.id = new Snowflake().GetId();
             SetApiIdsAndLevel(sys_Api);
             sys_Api.is_leaf = true;//新增的菜单节点都是子节点，没有下级
-            Sys_Api parent = new Sys_Api
+            sys_api parent = new sys_api
             {
                 id = sys_Api.api_pid,
                 is_leaf = false//更新父节点为非子节点。
@@ -123,20 +126,20 @@ namespace ApiServer.BLL.BLL
         }
 
         [Transaction]
-        public MsgModel DeleteApi(Sys_Api sys_Api)
+        public MsgModel DeleteApi(sys_api sys_Api)
         {
             // 查找被删除节点的子节点
-            List<Sys_Api> myChild = _baseService.GetModels(s => s.api_pids.Contains("[" + sys_Api.id + "]")).ToList();
+            List<sys_api> myChild = _baseService.GetModels(s => s.api_pids.Contains("[" + sys_Api.id + "]")).ToList();
             if (myChild.Count > 0)
             {
                 // "不能删除含有下级API接口的节点"
             }
             //查找被删除节点的父节点
-            List<Sys_Api> myFatherChild = _baseService.GetModels(s => s.api_pids.Contains("[" + sys_Api.api_pid + "]")).ToList();
+            List<sys_api> myFatherChild = _baseService.GetModels(s => s.api_pids.Contains("[" + sys_Api.api_pid + "]")).ToList();
             //我的父节点只有我这一个子节点，而我还要被删除，更新父节点为叶子节点。
             if (myFatherChild.Count == 1)
             {
-                Sys_Api parent = new Sys_Api
+                sys_api parent = new sys_api
                 {
                     id = sys_Api.api_pid,
                     is_leaf = true // //更新父节点为叶子节点。
@@ -152,9 +155,9 @@ namespace ApiServer.BLL.BLL
         /// 设置某子节点的所有祖辈id
         /// </summary>
         /// <param name="child"></param>
-        private void SetApiIdsAndLevel(Sys_Api child)
+        private void SetApiIdsAndLevel(sys_api child)
         {
-            List<Sys_Api> allApis = _baseService.GetModels(null).ToList();
+            List<sys_api> allApis = _baseService.GetModels(null).ToList();
             foreach (var sysApi in allApis)
             {
                 // 从组织列表中找到自己的直接父亲
@@ -209,7 +212,7 @@ namespace ApiServer.BLL.BLL
         /// <param name="status"></param>
         public MsgModel UpdateStatus(long id, bool status)
         {
-            Sys_Api sys_Api = _baseService.GetModels(a => a.id == id).SingleOrDefault();
+            sys_api sys_Api = _baseService.GetModels(a => a.id == id).SingleOrDefault();
             sys_Api.status = status;
             bool result = _baseService.UpdateRange(sys_Api);
 

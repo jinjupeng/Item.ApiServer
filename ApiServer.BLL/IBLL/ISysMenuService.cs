@@ -7,9 +7,9 @@ namespace ApiServer.BLL.IBLL
     public interface ISysMenuService
     {
         MsgModel GetMenuTree(string menuNameLike, bool? menuStatus);
-        MsgModel UpdateMenu(Sys_Menu sys_Menu);
-        MsgModel AddMenu(Sys_Menu sys_Menu);
-        MsgModel DeleteMenu(Sys_Menu sys_Menu);
+        MsgModel UpdateMenu(sys_menu sys_menu);
+        MsgModel AddMenu(sys_menu sys_menu);
+        MsgModel DeleteMenu(sys_menu sys_menu);
         List<string> GetCheckedKeys(long roleId);
         List<string> GetExpandedKeys();
         MsgModel SaveCheckedKeys(long roleId, List<long> checkedIds);

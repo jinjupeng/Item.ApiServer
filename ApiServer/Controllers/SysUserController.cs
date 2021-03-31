@@ -69,8 +69,8 @@ namespace ApiServer.Controllers
         [Route("update")]
         public async Task<IActionResult> Update([FromBody] SysUser sysUser)
         {
-            var sys_User = sysUser.BuildAdapter().AdaptToType<Sys_User>();
-            return Ok(await Task.FromResult(_sysUserService.UpdateUser(sys_User)));
+            var sys_user = sysUser.BuildAdapter().AdaptToType<sys_user>();
+            return Ok(await Task.FromResult(_sysUserService.UpdateUser(sys_user)));
         }
 
         /// <summary>
@@ -82,8 +82,8 @@ namespace ApiServer.Controllers
         [Route("add")]
         public async Task<IActionResult> Add([FromBody] SysUser sysUser)
         {
-            var sys_User = sysUser.BuildAdapter().AdaptToType<Sys_User>();
-            return Ok(await Task.FromResult(_sysUserService.AddUser(sys_User)));
+            var sys_user = sysUser.BuildAdapter().AdaptToType<sys_user>();
+            return Ok(await Task.FromResult(_sysUserService.AddUser(sys_user)));
         }
 
         /// <summary>

@@ -9,9 +9,9 @@ namespace ApiServer.BLL.IBLL
         MsgModel QueryConfigs(string configLik);
 
         string GetConfigItem(string paramKey);
-        MsgModel UpdateConfig(Sys_Config sys_Config);
+        MsgModel UpdateConfig(sys_config sys_Config);
 
-        MsgModel AddConfig(Sys_Config sys_Config);
+        MsgModel AddConfig(sys_config sys_Config);
 
         MsgModel DeleteConfig(long configId);
     }

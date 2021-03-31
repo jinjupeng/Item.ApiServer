@@ -1,6 +1,5 @@
 ﻿using ApiServer.BLL.IBLL;
 using ApiServer.Common;
-using ApiServer.Common.Attributes;
 using ApiServer.Model.Entity;
 using ApiServer.Model.Model.MsgModel;
 using Microsoft.AspNetCore.Http;
@@ -11,11 +10,11 @@ namespace ApiServer.BLL.BLL
 {
     public class SysUserService : ISysUserService
     {
-        private readonly IBaseService<Sys_User> _baseSysUserService;
+        private readonly IBaseService<sys_user> _baseSysUserService;
         private readonly IMySystemService _mySystemService;
         private readonly ISysConfigService _sysConfigService;
 
-        public SysUserService(IBaseService<Sys_User> baseSysUserService,
+        public SysUserService(IBaseService<sys_user> baseSysUserService,
             IMySystemService mySystemService, ISysConfigService sysConfigService)
         {
             _baseSysUserService = baseSysUserService;
@@ -30,18 +29,13 @@ namespace ApiServer.BLL.BLL
         /// <returns></returns>
         public MsgModel GetUserByUserName(string userName)
         {
-            MsgModel msg = new MsgModel
-            {
-                message = "查询用户信息成功！"
-            };
-            Sys_User sysUser = _baseSysUserService.GetModels(a => a.username == userName).SingleOrDefault();
+            sys_user sysUser = _baseSysUserService.GetModels(a => a.username == userName).SingleOrDefault();
             if (sysUser != null)
             {
                 sysUser.password = "";
             }
 
-            msg.data = sysUser;
-            return msg;
+            return MsgModel.Success(sysUser);
         }
 
         /// <summary>
@@ -66,10 +60,10 @@ namespace ApiServer.BLL.BLL
         /// <summary>
         /// 用户管理：修改
         /// </summary>
-        /// <param name="sys_User"></param>
-        public MsgModel UpdateUser(Sys_User sys_User)
+        /// <param name="sys_user"></param>
+        public MsgModel UpdateUser(sys_user sys_user)
         {
-            if (!_baseSysUserService.UpdateRange(sys_User))
+            if (!_baseSysUserService.UpdateRange(sys_user))
             {
                 return MsgModel.Fail(StatusCodes.Status500InternalServerError, "更新用户失败！");
             }
@@ -79,18 +73,18 @@ namespace ApiServer.BLL.BLL
         /// <summary>
         /// 用户管理：新增
         /// </summary>
-        /// <param name="sys_User"></param>
-        public MsgModel AddUser(Sys_User sys_User)
+        /// <param name="sys_user"></param>
+        public MsgModel AddUser(sys_user sys_user)
         {
-            sys_User.id = new Snowflake().GetId();
-            sys_User.password = PasswordEncoder.Encode(_sysConfigService.GetConfigItem("user.init.password"));
-            sys_User.create_time = DateTime.Now; //创建时间
-            sys_User.enabled = true;//新增用户激活
-            if (_baseSysUserService.GetModels(a => a.username == sys_User.username).Any())
+            sys_user.id = new Snowflake().GetId();
+            sys_user.password = PasswordEncoder.Encode(_sysConfigService.GetConfigItem("user.init.password"));
+            sys_user.create_time = DateTime.Now; //创建时间
+            sys_user.enabled = true;//新增用户激活
+            if (_baseSysUserService.GetModels(a => a.username == sys_user.username).Any())
             {
                 return MsgModel.Fail(StatusCodes.Status500InternalServerError, "用户名已存在，不能重复");
             }
-            if (!_baseSysUserService.AddRange(sys_User))
+            if (!_baseSysUserService.AddRange(sys_user))
             {
                 return MsgModel.Fail("新增用户失败！");
             }
@@ -116,11 +110,11 @@ namespace ApiServer.BLL.BLL
         /// <param name="userId"></param>
         public MsgModel PwdReset(long userId)
         {
-            Sys_User sys_User = _baseSysUserService.GetModels(a => a.id == userId).ToList().SingleOrDefault();
-            sys_User.id = userId;
-            sys_User.password = PasswordEncoder.Encode(_sysConfigService.GetConfigItem("user.init.password"));
-            var length = sys_User.password.Length;
-            bool result = _baseSysUserService.UpdateRange(sys_User);
+            sys_user sys_user = _baseSysUserService.GetModels(a => a.id == userId).ToList().SingleOrDefault();
+            sys_user.id = userId;
+            sys_user.password = PasswordEncoder.Encode(_sysConfigService.GetConfigItem("user.init.password"));
+            var length = sys_user.password.Length;
+            bool result = _baseSysUserService.UpdateRange(sys_user);
             if (!result)
             {
                 return MsgModel.Fail(StatusCodes.Status500InternalServerError, "密码重置失败！");
@@ -135,9 +129,9 @@ namespace ApiServer.BLL.BLL
         /// <returns></returns>
         public MsgModel IsDefault(string userName)
         {
-            Sys_User sys_User = _baseSysUserService.GetModels(a => a.username == userName).SingleOrDefault();
+            sys_user sys_user = _baseSysUserService.GetModels(a => a.username == userName).SingleOrDefault();
             //判断数据库密码是否是默认密码
-            var result = PasswordEncoder.IsMatch(sys_User.password, _sysConfigService.GetConfigItem("user.init.password"));
+            var result = PasswordEncoder.IsMatch(sys_user.password, _sysConfigService.GetConfigItem("user.init.password"));
             //判断数据库密码是否是默认密码
             return MsgModel.Success(result, "获取成功！");
         }
@@ -150,15 +144,15 @@ namespace ApiServer.BLL.BLL
         /// <param name="newPass"></param>
         public MsgModel ChangePwd(string userName, string oldPass, string newPass)
         {
-            Sys_User sys_User = _baseSysUserService.GetModels(a => a.username == userName).SingleOrDefault();
+            sys_user sys_user = _baseSysUserService.GetModels(a => a.username == userName).SingleOrDefault();
             // 判断旧密码是否正确
-            bool isMatch = PasswordEncoder.IsMatch(sys_User.password, oldPass);
+            bool isMatch = PasswordEncoder.IsMatch(sys_user.password, oldPass);
             if (!isMatch)
             {
                 return MsgModel.Fail("原密码输入错误，请确认后重新输入！");
             }
-            sys_User.password = PasswordEncoder.Encode(newPass);
-            var result = _baseSysUserService.UpdateRange(sys_User);
+            sys_user.password = PasswordEncoder.Encode(newPass);
+            var result = _baseSysUserService.UpdateRange(sys_user);
             return result ? MsgModel.Success("密码修改成功！") : MsgModel.Fail("密码修改失败！");
         }
 
@@ -169,9 +163,9 @@ namespace ApiServer.BLL.BLL
         /// <param name="enabled"></param>
         public MsgModel UpdateEnabled(long id, bool enabled)
         {
-            Sys_User sys_User = _baseSysUserService.GetModels(a => a.id == id).SingleOrDefault();
-            sys_User.enabled = enabled;
-            bool result = _baseSysUserService.UpdateRange(sys_User);
+            sys_user sys_user = _baseSysUserService.GetModels(a => a.id == id).SingleOrDefault();
+            sys_user.enabled = enabled;
+            bool result = _baseSysUserService.UpdateRange(sys_user);
 
             return result ? MsgModel.Success("用户状态更新成功！") : MsgModel.Fail("用户状态更新失败！");
 

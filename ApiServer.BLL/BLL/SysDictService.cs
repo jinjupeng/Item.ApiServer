@@ -13,9 +13,9 @@ namespace ApiServer.BLL.BLL
 {
     public class SysDictService : ISysDictService
     {
-        private readonly IBaseService<Sys_Dict> _baseSysDictService;
+        private readonly IBaseService<sys_dict> _baseSysDictService;
 
-        public SysDictService(IBaseService<Sys_Dict> baseSysDictService)
+        public SysDictService(IBaseService<sys_dict> baseSysDictService)
         {
             _baseSysDictService = baseSysDictService;
         }
@@ -26,7 +26,7 @@ namespace ApiServer.BLL.BLL
         /// <returns></returns>
         public MsgModel All()
         {
-            List<Sys_Dict> list = _baseSysDictService.GetModels(null).ToList();
+            List<sys_dict> list = _baseSysDictService.GetModels(null).ToList();
             var data = list.BuildAdapter().AdaptToType<List<SysDict>>();
             return MsgModel.Success(data, "查询成功！");
         }
@@ -39,7 +39,7 @@ namespace ApiServer.BLL.BLL
         /// <returns></returns>
         public MsgModel Query(string groupName, string groupCode)
         {
-            Expression<Func<Sys_Dict, bool>> where = PredicateBuilder.True<Sys_Dict>();
+            Expression<Func<sys_dict, bool>> where = PredicateBuilder.True<sys_dict>();
             if (!string.IsNullOrWhiteSpace(groupName))
             {
                 where = where.And(a => a.group_name.Contains(groupName));
@@ -57,7 +57,7 @@ namespace ApiServer.BLL.BLL
         /// 更新数据字典项
         /// </summary>
         /// <param name="sys_Dict"></param>
-        public MsgModel Update(Sys_Dict sys_Dict)
+        public MsgModel Update(sys_dict sys_Dict)
         {
             var result = _baseSysDictService.UpdateRange(sys_Dict);
             return result ? MsgModel.Success("更新数据字典项成功！") : MsgModel.Fail("更新数据字典项失败！");
@@ -67,7 +67,7 @@ namespace ApiServer.BLL.BLL
         /// 新增数据字典项
         /// </summary>
         /// <param name="sys_Dict"></param>
-        public MsgModel Add(Sys_Dict sys_Dict)
+        public MsgModel Add(sys_dict sys_Dict)
         {
             sys_Dict.id = new Snowflake().GetId();
             var result = _baseSysDictService.AddRange(sys_Dict);

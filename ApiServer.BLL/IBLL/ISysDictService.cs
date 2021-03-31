@@ -8,8 +8,8 @@ namespace ApiServer.BLL.IBLL
         MsgModel All();
         MsgModel Query(string groupName, string groupCode);
 
-        MsgModel Update(Sys_Dict sys_Dict);
-        MsgModel Add(Sys_Dict sys_Dict);
+        MsgModel Update(sys_dict sys_Dict);
+        MsgModel Add(sys_dict sys_Dict);
         MsgModel Delete(long id);
     }
 }

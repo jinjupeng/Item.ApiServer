@@ -3,6 +3,7 @@ using ApiServer.DAL.IDAL;
 using ApiServer.Model.Entity;
 using ApiServer.Model.Model;
 using ApiServer.Model.Model.MsgModel;
+using ApiServer.Model.Model.PageModel;
 using ApiServer.Model.Model.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -49,12 +50,12 @@ namespace ApiServer.BLL.BLL
             return _mySystemDal.SelectApiExpandedKeys().ToList();
         }
 
-        public List<Sys_Api> SelectApiTree(long rootApiId, string apiNameLike, bool apiStatus)
+        public List<sys_api> SelectApiTree(long rootApiId, string apiNameLike, bool apiStatus)
         {
             return _mySystemDal.SelectApiTree(rootApiId, apiNameLike, apiStatus).ToList();
         }
 
-        public List<Sys_Menu> SelectMenuByUserName(string userName)
+        public List<sys_menu> SelectMenuByUserName(string userName)
         {
             return _mySystemDal.SelectMenuByUserName(userName).ToList();
         }
@@ -69,12 +70,12 @@ namespace ApiServer.BLL.BLL
             return _mySystemDal.SelectMenuExpandedKeys().ToList();
         }
 
-        public List<Sys_Menu> SelectMenuTree(long rootMenuId, string menuNameLike, bool? menuStatus)
+        public List<sys_menu> SelectMenuTree(long rootMenuId, string menuNameLike, bool? menuStatus)
         {
             return _mySystemDal.SelectMenuTree(rootMenuId, menuNameLike, menuStatus).ToList();
         }
 
-        public List<Sys_Org> SelectOrgTree(long rootOrgId, string orgNameLike, bool? orgStatus)
+        public List<sys_org> SelectOrgTree(long rootOrgId, string orgNameLike, bool? orgStatus)
         {
             return _mySystemDal.SelectOrgTree(rootOrgId, orgNameLike, orgStatus).ToList();
         }

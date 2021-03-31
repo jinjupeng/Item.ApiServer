@@ -8,11 +8,11 @@ namespace ApiServer.DAL.IDAL
 {
     public interface IMySystemDal
     {
-        IQueryable<Sys_Org> SelectOrgTree(long rootOrgId, string orgNameLike, bool? orgStatus);
+        IQueryable<sys_org> SelectOrgTree(long rootOrgId, string orgNameLike, bool? orgStatus);
 
-        IQueryable<Sys_Menu> SelectMenuTree(long rootMenuId, string menuNameLike, bool? menuStatus);
+        IQueryable<sys_menu> SelectMenuTree(long rootMenuId, string menuNameLike, bool? menuStatus);
 
-        IQueryable<Sys_Api> SelectApiTree(long rootApiId, string apiNameLike, bool apiStatus);
+        IQueryable<sys_api> SelectApiTree(long rootApiId, string apiNameLike, bool apiStatus);
 
         int InsertRoleMenuIds(long roleId, List<long> checkedIds);
 
@@ -30,7 +30,7 @@ namespace ApiServer.DAL.IDAL
 
         int InsertUserRoleIds(long userId, List<long> checkedIds);
 
-        IQueryable<Sys_Menu> SelectMenuByUserName(string userName);
+        IQueryable<sys_menu> SelectMenuByUserName(string userName);
 
         IQueryable<SysUserOrg> SelectUser(long? orgId,
                                       string userName,

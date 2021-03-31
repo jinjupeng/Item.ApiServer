@@ -17,14 +17,14 @@ namespace ApiServer.Controllers
     public class SysOrgController : BaseController
     {
         private readonly ISysOrgService _sysOrgService;
-        private readonly IBaseService<Sys_User> _baseSysUserService;
+        private readonly IBaseService<sys_user> _baseSysUserService;
 
         /// <summary>
         /// 构造函数
         /// </summary>
         /// <param name="sysOrgService"></param>
         /// <param name="baseSysUserService"></param>
-        public SysOrgController(ISysOrgService sysOrgService, IBaseService<Sys_User> baseSysUserService)
+        public SysOrgController(ISysOrgService sysOrgService, IBaseService<sys_user> baseSysUserService)
         {
             _sysOrgService = sysOrgService;
             _baseSysUserService = baseSysUserService;
@@ -46,8 +46,8 @@ namespace ApiServer.Controllers
             {
                 orgStatus = Convert.ToBoolean(pairs["orgStatus"]);
             }
-            Sys_User sys_User = _baseSysUserService.GetModels(a => a.username == userName).SingleOrDefault();
-            return Ok(await Task.FromResult(_sysOrgService.GetOrgTreeById(sys_User.org_id, orgNameLike, orgStatus)));
+            sys_user sys_user = _baseSysUserService.GetModels(a => a.username == userName).SingleOrDefault();
+            return Ok(await Task.FromResult(_sysOrgService.GetOrgTreeById(sys_user.org_id, orgNameLike, orgStatus)));
         }
 
         /// <summary>
@@ -59,8 +59,8 @@ namespace ApiServer.Controllers
         [Route("update")]
         public async Task<IActionResult> Update([FromBody] SysOrg sysOrg)
         {
-            var sys_Org = sysOrg.BuildAdapter().AdaptToType<Sys_Org>();
-            return Ok(await Task.FromResult(_sysOrgService.UpdateOrg(sys_Org)));
+            var sys_org = sysOrg.BuildAdapter().AdaptToType<sys_org>();
+            return Ok(await Task.FromResult(_sysOrgService.UpdateOrg(sys_org)));
 
         }
 
@@ -73,8 +73,8 @@ namespace ApiServer.Controllers
         [Route("add")]
         public async Task<IActionResult> Add([FromBody] SysOrg sysOrg)
         {
-            var sys_Org = sysOrg.BuildAdapter().AdaptToType<Sys_Org>();
-            return Ok(await Task.FromResult(_sysOrgService.AddOrg(sys_Org)));
+            var sys_org = sysOrg.BuildAdapter().AdaptToType<sys_org>();
+            return Ok(await Task.FromResult(_sysOrgService.AddOrg(sys_org)));
 
         }
 
@@ -87,8 +87,8 @@ namespace ApiServer.Controllers
         [Route("delete")]
         public async Task<IActionResult> Delete([FromBody] SysOrg sysOrg)
         {
-            var sys_Org = sysOrg.BuildAdapter().AdaptToType<Sys_Org>();
-            return Ok(await Task.FromResult(_sysOrgService.DeleteOrg(sys_Org)));
+            var sys_org = sysOrg.BuildAdapter().AdaptToType<sys_org>();
+            return Ok(await Task.FromResult(_sysOrgService.DeleteOrg(sys_org)));
 
         }
 

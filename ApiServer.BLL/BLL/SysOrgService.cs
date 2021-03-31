@@ -5,7 +5,9 @@ using ApiServer.Model;
 using ApiServer.Model.Entity;
 using ApiServer.Model.Enum;
 using ApiServer.Model.Model;
+using ApiServer.Model.Model.DataTree;
 using ApiServer.Model.Model.MsgModel;
+using ApiServer.Model.Model.Nodes;
 using Mapster;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,10 +16,10 @@ namespace ApiServer.BLL.BLL
 {
     public class SysOrgService : ISysOrgService
     {
-        private readonly IBaseService<Sys_Org> _baseSysOrgService;
+        private readonly IBaseService<sys_org> _baseSysOrgService;
         private readonly IMySystemService _mySystemService;
 
-        public SysOrgService(IBaseService<Sys_Org> baseSysOrgService, IMySystemService mySystemService)
+        public SysOrgService(IBaseService<sys_org> baseSysOrgService, IMySystemService mySystemService)
         {
             _baseSysOrgService = baseSysOrgService;
             _mySystemService = mySystemService;
@@ -37,11 +39,11 @@ namespace ApiServer.BLL.BLL
                 isok = true,
                 message = "查询成功！"
             };
-            List<Sys_Org> sysOrgs = _mySystemService.SelectOrgTree(rootOrgId, orgNameLike, orgStatus);
+            List<sys_org> sysOrgs = _mySystemService.SelectOrgTree(rootOrgId, orgNameLike, orgStatus);
             List<SysOrgNode> sysOrgNodes = new List<SysOrgNode>();
-            foreach (Sys_Org sys_Org in sysOrgs)
+            foreach (sys_org sys_org in sysOrgs)
             {
-                SysOrgNode sysOrgNode = sys_Org.BuildAdapter().AdaptToType<SysOrgNode>();
+                SysOrgNode sysOrgNode = sys_org.BuildAdapter().AdaptToType<SysOrgNode>();
                 sysOrgNodes.Add(sysOrgNode);
             }
             if (!string.IsNullOrEmpty(orgNameLike))
@@ -59,9 +61,9 @@ namespace ApiServer.BLL.BLL
 
         }
 
-        public MsgModel UpdateOrg(Sys_Org sys_Org)
+        public MsgModel UpdateOrg(sys_org sys_org)
         {
-            if (!_baseSysOrgService.UpdateRange(sys_Org))
+            if (!_baseSysOrgService.UpdateRange(sys_org))
             {
                 return MsgModel.Fail("更新组织机构失败！");
             }
@@ -70,43 +72,43 @@ namespace ApiServer.BLL.BLL
         }
 
         [Transaction]
-        public MsgModel AddOrg(Sys_Org sys_Org)
+        public MsgModel AddOrg(sys_org sys_org)
         {
-            sys_Org.id = new Snowflake().GetId();
-            SetOrgIdsAndLevel(sys_Org);
-            sys_Org.is_leaf = true;//新增的组织节点都是子节点，没有下级
-            Sys_Org parent = _baseSysOrgService.GetModels(a => a.id == sys_Org.org_pid).SingleOrDefault();
-            parent.id = sys_Org.org_pid;
+            sys_org.id = new Snowflake().GetId();
+            SetOrgIdsAndLevel(sys_org);
+            sys_org.is_leaf = true;//新增的组织节点都是子节点，没有下级
+            sys_org parent = _baseSysOrgService.GetModels(a => a.id == sys_org.org_pid).SingleOrDefault();
+            parent.id = sys_org.org_pid;
             parent.is_leaf = false; //更新父节点为非子节点。
             _baseSysOrgService.UpdateRange(parent);
 
-            sys_Org.status = false;//设置是否禁用，新增节点默认可用
-            _baseSysOrgService.AddRange(sys_Org);
+            sys_org.status = false;//设置是否禁用，新增节点默认可用
+            _baseSysOrgService.AddRange(sys_org);
             return MsgModel.Success("新增组织机构成功！");
         }
 
         [Transaction]
-        public MsgModel DeleteOrg(Sys_Org sys_Org)
+        public MsgModel DeleteOrg(sys_org sys_org)
         {
-            List<Sys_Org> myChilds = _baseSysOrgService.GetModels(a => a.org_pids.Contains("[" + sys_Org.org_pid + "]")).ToList();
+            List<sys_org> myChilds = _baseSysOrgService.GetModels(a => a.org_pids.Contains("[" + sys_org.org_pid + "]")).ToList();
             if (myChilds.Count > 0)
             {
                 // "不能删除有下级组织的组织机构"
                 throw new CustomException((int)HttpStatusCode.Status500InternalServerError, "不能删除有下级组织的组织机构");
             }
-            List<Sys_Org> myFatherChilds = _baseSysOrgService.GetModels(a => a.org_pids.Contains("[" + "]")).ToList();
+            List<sys_org> myFatherChilds = _baseSysOrgService.GetModels(a => a.org_pids.Contains("[" + "]")).ToList();
             //我的父节点只有我这一个子节点，而我还要被删除，更新父节点为叶子节点。
             if (myFatherChilds.Count == 1)
             {
-                Sys_Org parent = new Sys_Org
+                sys_org parent = new sys_org
                 {
-                    id = sys_Org.org_pid,
+                    id = sys_org.org_pid,
                     is_leaf = true// 更新父节点为叶子节点。
                 };
                 _baseSysOrgService.UpdateRange(parent);
             }
             // 删除节点
-            _baseSysOrgService.DeleteRange(sys_Org);
+            _baseSysOrgService.DeleteRange(sys_org);
             return MsgModel.Success("删除组织机构成功！");
         }
 
@@ -114,18 +116,18 @@ namespace ApiServer.BLL.BLL
         /// //设置某子节点的所有祖辈id
         /// </summary>
         /// <param name="child"></param>
-        private void SetOrgIdsAndLevel(Sys_Org child)
+        private void SetOrgIdsAndLevel(sys_org child)
         {
-            List<Sys_Org> allOrgs = _baseSysOrgService.GetModels(null).ToList();
-            foreach (Sys_Org sys_Org in allOrgs)
+            List<sys_org> allOrgs = _baseSysOrgService.GetModels(null).ToList();
+            foreach (sys_org sys_org in allOrgs)
             {
                 //从组织列表中找到自己的直接父亲
-                if (sys_Org.id == child.org_pid)
+                if (sys_org.id == child.org_pid)
                 {
                     //直接父亲的所有祖辈id + 直接父id = 当前子节点的所有祖辈id
                     //爸爸的所有祖辈 + 爸爸 = 孩子的所有祖辈
-                    child.org_pids = sys_Org.org_pids + "[" + child.org_pid + "]";
-                    child.level = sys_Org.level + 1;
+                    child.org_pids = sys_org.org_pids + "[" + child.org_pid + "]";
+                    child.level = sys_org.level + 1;
                 }
             }
         }
@@ -137,9 +139,9 @@ namespace ApiServer.BLL.BLL
         /// <param name="status"></param>
         public MsgModel UpdateStatus(long id, bool status)
         {
-            Sys_Org sys_Org = _baseSysOrgService.GetModels(a => a.id == id).SingleOrDefault();
-            sys_Org.status = status;
-            bool result = _baseSysOrgService.UpdateRange(sys_Org);
+            sys_org sys_org = _baseSysOrgService.GetModels(a => a.id == id).SingleOrDefault();
+            sys_org.status = status;
+            bool result = _baseSysOrgService.UpdateRange(sys_org);
 
             return result ? MsgModel.Success("更新组织机构状态成功！") : MsgModel.Fail("更新组织机构状态失败！");
         }

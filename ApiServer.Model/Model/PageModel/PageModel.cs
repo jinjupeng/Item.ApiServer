@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace ApiServer.Model.Model
+namespace ApiServer.Model.Model.PageModel
 {
     /// <summary>
     /// 通用分页信息类

@@ -1,8 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace ApiServer.Model.Entity
 {
-    public partial class Sys_User
+    public partial class sys_user
     {
         public long id { get; set; }
         public string username { get; set; }

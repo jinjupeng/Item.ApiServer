@@ -1,8 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace ApiServer.Model.Entity
 {
-    public partial class Sys_Dict
+    public partial class sys_dict
     {
         public long id { get; set; }
         public string group_name { get; set; }

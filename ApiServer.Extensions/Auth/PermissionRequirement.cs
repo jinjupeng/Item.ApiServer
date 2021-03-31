@@ -1,4 +1,5 @@
 ﻿using ApiServer.Model.Model;
+using ApiServer.Model.Model.AuthModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Tokens;

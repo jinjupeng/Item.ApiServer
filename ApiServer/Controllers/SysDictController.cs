@@ -57,7 +57,7 @@ namespace ApiServer.Controllers
         [Route("update")]
         public async Task<IActionResult> Update([FromBody] SysDict sysDict)
         {
-            var sys_Dict = sysDict.BuildAdapter().AdaptToType<Sys_Dict>();
+            var sys_Dict = sysDict.BuildAdapter().AdaptToType<sys_dict>();
             return Ok(await Task.FromResult(_sysDictService.Update(sys_Dict)));
 
         }
@@ -71,7 +71,7 @@ namespace ApiServer.Controllers
         [Route("add")]
         public async Task<IActionResult> Add([FromBody] SysDict sysDict)
         {
-            var sys_Dict = sysDict.BuildAdapter().AdaptToType<Sys_Dict>();
+            var sys_Dict = sysDict.BuildAdapter().AdaptToType<sys_dict>();
             return Ok(await Task.FromResult(_sysDictService.Add(sys_Dict)));
 
         }

@@ -18,12 +18,12 @@ namespace ApiServer.BLL.BLL
     public class WxService : IWxService
     {
         private readonly ICacheService _cacheService;
-        private readonly IBaseService<Sys_User> _baseService;
+        private readonly IBaseService<sys_user> _baseService;
         private readonly IJwtAuthService _jwtAuthService;
         private readonly string appid = ConfigTool.Configuration["wxmini:appid"];
         private readonly string secret = ConfigTool.Configuration["wxmini:secret"];
 
-        public WxService(ICacheService cacheService, IBaseService<Sys_User> baseService,
+        public WxService(ICacheService cacheService, IBaseService<sys_user> baseService,
             IJwtAuthService jwtAuthService)
         {
             _cacheService = cacheService;

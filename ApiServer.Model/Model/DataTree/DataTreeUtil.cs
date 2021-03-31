@@ -1,7 +1,6 @@
-﻿using ApiServer.Model.Model;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
-namespace ApiServer.Model
+namespace ApiServer.Model.Model.DataTree
 {
     public class DataTreeUtil<T, ID> where T : IDataTree<T, ID>
     {

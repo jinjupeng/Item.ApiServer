@@ -1,6 +1,7 @@
-﻿using ApiServer.Common;
+﻿using System;
 using ApiServer.Common.Config;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace ApiServer.Model.Entity
 {
@@ -15,16 +16,16 @@ namespace ApiServer.Model.Entity
         {
         }
 
-        public virtual DbSet<Sys_Api> Sys_Api { get; set; }
-        public virtual DbSet<Sys_Config> Sys_Config { get; set; }
-        public virtual DbSet<Sys_Dict> Sys_Dict { get; set; }
-        public virtual DbSet<Sys_Menu> Sys_Menu { get; set; }
-        public virtual DbSet<Sys_Org> Sys_Org { get; set; }
-        public virtual DbSet<Sys_Role> Sys_Role { get; set; }
-        public virtual DbSet<Sys_Role_Api> Sys_Role_Api { get; set; }
-        public virtual DbSet<Sys_Role_Menu> Sys_Role_Menu { get; set; }
-        public virtual DbSet<Sys_User> Sys_User { get; set; }
-        public virtual DbSet<Sys_User_Role> Sys_User_Role { get; set; }
+        public virtual DbSet<sys_api> sys_api { get; set; }
+        public virtual DbSet<sys_config> sys_config { get; set; }
+        public virtual DbSet<sys_dict> sys_dict { get; set; }
+        public virtual DbSet<sys_menu> sys_menu { get; set; }
+        public virtual DbSet<sys_org> sys_org { get; set; }
+        public virtual DbSet<sys_role> sys_role { get; set; }
+        public virtual DbSet<sys_role_api> sys_role_api { get; set; }
+        public virtual DbSet<sys_role_menu> sys_role_menu { get; set; }
+        public virtual DbSet<sys_user> sys_user { get; set; }
+        public virtual DbSet<sys_user_role> sys_user_role { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -37,9 +38,9 @@ namespace ApiServer.Model.Entity
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Sys_Api>(entity =>
+            modelBuilder.Entity<sys_api>(entity =>
             {
-                entity.HasComment("系统Http接口表，配合Sys_Role_api控制接口访问权限");
+                entity.HasComment("系统Http接口表，配合sys_role_api控制接口访问权限");
 
                 entity.Property(e => e.id).ValueGeneratedNever();
 
@@ -74,7 +75,7 @@ namespace ApiServer.Model.Entity
                     .HasCollation("utf8_general_ci");
             });
 
-            modelBuilder.Entity<Sys_Config>(entity =>
+            modelBuilder.Entity<sys_config>(entity =>
             {
                 entity.HasComment("系统全局配置参数");
 
@@ -118,7 +119,7 @@ namespace ApiServer.Model.Entity
                     .HasCollation("utf8_general_ci");
             });
 
-            modelBuilder.Entity<Sys_Dict>(entity =>
+            modelBuilder.Entity<sys_dict>(entity =>
             {
                 entity.HasComment("数据字典表");
 
@@ -165,7 +166,7 @@ namespace ApiServer.Model.Entity
                     .HasCollation("utf8_general_ci");
             });
 
-            modelBuilder.Entity<Sys_Menu>(entity =>
+            modelBuilder.Entity<sys_menu>(entity =>
             {
                 entity.HasComment("系统菜单表");
 
@@ -207,7 +208,7 @@ namespace ApiServer.Model.Entity
                     .HasCollation("utf8_general_ci");
             });
 
-            modelBuilder.Entity<Sys_Org>(entity =>
+            modelBuilder.Entity<sys_org>(entity =>
             {
                 entity.HasComment("系统组织结构表");
 
@@ -256,7 +257,7 @@ namespace ApiServer.Model.Entity
                 entity.Property(e => e.status).HasComment("是否禁用，0:启用(否）,1:禁用(是)");
             });
 
-            modelBuilder.Entity<Sys_Role>(entity =>
+            modelBuilder.Entity<sys_role>(entity =>
             {
                 entity.HasComment("系统角色表");
 
@@ -293,7 +294,7 @@ namespace ApiServer.Model.Entity
                     .HasComment("是否禁用，0:启用(否）,1:禁用(是)");
             });
 
-            modelBuilder.Entity<Sys_Role_Api>(entity =>
+            modelBuilder.Entity<sys_role_api>(entity =>
             {
                 entity.HasNoKey();
 
@@ -304,7 +305,7 @@ namespace ApiServer.Model.Entity
                 entity.Property(e => e.role_id).HasComment("角色id");
             });
 
-            modelBuilder.Entity<Sys_Role_Menu>(entity =>
+            modelBuilder.Entity<sys_role_menu>(entity =>
             {
                 entity.HasNoKey();
 
@@ -315,7 +316,7 @@ namespace ApiServer.Model.Entity
                 entity.Property(e => e.role_id).HasComment("角色id");
             });
 
-            modelBuilder.Entity<Sys_User>(entity =>
+            modelBuilder.Entity<sys_user>(entity =>
             {
                 entity.HasComment("用户信息表");
 
@@ -342,6 +343,12 @@ namespace ApiServer.Model.Entity
                     .HasDefaultValueSql("'1'")
                     .HasComment("0无效用户，1是有效用户");
 
+                entity.Property(e => e.nickname)
+                    .HasColumnType("varchar(64)")
+                    .HasComment("昵称")
+                    .HasCharSet("utf8")
+                    .HasCollation("utf8_general_ci");
+
                 entity.Property(e => e.org_id).HasComment("组织id");
 
                 entity.Property(e => e.password)
@@ -352,23 +359,15 @@ namespace ApiServer.Model.Entity
                     .HasCharSet("utf8")
                     .HasCollation("utf8_general_ci");
 
-                entity.Property(e => e.nickname)
-                    .IsRequired()
-                    .HasColumnType("varchar(64)")
-                    .HasComment("昵称")
+                entity.Property(e => e.phone)
+                    .HasColumnType("varchar(16)")
+                    .HasComment("手机号")
                     .HasCharSet("utf8")
                     .HasCollation("utf8_general_ci");
 
                 entity.Property(e => e.portrait)
-                    .IsRequired()
                     .HasColumnType("varchar(255)")
                     .HasComment("头像图片路径")
-                    .HasCharSet("utf8")
-                    .HasCollation("utf8_general_ci");
-
-                entity.Property(e => e.phone)
-                    .HasColumnType("varchar(16)")
-                    .HasComment("手机号")
                     .HasCharSet("utf8")
                     .HasCollation("utf8_general_ci");
 
@@ -381,7 +380,7 @@ namespace ApiServer.Model.Entity
                     .HasCollation("utf8_general_ci");
             });
 
-            modelBuilder.Entity<Sys_User_Role>(entity =>
+            modelBuilder.Entity<sys_user_role>(entity =>
             {
                 entity.HasNoKey();
 

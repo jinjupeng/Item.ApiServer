@@ -9,8 +9,8 @@ namespace ApiServer.BLL.IBLL
         string GetRoleByUserName(string userName);
         MsgModel QueryRoles(string roleLik);
 
-        MsgModel UpdateRole(Sys_Role sys_Role);
-        MsgModel AddRole(Sys_Role sys_Role);
+        MsgModel UpdateRole(sys_role sys_role);
+        MsgModel AddRole(sys_role sys_role);
         MsgModel DeleteRole(long id);
         MsgModel GetRolesAndChecked(long userId);
         MsgModel SaveCheckedKeys(long userId, List<long> checkedIds);
