@@ -45,15 +45,12 @@ namespace ApiServer
 
             .ConfigureWebHostDefaults(webBuilder =>
             {
-                webBuilder
-                .UseKestrel(serverOptions =>
+                webBuilder.UseKestrel((context, options) =>
                 {
-                    serverOptions.Limits.MaxConcurrentConnections = 100;
-                    serverOptions.Limits.MinRequestBodyDataRate = null;
-                    serverOptions.Limits.MaxRequestBodySize = 52428800;
+                    options.Configure(context.Configuration.GetSection("Kestrel"));
                 })
-                    //设置监听的端口
-                    .UseUrls(ConfigTool.Configuration["Setting:ListenUrl"])
+                //设置监听的端口
+                //.UseUrls(ConfigTool.Configuration["Setting:ListenUrl"])
                 .UseStartup<Startup>()
                 // 将Serilog设置为日志提供程序
                 .UseSerilog(); // Add this line;

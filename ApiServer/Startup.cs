@@ -36,6 +36,7 @@ using System;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.HttpOverrides;
 
 namespace ApiServer
 {
@@ -54,8 +55,8 @@ namespace ApiServer
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers().AddNewtonsoftJson(
-                options =>
-                {
+            options =>
+            {
                     // 序列化时忽略循环
                     options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
                     // 使用驼峰命名
@@ -69,7 +70,7 @@ namespace ApiServer
                     options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
                     // 序列化时的时间格式
                     options.SerializerSettings.DateFormatString = "yyyy-MM-dd HH:mm:ss";
-                });
+            });
 
             services.Configure<FormOptions>(options =>
             {
@@ -88,13 +89,13 @@ namespace ApiServer
 
                 services.AddMemoryCache(options =>
                 {
-                        // SizeLimit缓存是没有大小的，此值设置缓存的份数
-                        // 注意：netcore中的缓存是没有单位的，缓存项和缓存的相对关系
-                        options.SizeLimit = 1024;
-                        // 缓存满的时候压缩20%的优先级较低的数据
-                        options.CompactionPercentage = 0.2;
-                        // 两秒钟查找一次过期项
-                        options.ExpirationScanFrequency = TimeSpan.FromSeconds(2);
+                    // SizeLimit缓存是没有大小的，此值设置缓存的份数
+                    // 注意：netcore中的缓存是没有单位的，缓存项和缓存的相对关系
+                    options.SizeLimit = 1024;
+                    // 缓存满的时候压缩20%的优先级较低的数据
+                    options.CompactionPercentage = 0.2;
+                    // 两秒钟查找一次过期项
+                    options.ExpirationScanFrequency = TimeSpan.FromSeconds(2);
                 });
                 // MemoryCache缓存注入
                 services.AddTransient<ICacheService, MemoryCacheService>();
@@ -294,6 +295,14 @@ namespace ApiServer
                 options.SuppressModelStateInvalidFilter = true;
             });
 
+            //services.Configure<ForwardedHeadersOptions>(options =>
+            //{
+            //    options.ForwardedHeaders =
+            //        ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+            //    options.KnownNetworks.Clear();
+            //    options.KnownProxies.Clear();
+            //});
+
             #region IP限流
             // https://marcus116.blogspot.com/2019/06/netcore-aspnet-core-webapi-aspnetcoreratelimit-throttle.html
 
@@ -323,6 +332,7 @@ namespace ApiServer
         // 配置HTTP请求管道
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            //app.UseForwardedHeaders();
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -332,6 +342,10 @@ namespace ApiServer
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
+            // http重定向到https
+            app.UseHttpsRedirection();
+
             // 启用限流,需在UseMvc前面
             app.UseIpRateLimiting();
 
