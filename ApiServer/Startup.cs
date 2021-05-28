@@ -10,7 +10,6 @@ using ApiServer.Extensions.ServiceExensions;
 using ApiServer.Model.Entity;
 using ApiServer.Model.Model.Config;
 using ApiServer.Model.Model.MsgModel;
-using ApiServer.RabbitMQ;
 using AspNetCoreRateLimit;
 using Autofac;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -77,8 +76,6 @@ namespace ApiServer
             });
 
             services.AddCache(Configuration);
-
-            services.AddRabbitMQ(Configuration);
 
             services.AddOSS(Configuration);
 
