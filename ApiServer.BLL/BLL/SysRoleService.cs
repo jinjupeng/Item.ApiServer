@@ -1,9 +1,9 @@
 ﻿using ApiServer.BLL.IBLL;
 using ApiServer.Common;
-using ApiServer.Model.Entity;
-using ApiServer.Model.Enum;
-using ApiServer.Model.Model.MsgModel;
-using ApiServer.Model.Model.ViewModel;
+using ApiServer.Models.Entity;
+using ApiServer.Models.Enum;
+using ApiServer.Models.Model.MsgModel;
+using ApiServer.Models.Model.ViewModel;
 using Mapster;
 using Microsoft.AspNetCore.Http;
 using System;

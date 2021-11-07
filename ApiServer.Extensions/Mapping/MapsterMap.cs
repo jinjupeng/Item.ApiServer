@@ -1,7 +1,7 @@
-﻿using ApiServer.Model.Entity;
-using ApiServer.Model.Model;
-using ApiServer.Model.Model.Nodes;
-using ApiServer.Model.Model.ViewModel;
+﻿using ApiServer.Models.Entity;
+using ApiServer.Models.Model;
+using ApiServer.Models.Model.Nodes;
+using ApiServer.Models.Model.ViewModel;
 using Mapster;
 using MapsterMapper;
 using Microsoft.Extensions.DependencyInjection;

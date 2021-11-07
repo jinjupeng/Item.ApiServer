@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace ApiServer.Model.Model.Files
+namespace ApiServer.Models.Model.Files
 {
     /// <summary>
     /// 单文件上传

@@ -1,4 +1,4 @@
-﻿using ApiServer.Model.Entity;
+﻿using ApiServer.Models.Entity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Logging;

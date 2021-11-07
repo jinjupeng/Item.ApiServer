@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ApiServer.Model.Model.WX
+namespace ApiServer.Models.Model.WX
 {
     public class WXAuth
     {

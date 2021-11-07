@@ -1,7 +1,7 @@
 ﻿using ApiServer.Common.Extensions;
-using ApiServer.Model.Enum;
+using ApiServer.Models.Enum;
 
-namespace ApiServer.Model.Model.Files
+namespace ApiServer.Models.Model.Files
 {
     /// <summary>
     /// 文件大小

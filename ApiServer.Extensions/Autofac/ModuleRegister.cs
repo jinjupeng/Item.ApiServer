@@ -33,10 +33,6 @@ namespace ApiServer.Extensions.AutofacModule
                 builder.RegisterType<UnitOfWork>().As<IUnitOfWork>()
                     .AsImplementedInterfaces();
 
-                // 注册拦截器，注意：不能在BaseService类中使用[Transaction]，因为无效
-                builder.RegisterType<TransactionInterceptor>().AsSelf(); 
-                interceptorServiceTypes.Add(typeof(TransactionInterceptor)); // 配置事务拦截器
-
                 // 泛型注册
                 builder.RegisterGeneric(typeof(BaseService<>)).As(typeof(IBaseService<>)).InstancePerDependency();
 

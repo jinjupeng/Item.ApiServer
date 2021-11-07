@@ -1,9 +1,9 @@
-﻿using ApiServer.Model.Enum;
+﻿using ApiServer.Models.Enum;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ApiServer.Model.Model.Config
+namespace ApiServer.Models.Model.Config
 {
     /// <summary>
     /// OSSConfig

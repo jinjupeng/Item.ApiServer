@@ -1,17 +1,11 @@
 ﻿using ApiServer.Common;
-using ApiServer.Common.Auth;
-using ApiServer.Common.Config;
 using ApiServer.Extensions.Attributes;
 using ApiServer.Extensions.Auth;
-using ApiServer.Extensions.AutofacModule;
-using ApiServer.Extensions.Mapping;
 using ApiServer.Extensions.Filters;
-using ApiServer.Extensions.ServiceExensions;
-using ApiServer.Model.Entity;
-using ApiServer.Model.Model.Config;
-using ApiServer.Model.Model.MsgModel;
-using AspNetCoreRateLimit;
-using Autofac;
+using ApiServer.Mapping;
+using ApiServer.Models;
+using ApiServer.Models.Entity;
+using ApiServer.Models.Model.MsgModel;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -32,7 +26,10 @@ using System;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.HttpOverrides;
+using Common.Utility.JWT;
+using UnitOfWork;
+using ApiServer.DAL.DAL;
+using ApiServer.BLL.BLL;
 
 namespace ApiServer
 {
@@ -44,28 +41,34 @@ namespace ApiServer
         }
 
         public IConfiguration Configuration { get; }
-        public IContainer Container { get; private set; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         // 使用DI将服务注入到容器中
         public void ConfigureServices(IServiceCollection services)
         {
+            var rootSection = Configuration.GetSection(nameof(ApiServerOptions));
+            var jwtOptions = rootSection.GetSection(nameof(ApiServerOptions.JwtOptions)).Get<JwtOptions>();
+            services.AddOptions<ApiServerOptions>().Configure(options =>
+            {
+                options.JwtOptions = jwtOptions;
+            });
+
             services.AddControllers().AddNewtonsoftJson(
             options =>
             {
-                    // 序列化时忽略循环
-                    options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-                    // 使用驼峰命名
-                    options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
-                    // Enum转换为字符串
-                    options.SerializerSettings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
-                    // Int64转换为字符串
-                    options.SerializerSettings.Converters.Add(new Int64ToStringConvert());
-                    options.SerializerSettings.Converters.Add(new NullableInt64ToStringConvert());
-                    // 序列化时是否忽略空值
-                    options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
-                    // 序列化时的时间格式
-                    options.SerializerSettings.DateFormatString = "yyyy-MM-dd HH:mm:ss";
+                // 序列化时忽略循环
+                options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                // 使用驼峰命名
+                options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+                // Enum转换为字符串
+                options.SerializerSettings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
+                // Int64转换为字符串
+                options.SerializerSettings.Converters.Add(new Int64ToStringConvert());
+                options.SerializerSettings.Converters.Add(new NullableInt64ToStringConvert());
+                // 序列化时是否忽略空值
+                options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
+                // 序列化时的时间格式
+                options.SerializerSettings.DateFormatString = "yyyy-MM-dd HH:mm:ss";
             });
 
             services.Configure<FormOptions>(options =>
@@ -75,30 +78,25 @@ namespace ApiServer
                 options.MemoryBufferThreshold = int.MaxValue;
             });
 
-            services.AddCache(Configuration);
-
-            services.AddOSS(Configuration);
-
-            #region 配置文件绑定
-
-            // 文件路径配置绑定
-            services.Configure<FilePathConfig>(Configuration.GetSection("FilePath"));
-
-            #endregion
+            services.AddUnitOfWork<ContextMySql>();
 
             // 数据库上下文注入
-            services.AddDbContext<ContextMySql>(option => option.UseMySql(ConfigTool.Configuration["Setting:Conn"]));
+            services.AddDbContext<ContextMySql>(option =>
+            {
+                option.UseMySql(rootSection.GetSection(nameof(ApiServerOptions.ConnString)).Get<string>());
+            });
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
-            #region JwtSetting类注入
-            services.Configure<JwtSettings>(Configuration.GetSection("JwtSettings"));
-            var jwtSetting = new JwtSettings();
-            Configuration.Bind("JwtSettings", jwtSetting);
-            JwtHelper.Settings = jwtSetting;
-            #endregion
+            services.AddJwtOptions(options =>
+            {
+                options.Issuer = jwtOptions.Issuer;
+                options.Audience = jwtOptions.Audience;
+                options.ExpireMinutes = jwtOptions.ExpireMinutes;
+            });
 
             #region 基于策略模式的授权
+
             // jwt服务注入
             services.AddAuthorization(options =>
             {
@@ -108,8 +106,8 @@ namespace ApiServer
             })
 
             #region JWT认证，core自带官方jwt认证
+
             // 开启Bearer认证
-            // .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddAuthentication(s =>
             {
                 //添加JWT Scheme
@@ -127,9 +125,9 @@ namespace ApiServer
                     ValidateLifetime = true,// 是否验证失效时间
                     ClockSkew = TimeSpan.FromSeconds(30),
                     ValidateIssuerSigningKey = true,// 是否验证SecurityKey
-                    ValidAudience = jwtSetting.Audience,// Audience
-                    ValidIssuer = jwtSetting.Issuer,// Issuer，这两项和前面签发jwt的设置一致
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSetting.SecretKey))// 拿到SecurityKey
+                    ValidAudience = jwtOptions.Audience,// Audience
+                    ValidIssuer = jwtOptions.Issuer,// Issuer，这两项和前面签发jwt的设置一致
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.SecretKey))// 拿到SecurityKey
                 };
                 config.Events = new JwtBearerEvents
                 {
@@ -172,6 +170,7 @@ namespace ApiServer
             #endregion
 
             #region Cors 跨域
+
             services.AddCors(options =>
             {
                 // 浏览器会发起2次请求,使用OPTIONS发起预检请求，第二次才是api请求
@@ -185,17 +184,19 @@ namespace ApiServer
                     .AllowCredentials(); //指定处理cookie
                 });
             });
+
             #endregion
 
             #region 注入自定义策略
 
-            services.AddSingleton<IAuthorizationHandler, PermissionHandler>();
+            services.AddScoped<IAuthorizationHandler, PermissionHandler>();
 
             services.AddMapster();
 
             #endregion
 
             #region Swagger UI
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo
@@ -245,44 +246,26 @@ namespace ApiServer
                 // 注册全局过滤器
                 options.Filters.Add<GlobalExceptionFilter>();
                 options.Filters.Add(typeof(ValidateModelStateAttribute));
-            }).AddValidation(services); // 添加验证器
+            });
 
             services.Configure<ApiBehaviorOptions>(options =>
             {
                 options.SuppressModelStateInvalidFilter = true;
             });
 
-            //services.Configure<ForwardedHeadersOptions>(options =>
-            //{
-            //    options.ForwardedHeaders =
-            //        ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
-            //    options.KnownNetworks.Clear();
-            //    options.KnownProxies.Clear();
-            //});
-
-            #region IP限流
-            // https://marcus116.blogspot.com/2019/06/netcore-aspnet-core-webapi-aspnetcoreratelimit-throttle.html
-
-            // 将速限计数器资料储存在 Memory 中
-            services.AddMemoryCache();
-
-            // 从 appsettings.json 读取 IpRateLimiting 设置
-            services.Configure<IpRateLimitOptions>(Configuration.GetSection("IpRateLimiting"));
-
-            // 从 appsettings.json 读取 Ip Rule 设置
-            services.Configure<IpRateLimitPolicies>(Configuration.GetSection("IpRateLimitPolicies"));
-
-            // 注入 counter and IP Rules
-            services.AddSingleton<IIpPolicyStore, MemoryCacheIpPolicyStore>();
-            services.AddSingleton<IRateLimitCounterStore, MemoryCacheRateLimitCounterStore>();
-
-            // the clientId/ clientIp resolvers use it.
-            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-
-            // Rate Limit configuration 设置
-            services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
-
-            #endregion
+            // 泛型注入
+            services.AddScoped(typeof(IBaseDal<>), typeof(BaseDal<>));
+            services.AddScoped(typeof(IBaseService<>), typeof(BaseService<>));
+            services.AddScoped<IMySystemDal, MySystemDal>();
+            services.AddScoped<IJwtAuthService, JwtAuthService>();
+            services.AddScoped<IMySystemService, MySystemService>();
+            services.AddScoped<ISysApiService, SysApiService>();
+            services.AddScoped<ISysConfigService, SysConfigService>();
+            services.AddScoped<ISysDictService, SysDictService>();
+            services.AddScoped<ISysMenuService, SysMenuService>();
+            services.AddScoped<ISysOrgService, SysOrgService>();
+            services.AddScoped<ISysRoleService, SysRoleService>();
+            services.AddScoped<ISysUserService, SysUserService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -303,9 +286,6 @@ namespace ApiServer
             // http重定向到https
             app.UseHttpsRedirection();
 
-            // 启用限流,需在UseMvc前面
-            app.UseIpRateLimiting();
-
             // 允许跨域
             app.UseCors("cors");
 
@@ -323,6 +303,7 @@ namespace ApiServer
             app.UseSerilogRequestLogging();
 
             #region Swagger
+
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
@@ -331,21 +312,13 @@ namespace ApiServer
                 c.RoutePrefix = string.Empty;
                 //swagger集成auth验证
             });
+
             #endregion
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
             });
-        }
-
-        /// <summary>
-        /// Autofac注册
-        /// </summary>
-        /// <param name="builder"></param>
-        public void ConfigureContainer(ContainerBuilder builder)
-        {
-            builder.RegisterModule(new ModuleRegister());
         }
     }
 }

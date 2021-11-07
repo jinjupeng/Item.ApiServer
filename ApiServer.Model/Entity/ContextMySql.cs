@@ -3,7 +3,7 @@ using ApiServer.Common.Config;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
-namespace ApiServer.Model.Entity
+namespace ApiServer.Models.Entity
 {
     public partial class ContextMySql : DbContext
     {

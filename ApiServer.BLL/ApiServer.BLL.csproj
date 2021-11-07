@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\LibSamples\Common.Utility\src\Common.Utility\Common.Utility.csproj" />
     <ProjectReference Include="..\ApiServer.DAL\ApiServer.DAL.csproj" />
   </ItemGroup>
 

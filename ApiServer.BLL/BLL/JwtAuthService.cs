@@ -1,23 +1,28 @@
 ﻿using ApiServer.BLL.IBLL;
-using ApiServer.Common;
-using ApiServer.Common.Attributes;
-using ApiServer.Common.Auth;
-using ApiServer.Model.Entity;
-using ApiServer.Model.Model.MsgModel;
-using ApiServer.Model.Model.ViewModel;
+using ApiServer.Models.Entity;
+using ApiServer.Models.Model.MsgModel;
+using ApiServer.Models.Model.ViewModel;
+using Common.Utility.Helper;
+using Common.Utility.JWT;
+using Common.Utility.Utils;
 using Mapster;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
+using ApiServer.Models;
 
 namespace ApiServer.BLL.BLL
 {
     public class JwtAuthService : IJwtAuthService
     {
         private readonly IBaseService<sys_user> _baseService;
+        private readonly JwtHelper _jwtHelper;
 
-        public JwtAuthService(IBaseService<sys_user> baseService)
+        public JwtAuthService(IBaseService<sys_user> baseService, JwtHelper jwtHelper)
         {
             _baseService = baseService;
+            _jwtHelper = jwtHelper;
         }
 
         /// <summary>
@@ -46,13 +51,13 @@ namespace ApiServer.BLL.BLL
             }
 
             // 将一些个人数据写入token中
-            var dict = new Dictionary<string, object>
-                {
-                    { ClaimAttributes.UserId, sys_user.id },
-                    { ClaimAttributes.UserName, username }
-                };
+            var customClaims = new List<Claim>
+            {
+                new Claim(ClaimAttributes.UserId, Convert.ToString(sys_user.id)),
+                new Claim(ClaimAttributes.UserName, username )
+            };
 
-            var data = JwtHelper.IssueJwt(dict);
+            var data = _jwtHelper.IssueJwt(customClaims);
             return MsgModel.Success((object)data);
         }
 
@@ -64,7 +69,7 @@ namespace ApiServer.BLL.BLL
         public MsgModel SignUp(SysUser user)
         {
             var dict = new Dictionary<string, object>();
-            var stringRandom = CommonUtils.GetStringRandom(10);
+            var stringRandom = StringHelper.GenerateRandom(10);
             user.username = stringRandom;
             //user.nickname = stringRandom;
             if (user.phone != null)
@@ -75,13 +80,14 @@ namespace ApiServer.BLL.BLL
                     var sysUser = new sys_user();
                     sysUser = user.BuildAdapter().AdaptToType<sys_user>();
                     _baseService.AddRange(sysUser);
-                    var playLoad = new Dictionary<string, object>
+
+                    var customClaims = new List<Claim>
                     {
-                        { ClaimAttributes.UserId, queryUser.id },
-                        { ClaimAttributes.UserName, queryUser.username }
+                        new Claim(ClaimAttributes.UserId, Convert.ToString(queryUser.id)),
+                        new Claim(ClaimAttributes.UserName, queryUser.username )
                     };
 
-                    var token = JwtHelper.IssueJwt(playLoad);
+                    var token = _jwtHelper.IssueJwt(customClaims);
                     dict.Add("token", token);
                     return MsgModel.Success(dict);
                 }

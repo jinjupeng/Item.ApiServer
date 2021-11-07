@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ApiServer.Model.Model.Config
+namespace ApiServer.Models.Model.Config
 {
     public class AliyunConfig
     {

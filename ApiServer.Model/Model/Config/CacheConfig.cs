@@ -1,7 +1,7 @@
 ﻿using ApiServer.Common.Extensions;
-using ApiServer.Model.Enum;
+using ApiServer.Models.Enum;
 
-namespace ApiServer.Model.Model.Config
+namespace ApiServer.Models.Model.Config
 {
     /// <summary>
     /// 缓存配置

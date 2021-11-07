@@ -1,15 +1,15 @@
 ﻿using ApiServer.BLL.IBLL;
 using ApiServer.Common.Encrypt;
 using ApiServer.Common.Extensions;
-using ApiServer.Model.Model.Files;
-using ApiServer.Model.Model.MsgModel;
+using ApiServer.Models.Model.Files;
+using ApiServer.Models.Model.MsgModel;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using FileInfo = ApiServer.Model.Model.Files.FileInfo;
+using FileInfo = ApiServer.Models.Model.Files.FileInfo;
 
 namespace ApiServer.BLL.BLL
 {

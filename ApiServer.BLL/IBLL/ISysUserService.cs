@@ -1,5 +1,5 @@
-﻿using ApiServer.Model.Entity;
-using ApiServer.Model.Model.MsgModel;
+﻿using ApiServer.Models.Entity;
+using ApiServer.Models.Model.MsgModel;
 using System;
 
 namespace ApiServer.BLL.IBLL

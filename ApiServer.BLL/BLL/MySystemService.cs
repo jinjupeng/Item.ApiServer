@@ -1,10 +1,10 @@
 ﻿using ApiServer.BLL.IBLL;
 using ApiServer.DAL.IDAL;
-using ApiServer.Model.Entity;
-using ApiServer.Model.Model;
-using ApiServer.Model.Model.MsgModel;
-using ApiServer.Model.Model.PageModel;
-using ApiServer.Model.Model.ViewModel;
+using ApiServer.Models.Entity;
+using ApiServer.Models.Model;
+using ApiServer.Models.Model.MsgModel;
+using ApiServer.Models.Model.PageModel;
+using ApiServer.Models.Model.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;

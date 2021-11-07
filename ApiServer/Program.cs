@@ -1,6 +1,4 @@
-﻿using ApiServer.Common.Config;
-using Autofac.Extensions.DependencyInjection;
-using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Serilog;
@@ -41,17 +39,13 @@ namespace ApiServer
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-            .UseServiceProviderFactory(new AutofacServiceProviderFactory())
-
             .ConfigureWebHostDefaults(webBuilder =>
             {
-                webBuilder.UseKestrel((context, options) =>
-                {
-                    options.Configure(context.Configuration.GetSection("Kestrel"));
-                })
-                //设置监听的端口
-                //.UseUrls(ConfigTool.Configuration["Setting:ListenUrl"])
-                .UseStartup<Startup>()
+                //webBuilder.UseKestrel((context, options) =>
+                //{
+                //    options.Configure(context.Configuration.GetSection("Kestrel"));
+                //})
+                webBuilder.UseStartup<Startup>()
                 // 将Serilog设置为日志提供程序
                 .UseSerilog(); // Add this line;
             });

@@ -1,5 +1,5 @@
-﻿using ApiServer.BLL.IBLL;
-using ApiServer.Model.Entity;
+﻿using ApiServer.BLL.BLL;
+using ApiServer.Models.Entity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;

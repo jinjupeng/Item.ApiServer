@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
 
-namespace ApiServer.Model.Enum
+namespace ApiServer.Models.Enum
 {
     /// <summary>
     /// 文件访问方式

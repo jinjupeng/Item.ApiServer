@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-namespace ApiServer.Model.Model.Config
+namespace ApiServer.Models.Model.Config
 {
     /// <summary>
     /// 路径配置

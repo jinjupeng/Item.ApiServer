@@ -1,7 +1,7 @@
-﻿using ApiServer.Model.Enum;
-using ApiServer.Model.Model.Files;
+﻿using ApiServer.Models.Enum;
+using ApiServer.Models.Model.Files;
 
-namespace ApiServer.Model.Files
+namespace ApiServer.Models.Files
 {
     /// <summary>
     /// 文件对象

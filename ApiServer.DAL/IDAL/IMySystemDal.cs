@@ -1,5 +1,5 @@
-﻿using ApiServer.Model.Entity;
-using ApiServer.Model.Model.ViewModel;
+﻿using ApiServer.Models.Entity;
+using ApiServer.Models.Model.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;

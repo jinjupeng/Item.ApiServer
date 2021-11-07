@@ -1,6 +1,6 @@
-﻿using ApiServer.BLL.IBLL;
-using ApiServer.Common.Auth;
-using ApiServer.Model.Model.MsgModel;
+﻿using ApiServer.BLL.BLL;
+using ApiServer.Models.Model.MsgModel;
+using Common.Utility.JWT;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -19,6 +19,7 @@ namespace ApiServer.Controllers
         private readonly IJwtAuthService _jwtAuthService;
         private readonly ISysRoleService _sysRoleService;
         private readonly IHttpContextAccessor _accessor;
+        private readonly JwtHelper _jwtHelper;
 
         /// <summary>
         /// 
@@ -27,11 +28,12 @@ namespace ApiServer.Controllers
         /// <param name="sysRoleService"></param>
         /// <param name="accessor"></param>
         public JwtAuthController(IJwtAuthService jwtAuthService, ISysRoleService sysRoleService,
-            IHttpContextAccessor accessor)
+            IHttpContextAccessor accessor, JwtHelper jwtHelper)
         {
             _jwtAuthService = jwtAuthService;
             _sysRoleService = sysRoleService;
             _accessor = accessor;
+            _jwtHelper = jwtHelper;
         }
 
         /// <summary>
@@ -66,7 +68,7 @@ namespace ApiServer.Controllers
             {
                 return Ok(await Task.FromResult(MsgModel.Fail(StatusCodes.Status401Unauthorized, "用户登录信息已失效，请重新登录！")));
             }
-            string refreshToken = JwtHelper.RefreshToken(oldToken);
+            string refreshToken = _jwtHelper.RefreshToken(oldToken);
             return Ok(await Task.FromResult(MsgModel.Success((object)refreshToken)));
         }
     }

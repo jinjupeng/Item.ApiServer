@@ -1,5 +1,5 @@
 ﻿using ApiServer.DAL.IDAL;
-using ApiServer.Model.Entity;
+using ApiServer.Models.Entity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System;

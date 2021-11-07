@@ -2,9 +2,9 @@
 using Aliyun.OSS.Common;
 using ApiServer.BLL.IBLL;
 using ApiServer.Common.Extensions;
-using ApiServer.Model.Enum;
-using ApiServer.Model.Files;
-using ApiServer.Model.Model.Config;
+using ApiServer.Models.Enum;
+using ApiServer.Models.Files;
+using ApiServer.Models.Model.Config;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;

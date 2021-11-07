@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ApiServer.Model.Model.Files
+namespace ApiServer.Models.Model.Files
 {
     /// <summary>
     /// 文件信息

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace ApiServer.Model.Entity
+namespace ApiServer.Models.Entity
 {
     public partial class sys_menu
     {

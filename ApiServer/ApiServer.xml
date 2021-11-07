@@ -4,18 +4,188 @@
         <name>ApiServer</name>
     </assembly>
     <members>
-        <member name="T:ApiServer.Controllers.AuthController">
+        <member name="T:ApiServer.Extensions.Auth.PermissionHandler">
             <summary>
-            测试的接口
+            权限授权处理器
             </summary>
         </member>
-        <member name="M:ApiServer.Controllers.AuthController.CheckAccount(System.String,System.String,System.String@)">
+        <member name="M:ApiServer.Extensions.Auth.PermissionHandler.#ctor(Microsoft.AspNetCore.Http.IHttpContextAccessor,ApiServer.BLL.BLL.ISysApiService)">
             <summary>
-            模拟登陆校验，因为是模拟，所以逻辑很‘模拟’
+            构造函数
             </summary>
-            <param name="userName"></param>
-            <param name="pwd"></param>
-            <param name="role"></param>
+            <param name="accessor"></param>
+            <param name="sysApiService"></param>
+        </member>
+        <member name="M:ApiServer.Extensions.Auth.PermissionHandler.HandleRequirementAsync(Microsoft.AspNetCore.Authorization.AuthorizationHandlerContext,ApiServer.Extensions.Auth.PermissionRequirement)">
+            <summary>
+            常用自定义验证策略
+            </summary>
+            <param name="context"></param>
+            <param name="requirement"></param>
+            <returns></returns>
+        </member>
+        <member name="T:ApiServer.Extensions.Auth.PermissionRequirement">
+            <summary>
+            必要参数类，类似一个订单信息
+            继承 IAuthorizationRequirement，用于设计自定义权限处理器PermissionHandler
+            因为AuthorizationHandler 中的泛型参数 TRequirement 必须继承 IAuthorizationRequirement
+            </summary>
+        </member>
+        <member name="P:ApiServer.Extensions.Auth.PermissionRequirement.Permissions">
+            <summary>
+            用户权限集合，一个订单包含了很多详情，
+            同理，一个网站的认证发行中，也有很多权限详情(这里是Role和URL的关系)
+            </summary>
+        </member>
+        <member name="P:ApiServer.Extensions.Auth.PermissionRequirement.DeniedAction">
+            <summary>
+            无权限action
+            </summary>
+        </member>
+        <member name="M:ApiServer.Extensions.Auth.PermissionRequirement.#ctor">
+            <summary>
+            这里是写死的，也可从数据库获取
+            </summary>
+        </member>
+        <member name="P:ApiServer.Extensions.Auth.PermissionRequirement.ClaimType">
+            <summary>
+            认证授权类型
+            </summary>
+        </member>
+        <member name="P:ApiServer.Extensions.Auth.PermissionRequirement.LoginPath">
+            <summary>
+            请求路径
+            </summary>
+        </member>
+        <member name="P:ApiServer.Extensions.Auth.PermissionRequirement.Issuer">
+            <summary>
+            发行人
+            </summary>
+        </member>
+        <member name="P:ApiServer.Extensions.Auth.PermissionRequirement.Audience">
+            <summary>
+            订阅人
+            </summary>
+        </member>
+        <member name="P:ApiServer.Extensions.Auth.PermissionRequirement.Expiration">
+            <summary>
+            过期时间
+            </summary>
+        </member>
+        <member name="P:ApiServer.Extensions.Auth.PermissionRequirement.SigningCredentials">
+            <summary>
+            签名验证
+            </summary>
+        </member>
+        <member name="M:ApiServer.Extensions.Auth.PermissionRequirement.#ctor(System.String,System.Collections.Generic.List{ApiServer.Models.Model.AuthModel.PermissionItem},System.String,System.String,System.String,Microsoft.IdentityModel.Tokens.SigningCredentials,System.TimeSpan)">
+            <summary>
+            构造
+            </summary>
+            <param name="deniedAction">拒约请求的url</param>
+            <param name="permissions">权限集合</param>
+            <param name="claimType">声明类型</param>
+            <param name="issuer">发行人</param>
+            <param name="audience">订阅人</param>
+            <param name="signingCredentials">签名验证实体</param>
+            <param name="expiration">过期时间</param>
+        </member>
+        <member name="T:ApiServer.Extensions.Filters.GlobalExceptionFilter">
+            <summary>
+            自定义全局异常过滤器：当程序发生异常时，处理系统出现的未捕获的异常
+            自定义一个全局异常过滤器需要实现IExceptionFilter接口
+            </summary>
+        </member>
+        <member name="M:ApiServer.Extensions.Filters.GlobalExceptionFilter.#ctor(Microsoft.Extensions.Logging.ILogger{ApiServer.Extensions.Filters.GlobalExceptionFilter},Microsoft.AspNetCore.Hosting.IWebHostEnvironment)">
+            <summary>
+            构造函数
+            </summary>
+            <param name="logger"></param>
+            <param name="env"></param>
+        </member>
+        <member name="M:ApiServer.Extensions.Filters.GlobalExceptionFilter.OnException(Microsoft.AspNetCore.Mvc.Filters.ExceptionContext)">
+            <summary>
+            IExceptionFilter接口会要求实现OnException方法，当系统发生未捕获异常时就会触发这个方法。
+            OnException方法有一个ExceptionContext异常上下文，其中包含了具体的异常信息，HttpContext及mvc路由信息。
+            系统一旦出现未捕获异常后，比较常见的做法就是使用日志工具，将异常的详细信息记录下来，方便调试
+            </summary>
+            <param name="context"></param>
+        </member>
+        <member name="M:ApiServer.Extensions.Filters.GlobalExceptionFilter.WriteLog(System.String,System.Exception)">
+            <summary>
+            自定义返回格式
+            </summary>
+            <param name="throwMsg"></param>
+            <param name="ex"></param>
+            <returns></returns>
+        </member>
+        <member name="T:ApiServer.Extensions.Filters.GlobalExceptionFilter.InternalServerErrorObjectResult">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:ApiServer.Extensions.Filters.GlobalExceptionFilter.InternalServerErrorObjectResult.#ctor(System.Object)">
+            <summary>
+            
+            </summary>
+            <param name="value"></param>
+        </member>
+        <member name="T:ApiServer.Extensions.Attributes.ValidateModelStateAttribute">
+            <summary>
+            https://github.com/FluentValidation/FluentValidation/issues/548
+            https://stackoverflow.com/questions/45758024/use-custom-validation-responses-with-fluent-validation
+            </summary>
+        </member>
+        <member name="T:ApiServer.Extensions.Middlewares.ExceptionMiddleware">
+            <summary>
+            统一异常处理
+            </summary>
+        </member>
+        <member name="M:ApiServer.Extensions.Middlewares.ExceptionMiddleware.#ctor(Microsoft.Extensions.Logging.ILogger{ApiServer.Extensions.Middlewares.ExceptionMiddleware},Microsoft.AspNetCore.Http.RequestDelegate)">
+            <summary>
+            构造函数
+            </summary>
+            <param name="next"></param>
+            <param name="environment"></param>
+        </member>
+        <member name="M:ApiServer.Extensions.Middlewares.ExceptionMiddleware.InvokeAsync(Microsoft.AspNetCore.Http.HttpContext)">
+            <summary>
+            异常处理
+            </summary>
+            <param name="context"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiServer.Extensions.Middlewares.ExceptionMiddleware.HandleException(Microsoft.AspNetCore.Http.HttpContext,System.Exception)">
+            <summary>
+            处理异常
+            </summary>
+            <param name="context"></param>
+            <param name="exception"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiServer.Extensions.Middlewares.ExceptionMiddleware.WriteLog(System.String,System.Exception)">
+            <summary>
+            自定义返回格式
+            </summary>
+            <param name="throwMsg"></param>
+            <param name="ex"></param>
+            <returns></returns>
+        </member>
+        <member name="T:ApiServer.Extensions.Middlewares.RefererMiddleware">
+            <summary>
+            对请求头Referer判断过滤
+            </summary>
+        </member>
+        <member name="M:ApiServer.Extensions.Middlewares.RefererMiddleware.#ctor(Microsoft.AspNetCore.Http.RequestDelegate)">
+            <summary>
+            构造函数
+            </summary>
+            <param name="next"></param>
+        </member>
+        <member name="M:ApiServer.Extensions.Middlewares.RefererMiddleware.InvokeAsync(Microsoft.AspNetCore.Http.HttpContext)">
+            <summary>
+            对referer来源判断
+            </summary>
+            <param name="httpContext"></param>
             <returns></returns>
         </member>
         <member name="T:ApiServer.Controllers.ExceptionController">
@@ -23,38 +193,18 @@
             异常
             </summary>
         </member>
-        <member name="M:ApiServer.Controllers.ExceptionController.#ctor(Microsoft.Extensions.Logging.ILogger{ApiServer.Controllers.ExceptionController},ApiServer.BLL.IBLL.IBaseService{ApiServer.Model.Entity.sys_user})">
+        <member name="M:ApiServer.Controllers.ExceptionController.#ctor(Microsoft.Extensions.Logging.ILogger{ApiServer.Controllers.ExceptionController},ApiServer.BLL.BLL.IBaseService{ApiServer.Models.Entity.sys_user})">
             <summary>
             构造函数
             </summary>
             <param name="logger"></param>
-        </member>
-        <member name="T:ApiServer.Controllers.FileController">
-            <summary>
-            文件接口
-            </summary>
-        </member>
-        <member name="M:ApiServer.Controllers.FileController.#ctor(ApiServer.BLL.IBLL.IFileStorageService,ApiServer.BLL.IBLL.IFileUploadService,Microsoft.Extensions.Options.IOptions{ApiServer.Model.Model.Config.FilePathConfig})">
-            <summary>
-            构造函数
-            </summary>
-            <param name="fileStorageService"></param>
-            <param name="fileUploadService"></param>
-            <param name="filePathConfig"></param>
-        </member>
-        <member name="M:ApiServer.Controllers.FileController.Upload(Microsoft.AspNetCore.Http.IFormCollection)">
-            <summary>
-            单文件上传
-            </summary>
-            <param name="form"></param>
-            <returns></returns>
         </member>
         <member name="T:ApiServer.Controllers.JwtAuthController">
             <summary>
             
             </summary>
         </member>
-        <member name="M:ApiServer.Controllers.JwtAuthController.#ctor(ApiServer.BLL.IBLL.IJwtAuthService,ApiServer.BLL.IBLL.ISysRoleService,Microsoft.AspNetCore.Http.IHttpContextAccessor)">
+        <member name="M:ApiServer.Controllers.JwtAuthController.#ctor(ApiServer.BLL.BLL.IJwtAuthService,ApiServer.BLL.BLL.ISysRoleService,Microsoft.AspNetCore.Http.IHttpContextAccessor,Common.Utility.JWT.JwtHelper)">
             <summary>
             
             </summary>
@@ -80,7 +230,7 @@
             
             </summary>
         </member>
-        <member name="M:ApiServer.Controllers.SysApiController.#ctor(ApiServer.BLL.IBLL.ISysApiService)">
+        <member name="M:ApiServer.Controllers.SysApiController.#ctor(ApiServer.BLL.BLL.ISysApiService)">
             <summary>
             
             </summary>
@@ -94,21 +244,21 @@
             <param name="apiStatus"></param>
             <returns></returns>
         </member>
-        <member name="M:ApiServer.Controllers.SysApiController.Add(ApiServer.Model.Model.ViewModel.SysApi)">
+        <member name="M:ApiServer.Controllers.SysApiController.Add(ApiServer.Models.Model.ViewModel.SysApi)">
             <summary>
             接口管理:新增
             </summary>
             <param name="sysApi"></param>
             <returns></returns>
         </member>
-        <member name="M:ApiServer.Controllers.SysApiController.Update(ApiServer.Model.Model.ViewModel.SysApi)">
+        <member name="M:ApiServer.Controllers.SysApiController.Update(ApiServer.Models.Model.ViewModel.SysApi)">
             <summary>
             接口管理:修改
             </summary>
             <param name="sysApi"></param>
             <returns></returns>
         </member>
-        <member name="M:ApiServer.Controllers.SysApiController.Delete(ApiServer.Model.Model.ViewModel.SysApi)">
+        <member name="M:ApiServer.Controllers.SysApiController.Delete(ApiServer.Models.Model.ViewModel.SysApi)">
             <summary>
             接口管理:删除
             </summary>
@@ -122,7 +272,7 @@
             <param name="roleId"></param>
             <returns></returns>
         </member>
-        <member name="M:ApiServer.Controllers.SysApiController.SaveKeys(ApiServer.Model.Model.Nodes.RoleCheckedIds)">
+        <member name="M:ApiServer.Controllers.SysApiController.SaveKeys(ApiServer.Models.Model.Nodes.RoleCheckedIds)">
             <summary>
             角色管理：保存API权限勾选结果
             </summary>
@@ -142,7 +292,7 @@
             用户管理
             </summary>
         </member>
-        <member name="M:ApiServer.Controllers.SysConfigController.#ctor(ApiServer.BLL.IBLL.ISysConfigService)">
+        <member name="M:ApiServer.Controllers.SysConfigController.#ctor(ApiServer.BLL.BLL.ISysConfigService)">
             <summary>
             
             </summary>
@@ -167,14 +317,14 @@
             <param name="configLike"></param>
             <returns></returns>
         </member>
-        <member name="M:ApiServer.Controllers.SysConfigController.Update(ApiServer.Model.Model.ViewModel.SysConfig)">
+        <member name="M:ApiServer.Controllers.SysConfigController.Update(ApiServer.Models.Model.ViewModel.SysConfig)">
             <summary>
             
             </summary>
             <param name="sysConfig"></param>
             <returns></returns>
         </member>
-        <member name="M:ApiServer.Controllers.SysConfigController.Add(ApiServer.Model.Model.ViewModel.SysConfig)">
+        <member name="M:ApiServer.Controllers.SysConfigController.Add(ApiServer.Models.Model.ViewModel.SysConfig)">
             <summary>
             
             </summary>
@@ -193,7 +343,7 @@
             系统数据字典配置控制层代码
             </summary>
         </member>
-        <member name="M:ApiServer.Controllers.SysDictController.#ctor(ApiServer.BLL.IBLL.ISysDictService)">
+        <member name="M:ApiServer.Controllers.SysDictController.#ctor(ApiServer.BLL.BLL.ISysDictService)">
             <summary>
             
             </summary>
@@ -213,14 +363,14 @@
             <param name="groupCode">分组编码</param>
             <returns>数据字典项列表</returns>
         </member>
-        <member name="M:ApiServer.Controllers.SysDictController.Update(ApiServer.Model.Model.ViewModel.SysDict)">
+        <member name="M:ApiServer.Controllers.SysDictController.Update(ApiServer.Models.Model.ViewModel.SysDict)">
             <summary>
             根据id更新数据数据字典项目
             </summary>
             <param name="sysDict">更新实体（必须包含id）</param>
             <returns>更新成功结果</returns>
         </member>
-        <member name="M:ApiServer.Controllers.SysDictController.Add(ApiServer.Model.Model.ViewModel.SysDict)">
+        <member name="M:ApiServer.Controllers.SysDictController.Add(ApiServer.Models.Model.ViewModel.SysDict)">
             <summary>
             新增数据字典项
             </summary>
@@ -239,7 +389,7 @@
             菜单管理
             </summary>
         </member>
-        <member name="M:ApiServer.Controllers.SysMenuController.#ctor(ApiServer.BLL.IBLL.ISysMenuService)">
+        <member name="M:ApiServer.Controllers.SysMenuController.#ctor(ApiServer.BLL.BLL.ISysMenuService)">
             <summary>
             
             </summary>
@@ -252,21 +402,21 @@
             <param name="pairs"></param>
             <returns></returns>
         </member>
-        <member name="M:ApiServer.Controllers.SysMenuController.Update(ApiServer.Model.Model.ViewModel.SysMenu)">
+        <member name="M:ApiServer.Controllers.SysMenuController.Update(ApiServer.Models.Model.ViewModel.SysMenu)">
             <summary>
             菜单管理：修改
             </summary>
             <param name="sysMenu"></param>
             <returns></returns>
         </member>
-        <member name="M:ApiServer.Controllers.SysMenuController.Add(ApiServer.Model.Model.ViewModel.SysMenu)">
+        <member name="M:ApiServer.Controllers.SysMenuController.Add(ApiServer.Models.Model.ViewModel.SysMenu)">
             <summary>
             菜单管理：新增
             </summary>
             <param name="sysMenu"></param>
             <returns></returns>
         </member>
-        <member name="M:ApiServer.Controllers.SysMenuController.Delete(ApiServer.Model.Model.ViewModel.SysMenu)">
+        <member name="M:ApiServer.Controllers.SysMenuController.Delete(ApiServer.Models.Model.ViewModel.SysMenu)">
             <summary>
             菜单管理：删除
             </summary>
@@ -280,7 +430,7 @@
             <param name="roleId"></param>
             <returns></returns>
         </member>
-        <member name="M:ApiServer.Controllers.SysMenuController.SaveKeys(ApiServer.Model.Model.Nodes.RoleCheckedIds)">
+        <member name="M:ApiServer.Controllers.SysMenuController.SaveKeys(ApiServer.Models.Model.Nodes.RoleCheckedIds)">
             <summary>
             角色管理：保存菜单勾选结果
             </summary>
@@ -307,7 +457,7 @@
             部门管理
             </summary>
         </member>
-        <member name="M:ApiServer.Controllers.SysOrgController.#ctor(ApiServer.BLL.IBLL.ISysOrgService,ApiServer.BLL.IBLL.IBaseService{ApiServer.Model.Entity.sys_user})">
+        <member name="M:ApiServer.Controllers.SysOrgController.#ctor(ApiServer.BLL.BLL.ISysOrgService,ApiServer.BLL.BLL.IBaseService{ApiServer.Models.Entity.sys_user})">
             <summary>
             构造函数
             </summary>
@@ -321,21 +471,21 @@
             <param name="pairs"></param>
             <returns></returns>
         </member>
-        <member name="M:ApiServer.Controllers.SysOrgController.Update(ApiServer.Model.Model.ViewModel.SysOrg)">
+        <member name="M:ApiServer.Controllers.SysOrgController.Update(ApiServer.Models.Model.ViewModel.SysOrg)">
             <summary>
             更新
             </summary>
             <param name="sysOrg"></param>
             <returns></returns>
         </member>
-        <member name="M:ApiServer.Controllers.SysOrgController.Add(ApiServer.Model.Model.ViewModel.SysOrg)">
+        <member name="M:ApiServer.Controllers.SysOrgController.Add(ApiServer.Models.Model.ViewModel.SysOrg)">
             <summary>
             
             </summary>
             <param name="sysOrg"></param>
             <returns></returns>
         </member>
-        <member name="M:ApiServer.Controllers.SysOrgController.Delete(ApiServer.Model.Model.ViewModel.SysOrg)">
+        <member name="M:ApiServer.Controllers.SysOrgController.Delete(ApiServer.Models.Model.ViewModel.SysOrg)">
             <summary>
             
             </summary>
@@ -355,7 +505,7 @@
             角色管理
             </summary>
         </member>
-        <member name="M:ApiServer.Controllers.SysRoleController.#ctor(ApiServer.BLL.IBLL.ISysRoleService)">
+        <member name="M:ApiServer.Controllers.SysRoleController.#ctor(ApiServer.BLL.BLL.ISysRoleService)">
             <summary>
             
             </summary>
@@ -368,14 +518,14 @@
             <param name="roleLike"></param>
             <returns></returns>
         </member>
-        <member name="M:ApiServer.Controllers.SysRoleController.Update(ApiServer.Model.Model.ViewModel.SysRole)">
+        <member name="M:ApiServer.Controllers.SysRoleController.Update(ApiServer.Models.Model.ViewModel.SysRole)">
             <summary>
             角色管理：修改
             </summary>
             <param name="sysRole"></param>
             <returns></returns>
         </member>
-        <member name="M:ApiServer.Controllers.SysRoleController.Add(ApiServer.Model.Model.ViewModel.SysRole)">
+        <member name="M:ApiServer.Controllers.SysRoleController.Add(ApiServer.Models.Model.ViewModel.SysRole)">
             <summary>
             角色管理：新增
             </summary>
@@ -396,7 +546,7 @@
             <param name="userId"></param>
             <returns></returns>
         </member>
-        <member name="M:ApiServer.Controllers.SysRoleController.Savekeys(ApiServer.Model.Model.Nodes.UserRoleCheckedIds)">
+        <member name="M:ApiServer.Controllers.SysRoleController.Savekeys(ApiServer.Models.Model.Nodes.UserRoleCheckedIds)">
             <summary>
             用户管理：保存用户角色
             </summary>
@@ -416,7 +566,7 @@
             用户管理
             </summary>
         </member>
-        <member name="M:ApiServer.Controllers.SysUserController.#ctor(ApiServer.BLL.IBLL.ISysUserService)">
+        <member name="M:ApiServer.Controllers.SysUserController.#ctor(ApiServer.BLL.BLL.ISysUserService)">
             <summary>
             
             </summary>
@@ -436,14 +586,14 @@
             <param name="pairs"></param>
             <returns></returns>
         </member>
-        <member name="M:ApiServer.Controllers.SysUserController.Update(ApiServer.Model.Model.ViewModel.SysUser)">
+        <member name="M:ApiServer.Controllers.SysUserController.Update(ApiServer.Models.Model.ViewModel.SysUser)">
             <summary>
             用户管理：更新
             </summary>
             <param name="sysUser"></param>
             <returns></returns>
         </member>
-        <member name="M:ApiServer.Controllers.SysUserController.Add(ApiServer.Model.Model.ViewModel.SysUser)">
+        <member name="M:ApiServer.Controllers.SysUserController.Add(ApiServer.Models.Model.ViewModel.SysUser)">
             <summary>
             用户管理：新增
             </summary>
@@ -488,18 +638,835 @@
             <param name="enabled"></param>
             <returns></returns>
         </member>
-        <member name="M:ApiServer.Controllers.WxController.AuthLogin(ApiServer.Model.Model.WX.WXAuth)">
+        <member name="T:ApiServer.Mapping.MapsterMap">
             <summary>
-            微信登录
+            Mapster注入
             </summary>
-            <param name="wxAuth"></param>
+        </member>
+        <member name="M:ApiServer.Mapping.MapsterMap.AddMapster(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+            <summary>
+            自定义扩展service
+            </summary>
+            <param name="services"></param>
             <returns></returns>
         </member>
-        <member name="M:ApiServer.Startup.ConfigureContainer(Autofac.ContainerBuilder)">
+        <member name="T:ApiServer.Models.ApiServerOptions">
             <summary>
-            Autofac注册
+            
             </summary>
-            <param name="builder"></param>
+        </member>
+        <member name="P:ApiServer.Models.ApiServerOptions.ConnString">
+            <summary>
+            数据库连接字符串
+            </summary>
+        </member>
+        <member name="T:ApiServer.Models.Enum.CacheProvider">
+            <summary>
+            缓存提供器
+            </summary>
+        </member>
+        <member name="F:ApiServer.Models.Enum.CacheProvider.MemoryCache">
+            <summary>
+            内存缓存
+            </summary>
+        </member>
+        <member name="F:ApiServer.Models.Enum.CacheProvider.Redis">
+            <summary>
+            Redis
+            </summary>
+        </member>
+        <member name="T:ApiServer.Models.Enum.FileAccessMode">
+            <summary>
+            文件访问方式
+            </summary>
+        </member>
+        <member name="F:ApiServer.Models.Enum.FileAccessMode.Private">
+            <summary>
+            私有
+            </summary>
+        </member>
+        <member name="F:ApiServer.Models.Enum.FileAccessMode.Open">
+            <summary>
+            公开
+            </summary>
+        </member>
+        <member name="F:ApiServer.Models.Enum.FileAccessMode.Auth">
+            <summary>
+            授权
+            </summary>
+        </member>
+        <member name="T:ApiServer.Models.Enum.FileSizeUnit">
+            <summary>
+            文件大小单位
+            </summary>
+        </member>
+        <member name="F:ApiServer.Models.Enum.FileSizeUnit.Byte">
+            <summary>
+            字节
+            </summary>
+        </member>
+        <member name="F:ApiServer.Models.Enum.FileSizeUnit.K">
+            <summary>
+            K字节
+            </summary>
+        </member>
+        <member name="F:ApiServer.Models.Enum.FileSizeUnit.M">
+            <summary>
+            M字节
+            </summary>
+        </member>
+        <member name="F:ApiServer.Models.Enum.FileSizeUnit.G">
+            <summary>
+            G字节
+            </summary>
+        </member>
+        <member name="T:ApiServer.Models.Enum.HttpStatusCode">
+            <summary>
+            状态码枚举
+            </summary>
+        </member>
+        <member name="F:ApiServer.Models.Enum.HttpStatusCode.Status401Unauthorized">
+            <summary>
+            未登录（需要重新登录）
+            </summary>
+        </member>
+        <member name="F:ApiServer.Models.Enum.HttpStatusCode.Status403Forbidden">
+            <summary>
+            权限不足
+            </summary>
+        </member>
+        <member name="F:ApiServer.Models.Enum.HttpStatusCode.Status404NotFound">
+            <summary>
+            资源不存在
+            </summary>
+        </member>
+        <member name="F:ApiServer.Models.Enum.HttpStatusCode.Status500InternalServerError">
+            <summary>
+            系统内部错误（非业务代码里显式抛出的异常，例如由于数据不正确导致空指针异常、数据库异常等等）
+            </summary>
+        </member>
+        <member name="T:ApiServer.Models.Enum.OSSProvider">
+            <summary>
+            OSS提供器
+            </summary>
+        </member>
+        <member name="F:ApiServer.Models.Enum.OSSProvider.Qiniu">
+            <summary>
+            七牛
+            </summary>
+        </member>
+        <member name="F:ApiServer.Models.Enum.OSSProvider.Aliyun">
+            <summary>
+            阿里云
+            </summary>
+        </member>
+        <member name="T:ApiServer.Models.ClaimAttributes">
+            <summary>
+            Claim属性
+            </summary>
+        </member>
+        <member name="F:ApiServer.Models.ClaimAttributes.UserId">
+            <summary>
+            用户Id
+            </summary>
+        </member>
+        <member name="F:ApiServer.Models.ClaimAttributes.IdentityServerUserId">
+            <summary>
+            认证授权用户Id
+            </summary>
+        </member>
+        <member name="F:ApiServer.Models.ClaimAttributes.UserName">
+            <summary>
+            用户名
+            </summary>
+        </member>
+        <member name="F:ApiServer.Models.ClaimAttributes.UserNickName">
+            <summary>
+            姓名
+            </summary>
+        </member>
+        <member name="F:ApiServer.Models.ClaimAttributes.RefreshExpires">
+            <summary>
+            刷新有效期
+            </summary>
+        </member>
+        <member name="T:ApiServer.Models.Model.AuthModel.PermissionItem">
+            <summary>
+            用户或角色或其他凭据实体
+            </summary>
+        </member>
+        <member name="P:ApiServer.Models.Model.AuthModel.PermissionItem.Role">
+            <summary>
+            用户或角色或其他凭据名称
+            </summary>
+        </member>
+        <member name="P:ApiServer.Models.Model.AuthModel.PermissionItem.Url">
+            <summary>
+            请求Url
+            </summary>
+        </member>
+        <member name="M:ApiServer.Models.Model.DataTree.DataTreeUtil`2.BuildTreeWithoutRoot(System.Collections.Generic.List{`0},`1)">
+            <summary>
+            构造无根树形结构数据，比如系统左侧菜单栏
+            </summary>
+            <param name="paramList"></param>
+            <param name="rootNodeId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiServer.Models.Model.DataTree.DataTreeUtil`2.BuildTree(System.Collections.Generic.List{`0},`1)">
+            <summary>
+            构造只有一个根的树形结构数据
+            </summary>
+            <param name="paramList"></param>
+            <param name="rootNodeId"></param>
+            <returns></returns>
+        </member>
+        <member name="P:ApiServer.Models.Model.MsgModel.CustomException.Code">
+            <summary>
+            异常错误编码
+            </summary>
+        </member>
+        <member name="P:ApiServer.Models.Model.MsgModel.CustomException.Msg">
+            <summary>
+            异常信息
+            </summary>
+        </member>
+        <member name="P:ApiServer.Models.Model.MsgModel.MsgModel.isok">
+            <summary>
+            请求是否处理成功
+            </summary>
+        </member>
+        <member name="P:ApiServer.Models.Model.MsgModel.MsgModel.code">
+            <summary>
+            请求响应状态码（200、400、500）
+            </summary>
+        </member>
+        <member name="P:ApiServer.Models.Model.MsgModel.MsgModel.message">
+            <summary>
+            请求结果描述信息
+            </summary>
+        </member>
+        <member name="P:ApiServer.Models.Model.MsgModel.MsgModel.data">
+            <summary>
+            请求结果数据（通常用于查询操作）
+            </summary>
+        </member>
+        <member name="M:ApiServer.Models.Model.MsgModel.MsgModel.Success">
+            <summary>
+            请求成功的响应，不带查询数据（用于删除、修改、新增接口）
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ApiServer.Models.Model.MsgModel.MsgModel.Success(System.Object)">
+            <summary>
+            请求成功的响应，带有查询数据（用于数据查询接口）
+            </summary>
+            <param name="obj"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiServer.Models.Model.MsgModel.MsgModel.Success(System.Object,System.String)">
+            <summary>
+            请求成功的响应，带有查询数据（用于数据查询接口）
+            </summary>
+            <param name="obj"></param>
+            <param name="message"></param>
+            <returns></returns>
+        </member>
+        <member name="T:ApiServer.Models.Model.PageModel.PageModel`1">
+            <summary>
+            通用分页信息类
+            </summary>
+        </member>
+        <member name="P:ApiServer.Models.Model.PageModel.PageModel`1.pageNum">
+            <summary>
+            当前页
+            </summary>
+        </member>
+        <member name="P:ApiServer.Models.Model.PageModel.PageModel`1.pageSize">
+            <summary>
+            每页数量
+            </summary>
+        </member>
+        <member name="P:ApiServer.Models.Model.PageModel.PageModel`1.total">
+            <summary>
+            总记录数
+            </summary>
+        </member>
+        <member name="P:ApiServer.Models.Model.PageModel.PageModel`1.size">
+            <summary>
+            当前页的数量
+            </summary>
+        </member>
+        <member name="P:ApiServer.Models.Model.PageModel.PageModel`1.records">
+            <summary>
+            结果集
+            </summary>
+        </member>
+        <member name="P:ApiServer.Models.Model.ViewModel.SysApi.apiPid">
+            <summary>
+            接口父ID(即接口分组)
+            </summary>
+        </member>
+        <member name="P:ApiServer.Models.Model.ViewModel.SysApi.apiPids">
+            <summary>
+            当前接口的所有上级id(即所有上级分组)
+            </summary>
+        </member>
+        <member name="P:ApiServer.Models.Model.ViewModel.SysApi.isLeaf">
+            <summary>
+            0:不是叶子节点，1:是叶子节点
+            </summary>
+        </member>
+        <member name="P:ApiServer.Models.Model.ViewModel.SysApi.apiName">
+            <summary>
+            接口名称
+            </summary>
+        </member>
+        <member name="P:ApiServer.Models.Model.ViewModel.SysApi.url">
+            <summary>
+            跳转URL
+            </summary>
+        </member>
+        <member name="P:ApiServer.Models.Model.ViewModel.SysApi.sort">
+            <summary>
+            排序
+            </summary>
+        </member>
+        <member name="P:ApiServer.Models.Model.ViewModel.SysApi.level">
+            <summary>
+            层级，1：接口分组，2：接口
+            </summary>
+        </member>
+        <member name="P:ApiServer.Models.Model.ViewModel.SysApi.status">
+            <summary>
+            是否禁用，0:启用(否）,1:禁用(是)
+            </summary>
+        </member>
+        <member name="P:ApiServer.Models.Model.ViewModel.SysConfig.paramName">
+            <summary>
+            参数名称(中文)
+            </summary>
+        </member>
+        <member name="P:ApiServer.Models.Model.ViewModel.SysConfig.paramKey">
+            <summary>
+            参数唯一标识(英文及数字)
+            </summary>
+        </member>
+        <member name="P:ApiServer.Models.Model.ViewModel.SysConfig.paramValue">
+            <summary>
+            参数值
+            </summary>
+        </member>
+        <member name="P:ApiServer.Models.Model.ViewModel.SysConfig.paramDesc">
+            <summary>
+            参数描述备注
+            </summary>
+        </member>
+        <member name="P:ApiServer.Models.Model.ViewModel.SysConfig.createTime">
+            <summary>
+            创建时间
+            </summary>
+        </member>
+        <member name="P:ApiServer.Models.Model.ViewModel.SysDict.groupName">
+            <summary>
+            分组名称
+            </summary>
+        </member>
+        <member name="P:ApiServer.Models.Model.ViewModel.SysDict.groupCode">
+            <summary>
+            分组编码
+            </summary>
+        </member>
+        <member name="P:ApiServer.Models.Model.ViewModel.SysDict.itemName">
+            <summary>
+            字典项名称
+            </summary>
+        </member>
+        <member name="P:ApiServer.Models.Model.ViewModel.SysDict.itemValue">
+            <summary>
+            字典项Value
+            </summary>
+        </member>
+        <member name="P:ApiServer.Models.Model.ViewModel.SysDict.itemDesc">
+            <summary>
+            字典项描述
+            </summary>
+        </member>
+        <member name="P:ApiServer.Models.Model.ViewModel.SysDict.createTime">
+            <summary>
+            字典项创建时间
+            </summary>
+        </member>
+        <member name="P:ApiServer.Models.Model.ViewModel.SysMenu.menuPid">
+            <summary>
+            父菜单ID
+            </summary>
+        </member>
+        <member name="P:ApiServer.Models.Model.ViewModel.SysMenu.menuPids">
+            <summary>
+            当前菜单所有父菜单
+            </summary>
+        </member>
+        <member name="P:ApiServer.Models.Model.ViewModel.SysMenu.isLeaf">
+            <summary>
+            0:不是叶子节点，1:是叶子节点
+            </summary>
+        </member>
+        <member name="P:ApiServer.Models.Model.ViewModel.SysMenu.menuName">
+            <summary>
+            菜单名称
+            </summary>
+        </member>
+        <member name="P:ApiServer.Models.Model.ViewModel.SysMenu.url">
+            <summary>
+            跳转URL
+            </summary>
+        </member>
+        <member name="P:ApiServer.Models.Model.ViewModel.SysMenu.icon">
+            <summary>
+            图标
+            </summary>
+        </member>
+        <member name="P:ApiServer.Models.Model.ViewModel.SysMenu.sort">
+            <summary>
+            排序
+            </summary>
+        </member>
+        <member name="P:ApiServer.Models.Model.ViewModel.SysMenu.level">
+            <summary>
+            菜单层级
+            </summary>
+        </member>
+        <member name="P:ApiServer.Models.Model.ViewModel.SysMenu.status">
+            <summary>
+            0:启用,1:禁用
+            </summary>
+        </member>
+        <member name="P:ApiServer.Models.Model.ViewModel.SysOrg.orgPid">
+            <summary>
+            上级组织编码
+            </summary>
+        </member>
+        <member name="P:ApiServer.Models.Model.ViewModel.SysOrg.orgPids">
+            <summary>
+            所有的父节点id
+            </summary>
+        </member>
+        <member name="P:ApiServer.Models.Model.ViewModel.SysOrg.isLeaf">
+            <summary>
+            0:不是叶子节点，1:是叶子节点
+            </summary>
+        </member>
+        <member name="P:ApiServer.Models.Model.ViewModel.SysOrg.orgName">
+            <summary>
+            组织名
+            </summary>
+        </member>
+        <member name="P:ApiServer.Models.Model.ViewModel.SysOrg.address">
+            <summary>
+            地址
+            </summary>
+        </member>
+        <member name="P:ApiServer.Models.Model.ViewModel.SysOrg.phone">
+            <summary>
+            电话
+            </summary>
+        </member>
+        <member name="P:ApiServer.Models.Model.ViewModel.SysOrg.email">
+            <summary>
+            邮件
+            </summary>
+        </member>
+        <member name="P:ApiServer.Models.Model.ViewModel.SysOrg.sort">
+            <summary>
+            排序
+            </summary>
+        </member>
+        <member name="P:ApiServer.Models.Model.ViewModel.SysOrg.level">
+            <summary>
+            组织层级
+            </summary>
+        </member>
+        <member name="P:ApiServer.Models.Model.ViewModel.SysOrg.status">
+            <summary>
+            0:启用,1:禁用
+            </summary>
+        </member>
+        <member name="P:ApiServer.Models.Model.ViewModel.SysRole.roleName">
+            <summary>
+            角色名称(汉字)
+            </summary>
+        </member>
+        <member name="P:ApiServer.Models.Model.ViewModel.SysRole.roleDesc">
+            <summary>
+            角色描述
+            </summary>
+        </member>
+        <member name="P:ApiServer.Models.Model.ViewModel.SysRole.roleCode">
+            <summary>
+            角色的英文code.如：ADMIN
+            </summary>
+        </member>
+        <member name="P:ApiServer.Models.Model.ViewModel.SysRole.sort">
+            <summary>
+            角色顺序
+            </summary>
+        </member>
+        <member name="P:ApiServer.Models.Model.ViewModel.SysRole.status">
+            <summary>
+            0表示可用(false)
+            </summary>
+        </member>
+        <member name="P:ApiServer.Models.Model.ViewModel.SysRoleApi.roleId">
+            <summary>
+            角色id
+            </summary>
+        </member>
+        <member name="P:ApiServer.Models.Model.ViewModel.SysRoleApi.apiId">
+            <summary>
+            接口id
+            </summary>
+        </member>
+        <member name="P:ApiServer.Models.Model.ViewModel.SysRoleMenu.roleId">
+            <summary>
+            角色id
+            </summary>
+        </member>
+        <member name="P:ApiServer.Models.Model.ViewModel.SysRoleMenu.menuId">
+            <summary>
+            权限id
+            </summary>
+        </member>
+        <member name="P:ApiServer.Models.Model.ViewModel.SysUser.username">
+            <summary>
+            用户名
+            </summary>
+        </member>
+        <member name="P:ApiServer.Models.Model.ViewModel.SysUser.password">
+            <summary>
+            密码
+            </summary>
+        </member>
+        <member name="P:ApiServer.Models.Model.ViewModel.SysUser.nickname">
+            <summary>
+            昵称
+            </summary>
+        </member>
+        <member name="P:ApiServer.Models.Model.ViewModel.SysUser.portrait">
+            <summary>
+            头像图片路径
+            </summary>
+        </member>
+        <member name="P:ApiServer.Models.Model.ViewModel.SysUser.orgId">
+            <summary>
+            组织id
+            </summary>
+        </member>
+        <member name="P:ApiServer.Models.Model.ViewModel.SysUser.enabled">
+            <summary>
+            0无效用户，1是有效用户
+            </summary>
+        </member>
+        <member name="P:ApiServer.Models.Model.ViewModel.SysUser.phone">
+            <summary>
+            手机号
+            </summary>
+        </member>
+        <member name="P:ApiServer.Models.Model.ViewModel.SysUser.email">
+            <summary>
+            email
+            </summary>
+        </member>
+        <member name="P:ApiServer.Models.Model.ViewModel.SysUser.createTime">
+            <summary>
+            用户创建时间
+            </summary>
+        </member>
+        <member name="P:ApiServer.Models.Model.ViewModel.SysUserRole.roleId">
+            <summary>
+            角色id
+            </summary>
+        </member>
+        <member name="P:ApiServer.Models.Model.ViewModel.SysUserRole.userId">
+            <summary>
+            用户id
+            </summary>
+        </member>
+        <member name="F:ApiServer.DAL.DAL.BaseDal`1._context">
+            <summary>
+            EF上下文对象
+            </summary>
+        </member>
+        <member name="F:ApiServer.DAL.DAL.MySystemDal._context">
+            <summary>
+            EF上下文对象
+            </summary>
+        </member>
+        <member name="M:ApiServer.BLL.BLL.IBaseService`1.GetModels(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+            根据whereLambda获取IQueryable集合
+            </summary>
+            <param name="whereLambda"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiServer.BLL.BLL.JwtAuthService.Login(System.String,System.String)">
+            <summary>
+            用户登录
+            </summary>
+            <param name="username"></param>
+            <param name="password"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiServer.BLL.BLL.JwtAuthService.SignUp(ApiServer.Models.Model.ViewModel.SysUser)">
+            <summary>
+            注册
+            </summary>
+            <param name="user"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiServer.BLL.BLL.SysApiService.GetAllApiOfRole">
+            <summary>
+            获取到所有的角色和对应的api接口
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ApiServer.BLL.BLL.SysApiService.SetApiIdsAndLevel(ApiServer.Models.Entity.sys_api)">
+            <summary>
+            设置某子节点的所有祖辈id
+            </summary>
+            <param name="child"></param>
+        </member>
+        <member name="M:ApiServer.BLL.BLL.SysApiService.GetCheckedKeys(System.Int64)">
+            <summary>
+            获取某角色勾选的API访问权限
+            </summary>
+            <param name="roleId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiServer.BLL.BLL.SysApiService.GetExpandedKeys">
+            <summary>
+            获取在API分类树中展开的项
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ApiServer.BLL.BLL.SysApiService.SaveCheckedKeys(System.Int64,System.Collections.Generic.List{System.Int64})">
+            <summary>
+            保存为某角色新勾选的API项
+            </summary>
+            <param name="roleId"></param>
+            <param name="checkedIds"></param>
+        </member>
+        <member name="M:ApiServer.BLL.BLL.SysApiService.UpdateStatus(System.Int64,System.Boolean)">
+            <summary>
+            接口管理：更新接口的禁用状态
+            </summary>
+            <param name="id"></param>
+            <param name="status"></param>
+        </member>
+        <member name="M:ApiServer.BLL.BLL.SysDictService.All">
+            <summary>
+            查询所有
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ApiServer.BLL.BLL.SysDictService.Query(System.String,System.String)">
+            <summary>
+            
+            </summary>
+            <param name="groupName">分组名称</param>
+            <param name="groupCode">分组编码</param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiServer.BLL.BLL.SysDictService.Update(ApiServer.Models.Entity.sys_dict)">
+            <summary>
+            更新数据字典项
+            </summary>
+            <param name="sys_Dict"></param>
+        </member>
+        <member name="M:ApiServer.BLL.BLL.SysDictService.Add(ApiServer.Models.Entity.sys_dict)">
+            <summary>
+            新增数据字典项
+            </summary>
+            <param name="sys_Dict"></param>
+        </member>
+        <member name="M:ApiServer.BLL.BLL.SysDictService.Delete(System.Int64)">
+            <summary>
+            根据id删除数据字典项
+            </summary>
+            <param name="id"></param>
+        </member>
+        <member name="M:ApiServer.BLL.BLL.SysMenuService.GetMenuTree(System.String,System.Nullable{System.Boolean})">
+            <summary>
+            菜单管理：根据查询条件查询树形结构菜单列表
+            </summary>
+            <param name="menuNameLike">菜单名称</param>
+            <param name="menuStatus">菜单可用状态</param>
+            <returns>菜单列表或树形列表</returns>
+        </member>
+        <member name="M:ApiServer.BLL.BLL.SysMenuService.SetMenuIdsAndLevel(ApiServer.Models.Entity.sys_menu)">
+            <summary>
+            设置某子节点的所有祖辈id
+            </summary>
+            <param name="child"></param>
+        </member>
+        <member name="M:ApiServer.BLL.BLL.SysMenuService.GetCheckedKeys(System.Int64)">
+            <summary>
+            获取某角色勾选的菜单权限
+            </summary>
+            <param name="roleId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiServer.BLL.BLL.SysMenuService.GetExpandedKeys">
+            <summary>
+            获取在菜单中展开的菜单项
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ApiServer.BLL.BLL.SysMenuService.SaveCheckedKeys(System.Int64,System.Collections.Generic.List{System.Int64})">
+            <summary>
+            保存为某角色新勾选的菜单项目
+            </summary>
+            <param name="roleId"></param>
+            <param name="checkedIds"></param>
+        </member>
+        <member name="M:ApiServer.BLL.BLL.SysMenuService.GetMenuTreeByUsername(System.String)">
+            <summary>
+            根据某用户的用户名查询该用户可以访问的菜单项（系统左侧边栏菜单）
+            </summary>
+            <param name="username"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiServer.BLL.BLL.SysMenuService.UpdateStatus(System.Int64,System.Boolean)">
+            <summary>
+            菜单管理：更新菜单的禁用状态
+            </summary>
+            <param name="id"></param>
+            <param name="status"></param>
+        </member>
+        <member name="M:ApiServer.BLL.BLL.SysOrgService.GetOrgTreeById(System.Int64,System.String,System.Nullable{System.Boolean})">
+            <summary>
+            根据当前登录用户所属组织，查询组织树
+            </summary>
+            <param name="rootOrgId">当前登录用户的组织id</param>
+            <param name="orgNameLike">组织名称参数</param>
+            <param name="orgStatus">组织状态参数</param>
+            <returns>组织列表</returns>
+        </member>
+        <member name="M:ApiServer.BLL.BLL.SysOrgService.SetOrgIdsAndLevel(ApiServer.Models.Entity.sys_org)">
+            <summary>
+            //设置某子节点的所有祖辈id
+            </summary>
+            <param name="child"></param>
+        </member>
+        <member name="M:ApiServer.BLL.BLL.SysOrgService.UpdateStatus(System.Int64,System.Boolean)">
+            <summary>
+            组织管理：更新组织的禁用状态
+            </summary>
+            <param name="id"></param>
+            <param name="status"></param>
+        </member>
+        <member name="M:ApiServer.BLL.BLL.SysRoleService.GetRoleByUserName(System.String)">
+            <summary>
+            根据用户名获取用户角色（目前只支持单用户单角色）
+            </summary>
+            <param name="userName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiServer.BLL.BLL.SysRoleService.QueryRoles(System.String)">
+            <summary>
+            根据参数查询角色记录
+            </summary>
+            <param name="roleLik">角色编码 或角色描述 或角色名称模糊查询</param>
+            <returns>角色记录列表</returns>
+        </member>
+        <member name="M:ApiServer.BLL.BLL.SysRoleService.GetRolesAndChecked(System.Int64)">
+            <summary>
+            获取角色记录及某用户勾选角色记录
+            </summary>
+            <param name="userId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiServer.BLL.BLL.SysRoleService.SaveCheckedKeys(System.Int64,System.Collections.Generic.List{System.Int64})">
+            <summary>
+            保存某用户勾选的角色id数据
+            </summary>
+            <param name="userId"></param>
+            <param name="checkedIds"></param>
+        </member>
+        <member name="M:ApiServer.BLL.BLL.SysRoleService.UpdateStatus(System.Int64,System.Boolean)">
+            <summary>
+            角色管理：更新角色的禁用状态
+            </summary>
+            <param name="id"></param>
+            <param name="status"></param>
+        </member>
+        <member name="M:ApiServer.BLL.BLL.SysUserService.GetUserByUserName(System.String)">
+            <summary>
+            根据登录用户名查询用户信息
+            </summary>
+            <param name="userName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiServer.BLL.BLL.SysUserService.QueryUser(System.Nullable{System.Int64},System.String,System.String,System.String,System.Nullable{System.Boolean},System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.Int32,System.Int32)">
+            <summary>
+            用户管理：查询
+            </summary>
+            <param name="orgId"></param>
+            <param name="userName"></param>
+            <param name="phone"></param>
+            <param name="email"></param>
+            <param name="enabled"></param>
+            <param name="createStartTime"></param>
+            <param name="createEndTime"></param>
+            <param name="pageNum"></param>
+            <param name="pageSize"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiServer.BLL.BLL.SysUserService.UpdateUser(ApiServer.Models.Entity.sys_user)">
+            <summary>
+            用户管理：修改
+            </summary>
+            <param name="sys_user"></param>
+        </member>
+        <member name="M:ApiServer.BLL.BLL.SysUserService.AddUser(ApiServer.Models.Entity.sys_user)">
+            <summary>
+            用户管理：新增
+            </summary>
+            <param name="sys_user"></param>
+        </member>
+        <member name="M:ApiServer.BLL.BLL.SysUserService.DeleteUser(System.Int64)">
+            <summary>
+            用户管理：删除
+            </summary>
+            <param name="userId"></param>
+        </member>
+        <member name="M:ApiServer.BLL.BLL.SysUserService.PwdReset(System.Int64)">
+            <summary>
+            用户管理：重置密码
+            </summary>
+            <param name="userId"></param>
+        </member>
+        <member name="M:ApiServer.BLL.BLL.SysUserService.IsDefault(System.String)">
+            <summary>
+            判断当前登录的用户密码是否是默认密码，如果是，会让他去修改
+            </summary>
+            <param name="userName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ApiServer.BLL.BLL.SysUserService.ChangePwd(System.String,System.String,System.String)">
+            <summary>
+            个人中心：修改密码
+            </summary>
+            <param name="userName"></param>
+            <param name="oldPass"></param>
+            <param name="newPass"></param>
+        </member>
+        <member name="M:ApiServer.BLL.BLL.SysUserService.UpdateEnabled(System.Int64,System.Boolean)">
+            <summary>
+            用户管理：更新用户的激活状态
+            </summary>
+            <param name="id"></param>
+            <param name="enabled"></param>
         </member>
     </members>
 </doc>
