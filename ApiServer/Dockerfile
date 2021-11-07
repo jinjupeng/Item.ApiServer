@@ -8,7 +8,6 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/sdk:3.1 AS build
 WORKDIR /src
 COPY ["ApiServer/ApiServer.csproj", "ApiServer/"]
-COPY ["../../LibSamples/Common.Utility/src/Common.Utility/Common.Utility.csproj", "../../LibSamples/Common.Utility/src/Common.Utility/"]
 RUN dotnet restore "ApiServer/ApiServer.csproj"
 COPY . .
 WORKDIR "/src/ApiServer"
