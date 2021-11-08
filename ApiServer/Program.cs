@@ -41,10 +41,6 @@ namespace ApiServer
             Host.CreateDefaultBuilder(args)
             .ConfigureWebHostDefaults(webBuilder =>
             {
-                //webBuilder.UseKestrel((context, options) =>
-                //{
-                //    options.Configure(context.Configuration.GetSection("Kestrel"));
-                //})
                 webBuilder.UseStartup<Startup>()
                 // 将Serilog设置为日志提供程序
                 .UseSerilog(); // Add this line;

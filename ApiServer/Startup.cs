@@ -30,6 +30,7 @@ using Common.Utility.JWT;
 using UnitOfWork;
 using ApiServer.DAL.DAL;
 using ApiServer.BLL.BLL;
+using System.Reflection;
 
 namespace ApiServer
 {
@@ -234,8 +235,8 @@ namespace ApiServer
                     }
                 });
                 //获取应用程序所在目录（绝对，不受工作目录影响，建议采用此方法获取路径）
-                var basePath = Path.GetDirectoryName(typeof(Program).Assembly.Location);
-                var xmlPath = Path.Combine(basePath, "ApiServer.xml");
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 c.IncludeXmlComments(xmlPath);
             });
             #endregion
