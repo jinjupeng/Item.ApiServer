@@ -43,8 +43,6 @@ namespace ApiServer
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
-        // 使用DI将服务注入到容器中
         public void ConfigureServices(IServiceCollection services)
         {
             var rootSection = Configuration.GetSection(nameof(ApiServerOptions));
@@ -82,12 +80,12 @@ namespace ApiServer
             services.AddUnitOfWork<ContextMySql>();
 
             // 数据库上下文注入
-            services.AddDbContext<ContextMySql>(option =>
+            services.AddDbContext<ContextMySql>(options =>
             {
-                option.UseMySql(rootSection.GetSection(nameof(ApiServerOptions.ConnString)).Get<string>());
+                options.UseMySql(Configuration.GetConnectionString("DefaultConnection"));
             });
 
-            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddHttpContextAccessor();
 
             services.AddJwtOptions(options =>
             {
@@ -165,8 +163,6 @@ namespace ApiServer
                 };
             });
             #endregion
-
-
 
             #endregion
 
@@ -269,11 +265,8 @@ namespace ApiServer
             services.AddScoped<ISysUserService, SysUserService>();
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        // 配置HTTP请求管道
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            //app.UseForwardedHeaders();
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -290,6 +283,15 @@ namespace ApiServer
             // 允许跨域
             app.UseCors("cors");
 
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+                //要在应用的根(http://localhost:<port>/) 处提供 Swagger UI，请将 RoutePrefix 属性设置为空字符串
+                c.RoutePrefix = string.Empty;
+                //swagger集成auth验证
+            });
+
             // app.UseMiddleware<RefererMiddleware>(); // 判断Referer请求来源是否合法
             // app.UseMiddleware<ExceptionMiddleware>(); // 全局异常过滤
             app.UseRouting();
@@ -302,19 +304,6 @@ namespace ApiServer
 
             // 添加请求日志中间件
             app.UseSerilogRequestLogging();
-
-            #region Swagger
-
-            app.UseSwagger();
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
-                //要在应用的根(http://localhost:<port>/) 处提供 Swagger UI，请将 RoutePrefix 属性设置为空字符串
-                c.RoutePrefix = string.Empty;
-                //swagger集成auth验证
-            });
-
-            #endregion
 
             app.UseEndpoints(endpoints =>
             {
