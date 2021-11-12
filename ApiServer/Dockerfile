@@ -6,7 +6,9 @@ EXPOSE 80
 EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:3.1 AS build
-WORKDIR /src
+WORKDIR /src 
+RUN dotnet dev-certs https --clean
+RUN dotnet dev-certs https -ep ../https/aspnetapp.pfx  -p mypassword123
 COPY ["ApiServer/ApiServer.csproj", "ApiServer/"]
 RUN dotnet restore "ApiServer/ApiServer.csproj"
 COPY . .
