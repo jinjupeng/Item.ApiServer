@@ -1,22 +1,30 @@
 # Create SSL Certificate
 
-[document](https://docs.microsoft.com/en-us/aspnet/core/security/docker-compose-https)
+[https://docs.microsoft.com/en-us/aspnet/core/security/docker-compose-https?view=aspnetcore-6.0](https://docs.microsoft.com/en-us/aspnet/core/security/docker-compose-https)
 
 ## Windows using Linux containers
 
 Generate certificate and configure local machine:
 
-```bash
-# run in the current folder
-dotnet dev-certs https -ep aspnetapp.pfx -p mypassword123
+```powershell
+dotnet dev-certs https -ep %USERPROFILE%\.aspnet\https\aspnetapp.pfx -p mypassword123
 dotnet dev-certs https --trust
-
 ```
+
+## macOS or Linux
+
+Generate certificate and configure local machine:
 
 ```powershell
-dotnet dev-certs https -ep $env:USERPROFILE\.aspnet\https\aspnetapp.pfx -p mypassword123
+dotnet dev-certs https -ep ${HOME}/.aspnet/https/aspnetapp.pfx -p mypassword123
+dotnet dev-certs https --trust
 ```
 
-```cmd
+## Windows using Windows containers
+
+Generate certificate and configure local machine:
+
+```powershell
 dotnet dev-certs https -ep %USERPROFILE%\.aspnet\https\aspnetapp.pfx -p mypassword123
+dotnet dev-certs https --trust
 ```
