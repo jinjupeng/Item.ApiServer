@@ -31,6 +31,7 @@ using UnitOfWork;
 using ApiServer.DAL.DAL;
 using ApiServer.BLL.BLL;
 using System.Reflection;
+using ApiServer.Middlewares;
 
 namespace ApiServer
 {
@@ -291,6 +292,9 @@ namespace ApiServer
                 c.RoutePrefix = string.Empty;
                 //swagger集成auth验证
             });
+            app.UseHttpsRedirection();
+
+            app.UseRequestResponseLogging();
 
             // app.UseMiddleware<RefererMiddleware>(); // 判断Referer请求来源是否合法
             // app.UseMiddleware<ExceptionMiddleware>(); // 全局异常过滤

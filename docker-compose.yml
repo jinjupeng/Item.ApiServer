@@ -11,14 +11,21 @@ services:
     #This Service Depends on the database service specifed above
     depends_on: 
       - database
-    #Map port 5000 in the docker container to port 5000 in the Api
+    #Map port 80 in the docker container to port 80 in the Api
     ports:
-      - "5000:5000"
+      - "44392:443"
+      - "54023:80"
     restart: always
     #Specify Environment Variables for the Api Service
     environment: 
       - DBHOST=database
       - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+      - ASPNETCORE_HTTPS_PORT=44392
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=mypassword123
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
+    volumes:
+      - ./https/aspnetapp.pfx:/https/aspnetapp.pfx:ro
   # database Service
   database:
     # pull the latest mysql image

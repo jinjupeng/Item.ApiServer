@@ -18,8 +18,8 @@ namespace ApiServer.Extensions.Middlewares
         /// <summary>
         /// 构造函数
         /// </summary>
+        /// <param name="logger"></param>
         /// <param name="next"></param>
-        /// <param name="environment"></param>
         public ExceptionMiddleware(ILogger<ExceptionMiddleware> logger, RequestDelegate next)
         {
             _logger = logger;
