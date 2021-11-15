@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Threading.Tasks;
 
 namespace ApiServer.Controllers
@@ -27,6 +28,7 @@ namespace ApiServer.Controllers
         /// <param name="jwtAuthService"></param>
         /// <param name="sysRoleService"></param>
         /// <param name="accessor"></param>
+        /// <param name="jwtHelper"></param>
         public JwtAuthController(IJwtAuthService jwtAuthService, ISysRoleService sysRoleService,
             IHttpContextAccessor accessor, JwtHelper jwtHelper)
         {
@@ -63,8 +65,9 @@ namespace ApiServer.Controllers
             var httpContext = _accessor.HttpContext;
             //获取请求头部信息token
             var result = httpContext.Request.Headers.TryGetValue("Authorization", out StringValues oldToken);
+            var isValidToken = new JwtSecurityTokenHandler().CanReadToken(oldToken);
             //判断token是否为空
-            if (!result || !oldToken.ToString().StartsWith("ey"))
+            if (!result || !isValidToken || !_jwtHelper.Validate(oldToken))
             {
                 return Ok(await Task.FromResult(MsgModel.Fail(StatusCodes.Status401Unauthorized, "用户登录信息已失效，请重新登录！")));
             }

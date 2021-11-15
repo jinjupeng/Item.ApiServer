@@ -13,8 +13,8 @@ services:
       - database
     #Map port 80 in the docker container to port 80 in the Api
     ports:
-      - "44392:443"
-      - "54023:80"
+      - "5001:443"
+      - "5000:80"
     restart: always
     #Specify Environment Variables for the Api Service
     environment: 

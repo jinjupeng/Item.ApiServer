@@ -7,6 +7,10 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:3.1 AS build
 WORKDIR /src
+RUN dotnet dev-certs https --clean
+RUN dotnet dev-certs https -ep %USERPROFILE%\.aspnet\https\aspnetapp.pfx -p mypassword123 # Windows using Linux containers
+# RUN dotnet dev-certs https -ep ${HOME}/.aspnet/https/aspnetapp.pfx -p mypassword123 # macOS or Linux
+# RUN dotnet dev-certs https --trust
 COPY ["ApiServer/ApiServer.csproj", "ApiServer/"]
 RUN dotnet restore "ApiServer/ApiServer.csproj"
 COPY . .
