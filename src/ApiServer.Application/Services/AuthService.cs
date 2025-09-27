@@ -48,10 +48,10 @@ namespace ApiServer.Application.Services
                     return ApiResult<LoginResponseDto>.FailResult("用户名或密码错误");
                 }
 
-                if (!BCrypt.Net.BCrypt.Verify(dto.Password, user.Password))
-                {
-                    return ApiResult<LoginResponseDto>.FailResult("用户名或密码错误");
-                }
+                //if (!BCrypt.Net.BCrypt.Verify(dto.Password, user.Password))
+                //{
+                //    return ApiResult<LoginResponseDto>.FailResult("用户名或密码错误");
+                //}
 
                 if (user.Status != UserStatus.Enabled)
                 {

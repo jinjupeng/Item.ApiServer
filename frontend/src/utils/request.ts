@@ -1,62 +1,100 @@
-import axios from 'axios'
-import type { AxiosInstance, InternalAxiosRequestConfig, AxiosResponse } from 'axios'
-import { ElMessage, ElMessageBox } from 'element-plus'
-import { useAuthStore } from '@/stores/auth'
+import axios, { AxiosInstance, InternalAxiosRequestConfig, AxiosResponse } from 'axios'
+import { ElMessage } from 'element-plus'
 import router from '@/router'
-import type { ApiResult } from '@/types/api'
+import NProgress from 'nprogress'
+import Cookies from 'js-cookie'
 
 // 创建axios实例
 const service: AxiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || '/api',
-  timeout: 30000,
+  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api',
+  timeout: 15000,
   headers: {
-    'Content-Type': 'application/json;charset=UTF-8'
-  }
+    'Content-Type': 'application/json;charset=utf-8'
+  },
+  withCredentials: false
 })
+
+// 获取token的函数
+const getToken = (): string | null => {
+  // 首先尝试从cookie获取
+  const tokenFromCookie = Cookies.get('access_token')
+  if (tokenFromCookie) {
+    return tokenFromCookie
+  }
+  
+  // 如果cookie中没有，尝试从localStorage获取用户信息中的token
+  try {
+    const userInfo = localStorage.getItem('user_info')
+    if (userInfo) {
+      const parsed = JSON.parse(userInfo)
+      return parsed.token || null
+    }
+  } catch (error) {
+    console.error('解析用户信息失败:', error)
+  }
+  
+  return null
+}
 
 // 请求拦截器
 service.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    const authStore = useAuthStore()
+    // 开始进度条
+    NProgress.start()
     
     // 添加认证token
-    if (authStore.token) {
+    const token = getToken()
+    console.log('请求拦截器 - 获取到的token:', token ? `${token.substring(0, 20)}...` : 'null')
+    
+    if (token) {
       config.headers = config.headers || {}
-      config.headers.Authorization = `Bearer ${authStore.token}`
+      config.headers.Authorization = `Bearer ${token}`
+      console.log('请求拦截器 - 已添加Authorization头')
+    } else {
+      console.log('请求拦截器 - 没有找到token')
     }
+    
+    console.log('请求配置:', {
+      url: config.url,
+      method: config.method,
+      headers: config.headers
+    })
     
     return config
   },
   (error) => {
-    console.error('Request error:', error)
+    NProgress.done()
+    console.error('请求错误:', error)
     return Promise.reject(error)
   }
 )
 
 // 响应拦截器
 service.interceptors.response.use(
-  (response: AxiosResponse<ApiResult>) => {
+  (response: AxiosResponse) => {
+    NProgress.done()
+    
     const { data } = response
     
-    // 如果是文件下载等特殊情况，直接返回
+    // 如果是文件下载等特殊响应，直接返回
     if (response.config.responseType === 'blob') {
       return response
     }
     
-    // 检查业务状态码
-    if (data.success) {
-      return data as any
-    } else {
-      // 业务错误处理
+    // 处理业务逻辑错误
+    if (data.success === false) {
       ElMessage.error(data.message || '请求失败')
       return Promise.reject(new Error(data.message || '请求失败'))
     }
+    
+    return data
   },
   async (error) => {
-    console.error('Response error:', error)
+    NProgress.done()
     
     const { response } = error
-    const authStore = useAuthStore()
+    
+    console.error('API请求错误:', error)
     
     if (response) {
       const { status, data } = response
@@ -65,7 +103,10 @@ service.interceptors.response.use(
         case 401:
           // 未授权，清除token并跳转到登录页
           ElMessage.error('登录已过期，请重新登录')
-          authStore.logout()
+          // 直接清除所有认证信息
+          Cookies.remove('access_token')
+          Cookies.remove('refresh_token')
+          localStorage.removeItem('user_info')
           router.push('/login')
           break
         case 403:
@@ -82,69 +123,14 @@ service.interceptors.response.use(
       }
     } else if (error.code === 'ECONNABORTED') {
       ElMessage.error('请求超时，请稍后重试')
-    } else if (error.message === 'Network Error') {
-      ElMessage.error('网络连接失败，请检查网络')
+    } else if (error.code === 'ERR_NETWORK') {
+      ElMessage.error('无法连接到服务器，请确保后端服务已启动 (http://localhost:5000)')
     } else {
-      ElMessage.error('请求失败，请稍后重试')
+      ElMessage.error(`网络错误: ${error.message}`)
     }
     
     return Promise.reject(error)
   }
 )
 
-// 封装请求方法
-class Request {
-  // GET请求
-  get<T = any>(url: string, params?: any): Promise<ApiResult<T>> {
-    return service.get(url, { params })
-  }
-  
-  // POST请求
-  post<T = any>(url: string, data?: any): Promise<ApiResult<T>> {
-    return service.post(url, data)
-  }
-  
-  // PUT请求
-  put<T = any>(url: string, data?: any): Promise<ApiResult<T>> {
-    return service.put(url, data)
-  }
-  
-  // DELETE请求
-  delete<T = any>(url: string, params?: any): Promise<ApiResult<T>> {
-    return service.delete(url, { params })
-  }
-  
-  // PATCH请求
-  patch<T = any>(url: string, data?: any): Promise<ApiResult<T>> {
-    return service.patch(url, data)
-  }
-  
-  // 文件上传
-  upload<T = any>(url: string, formData: FormData): Promise<ApiResult<T>> {
-    return service.post(url, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      }
-    })
-  }
-  
-  // 文件下载
-  download(url: string, params?: any, filename?: string): Promise<void> {
-    return service.get(url, {
-      params,
-      responseType: 'blob'
-    }).then((response: any) => {
-      const blob = new Blob([response.data])
-      const downloadUrl = window.URL.createObjectURL(blob)
-      const link = document.createElement('a')
-      link.href = downloadUrl
-      link.download = filename || 'download'
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
-      window.URL.revokeObjectURL(downloadUrl)
-    })
-  }
-}
-
-export default new Request()
+export default service

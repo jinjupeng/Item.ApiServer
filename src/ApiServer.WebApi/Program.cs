@@ -1,5 +1,6 @@
 using ApiServer.Application;
 using ApiServer.Infrastructure;
+using ApiServer.Infrastructure.Extensions;
 using ApiServer.WebApi.Extensions;
 using ApiServer.WebApi.Middlewares;
 using Serilog;
@@ -44,9 +45,19 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
-    
-    // 确保数据库已创建
-    await app.Services.EnsureDatabaseCreatedAsync();
+}
+
+// 自动执行数据库迁移和数据初始化
+try
+{
+    Log.Information("程序启动时自动执行数据库迁移和初始化...");
+    await app.Services.AutoMigrateAndInitializeAsync();
+    Log.Information("数据库迁移和初始化完成，程序继续启动");
+}
+catch (Exception ex)
+{
+    Log.Fatal(ex, "数据库迁移或初始化失败，程序启动终止");
+    throw;
 }
 
 // 配置中间件管道
@@ -63,23 +74,6 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-// 配置静态文件和SPA
-app.UseStaticFiles();
-app.UseSpaStaticFiles();
-
-// 配置SPA
-app.UseSpa(spa =>
-{
-    spa.Options.SourcePath = "../frontend";
-    
-    if (app.Environment.IsDevelopment())
-    {
-        spa.UseProxyToSpaDevelopmentServer("http://localhost:8080");
-        spa.UseProxyToSpaDevelopmentServer("http://localhost:8081");
-        spa.UseProxyToSpaDevelopmentServer("http://localhost:8082");
-        spa.UseProxyToSpaDevelopmentServer("http://localhost:8083");
-    }
-});
 
 Log.Information("Application starting up");
 

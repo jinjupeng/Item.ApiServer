@@ -1,27 +1,14 @@
 <template>
-  <div id="app">
-    <router-view />
-  </div>
+  <router-view />
 </template>
 
 <script setup lang="ts">
-import { onMounted } from 'vue'
-import { useAppStore } from '@/stores/app'
-
-const appStore = useAppStore()
-
-onMounted(() => {
-  // 初始化主题
-  const isDark = localStorage.getItem('theme') === 'dark'
-  if (isDark) {
-    appStore.toggleTheme()
-  }
-})
+// 应用根组件
 </script>
 
-<style lang="scss">
+<style scoped>
 #app {
-  height: 100%;
-  width: 100%;
+  height: 100vh;
+  width: 100vw;
 }
 </style>

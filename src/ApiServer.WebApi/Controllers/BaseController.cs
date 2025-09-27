@@ -7,7 +7,7 @@ namespace ApiServer.WebApi.Controllers
     /// 基础控制器
     /// </summary>
     [ApiController]
-    [Route("api/v{version:apiVersion}/[controller]")]
+    [Route("api/[controller]")]
     [ApiVersion("1.0")]
     public abstract class BaseController : ControllerBase
     {

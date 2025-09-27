@@ -40,6 +40,9 @@ namespace ApiServer.Infrastructure.Data
             // 配置索引
             ConfigureIndexes(modelBuilder);
 
+            // 配置种子数据
+            ConfigureSeedData(modelBuilder);
+
             base.OnModelCreating(modelBuilder);
         }
 
@@ -164,6 +167,71 @@ namespace ApiServer.Infrastructure.Data
                 .IsUnique()
                 .HasDatabaseName("IX_RoleApi_RoleId_PermissionId");
 
+        }
+
+        /// <summary>
+        /// 配置种子数据
+        /// </summary>
+        private void ConfigureSeedData(ModelBuilder modelBuilder)
+        {
+            // 注意：这里只配置基础的种子数据，复杂的数据初始化通过DataSeeder类处理
+            // 这样可以避免在迁移中包含大量的种子数据
+
+            // 配置默认组织
+            modelBuilder.Entity<Organization>().HasData(
+                new Organization
+                {
+                    Id = 1,
+                    Code = "ROOT",
+                    Name = "总公司",
+                    ParentId = null,
+                    ParentIds = "0",
+                    IsLeaf = false,
+                    Sort = 1,
+                    Level = 1,
+                    Status = true,
+                    CreateTime = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+                }
+            );
+
+            // 配置默认角色
+            modelBuilder.Entity<Role>().HasData(
+                new Role
+                {
+                    Id = 1,
+                    RoleName = "超级管理员",
+                    RoleDesc = "系统超级管理员，拥有所有权限",
+                    Status = true,
+                    CreateTime = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+                }
+            );
+
+            // 配置默认用户
+            modelBuilder.Entity<User>().HasData(
+                new User
+                {
+                    Id = 1,
+                    Username = "admin",
+                    Password = "E10ADC3949BA59ABBE56E057F20F883E", // 123456的MD5
+                    Nickname = "超级管理员",
+                    OrgId = 1,
+                    Status = Domain.Enums.UserStatus.Enabled,
+                    Email = "admin@example.com",
+                    Phone = "13800138000",
+                    CreateTime = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+                }
+            );
+
+            // 配置默认用户角色关联
+            modelBuilder.Entity<UserRole>().HasData(
+                new UserRole 
+                { 
+                    Id = 1,
+                    UserId = 1, 
+                    RoleId = 1,
+                    CreateTime = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+                }
+            );
         }
 
         /// <summary>

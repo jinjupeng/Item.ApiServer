@@ -1,9 +1,9 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import { AuthApi } from '@/api'
-import type { LoginDto, UserInfoDto, UserPermissionDto, MenuPermissionDto } from '@/types/api'
+import { authApi } from '@/api/auth'
+import { menusApi } from '@/api/menus'
+import type { User, Permission, Menu, LoginDto, LoginResponse } from '@/types'
 import Cookies from 'js-cookie'
-import router from '@/router'
 
 const TOKEN_KEY = 'access_token'
 const REFRESH_TOKEN_KEY = 'refresh_token'
@@ -13,39 +13,61 @@ export const useAuthStore = defineStore('auth', () => {
   // 状态
   const token = ref<string>(Cookies.get(TOKEN_KEY) || '')
   const refreshToken = ref<string>(Cookies.get(REFRESH_TOKEN_KEY) || '')
-  const userInfo = ref<UserInfoDto | null>(null)
-  const permissions = ref<UserPermissionDto | null>(null)
-  const menuRoutes = ref<MenuPermissionDto[]>([])
+  const userInfo = ref<User | null>(null)
+  const permissions = ref<Permission[]>([])
+  const userMenus = ref<Menu[]>([])
 
   // 计算属性
   const isLoggedIn = computed(() => !!token.value)
   const userRoles = computed(() => userInfo.value?.roles || [])
-  const userId = computed(() => userInfo.value?.userId)
-  const username = computed(() => userInfo.value?.username)
-  const nickname = computed(() => userInfo.value?.nickname)
-  const avatar = computed(() => userInfo.value?.avatar)
+  const permissionCodes = computed(() => permissions.value.map(p => p.code))
+
+  // 初始化用户信息
+  const initUserInfo = () => {
+    const savedUserInfo = localStorage.getItem(USER_INFO_KEY)
+    if (savedUserInfo) {
+      try {
+        userInfo.value = JSON.parse(savedUserInfo)
+      } catch (error) {
+        console.error('解析用户信息失败:', error)
+        localStorage.removeItem(USER_INFO_KEY)
+      }
+    }
+  }
 
   // 登录
-  const login = async (loginData: LoginDto) => {
+  const login = async (loginData: LoginDto): Promise<LoginResponse> => {
     try {
-      const response = await AuthApi.login(loginData)
-      const { accessToken, refreshToken: newRefreshToken, userInfo: user } = response.data
+      console.log('开始登录请求...')
+      const response = await authApi.login(loginData)
+      const loginResult = response.data
+
+      console.log('登录响应:', loginResult)
 
       // 保存token
-      token.value = accessToken
-      refreshToken.value = newRefreshToken
-      userInfo.value = user
+      token.value = loginResult.accessToken
+      refreshToken.value = loginResult.refreshToken
+      userInfo.value = loginResult.userInfo
+
+      console.log('保存token到状态:', loginResult.accessToken)
 
       // 持久化存储
-      Cookies.set(TOKEN_KEY, accessToken, { expires: 7 })
-      Cookies.set(REFRESH_TOKEN_KEY, newRefreshToken, { expires: 30 })
-      localStorage.setItem(USER_INFO_KEY, JSON.stringify(user))
+      Cookies.set(TOKEN_KEY, loginResult.accessToken, { expires: 7 })
+      Cookies.set(REFRESH_TOKEN_KEY, loginResult.refreshToken, { expires: 30 })
+      localStorage.setItem(USER_INFO_KEY, JSON.stringify(loginResult.userInfo))
 
-      // 获取用户权限
-      await loadUserPermissions()
+      console.log('Token已保存到Cookie和localStorage')
+      console.log('当前token状态:', token.value)
 
-      return response
+      // 获取用户权限和菜单
+      await Promise.all([
+        getUserPermissions(),
+        getUserMenus()
+      ])
+
+      return loginResult
     } catch (error) {
+      console.error('登录失败:', error)
       throw error
     }
   }
@@ -54,139 +76,100 @@ export const useAuthStore = defineStore('auth', () => {
   const logout = async () => {
     try {
       if (token.value) {
-        await AuthApi.logout()
+        await authApi.logout()
       }
     } catch (error) {
-      console.error('Logout error:', error)
+      console.error('登出请求失败:', error)
     } finally {
-      // 清除状态
+      // 清除所有状态和存储
       token.value = ''
       refreshToken.value = ''
       userInfo.value = null
-      permissions.value = null
-      menuRoutes.value = []
+      permissions.value = []
+      userMenus.value = []
 
-      // 清除存储
       Cookies.remove(TOKEN_KEY)
       Cookies.remove(REFRESH_TOKEN_KEY)
       localStorage.removeItem(USER_INFO_KEY)
-
-      // 跳转到登录页
-      router.push('/login')
     }
   }
 
   // 刷新token
-  const refreshAccessToken = async () => {
+  const refreshAccessToken = async (): Promise<boolean> => {
     try {
       if (!refreshToken.value) {
-        throw new Error('No refresh token')
+        throw new Error('没有刷新令牌')
       }
 
-      const response = await AuthApi.refreshToken({ refreshToken: refreshToken.value })
-      const { accessToken, refreshToken: newRefreshToken } = response.data
+      const response = await authApi.refreshToken({ refreshToken: refreshToken.value })
+      const loginResult = response.data
 
-      token.value = accessToken
-      refreshToken.value = newRefreshToken
+      // 更新token
+      token.value = loginResult.accessToken
+      refreshToken.value = loginResult.refreshToken
+      userInfo.value = loginResult.userInfo
 
-      Cookies.set(TOKEN_KEY, accessToken, { expires: 7 })
-      Cookies.set(REFRESH_TOKEN_KEY, newRefreshToken, { expires: 30 })
+      // 更新存储
+      Cookies.set(TOKEN_KEY, loginResult.accessToken, { expires: 7 })
+      Cookies.set(REFRESH_TOKEN_KEY, loginResult.refreshToken, { expires: 30 })
+      localStorage.setItem(USER_INFO_KEY, JSON.stringify(loginResult.userInfo))
 
-      return response
+      return true
     } catch (error) {
-      // 刷新失败，清除所有状态
+      console.error('刷新token失败:', error)
       await logout()
-      throw error
+      return false
     }
   }
 
-  // 加载用户信息
-  const loadUserInfo = async () => {
+  // 获取当前用户信息
+  const getCurrentUserInfo = async () => {
     try {
-      const response = await AuthApi.getCurrentUserInfo()
+      const response = await authApi.getCurrentUserInfo()
       userInfo.value = response.data
       localStorage.setItem(USER_INFO_KEY, JSON.stringify(response.data))
-      return response
     } catch (error) {
+      console.error('获取用户信息失败:', error)
       throw error
     }
   }
 
-  // 加载用户权限
-  const loadUserPermissions = async () => {
+  // 获取用户权限
+  const getUserPermissions = async () => {
     try {
-      const response = await AuthApi.getUserPermissions()
+      const response = await authApi.getUserPermissions()
       permissions.value = response.data
-      menuRoutes.value = response.data.menus
-      return response
     } catch (error) {
-      console.error('Load permissions error:', error)
-      throw error
+      console.error('获取用户权限失败:', error)
+      permissions.value = []
     }
   }
 
-  // 修改密码
-  const changePassword = async (passwordData: any) => {
+  // 获取用户菜单
+  const getUserMenus = async () => {
     try {
-      const response = await AuthApi.changePassword(passwordData)
-      return response
+      if (!userInfo.value?.username) return
+
+      const response = await menusApi.getUserMenuTreeByUsername(userInfo.value.username)
+      userMenus.value = response.data
     } catch (error) {
-      throw error
+      console.error('获取用户菜单失败:', error)
+      userMenus.value = []
     }
   }
 
   // 检查权限
-  const hasPermission = (permission: string): boolean => {
-    if (!permissions.value) return false
-    
-    // 检查API权限
-    return permissions.value.apis.includes(permission)
+  const hasPermission = (permissionCode: string): boolean => {
+    return permissionCodes.value.includes(permissionCode)
   }
 
   // 检查角色
-  const hasRole = (role: string): boolean => {
-    return userRoles.value.includes(role)
+  const hasRole = (roleCode: string): boolean => {
+    return userRoles.value.some(role => role.code === roleCode)
   }
 
-  // 检查菜单权限
-  const hasMenuPermission = (menuCode: string): boolean => {
-    if (!permissions.value) return false
-    
-    const findMenu = (menus: MenuPermissionDto[], code: string): boolean => {
-      for (const menu of menus) {
-        if (menu.code === code) return true
-        if (menu.children && findMenu(menu.children, code)) return true
-      }
-      return false
-    }
-    
-    return findMenu(permissions.value.menus, menuCode)
-  }
-
-  // 初始化用户信息（从本地存储恢复）
-  const initUserInfo = () => {
-    const savedUserInfo = localStorage.getItem(USER_INFO_KEY)
-    if (savedUserInfo) {
-      try {
-        userInfo.value = JSON.parse(savedUserInfo)
-      } catch (error) {
-        console.error('Parse user info error:', error)
-        localStorage.removeItem(USER_INFO_KEY)
-      }
-    }
-  }
-
-  // 验证token有效性
-  const validateToken = async () => {
-    if (!token.value) return false
-    
-    try {
-      const response = await AuthApi.validateToken(token.value)
-      return response.data
-    } catch (error) {
-      return false
-    }
-  }
+  // 检查是否为超级管理员
+  const isSuperAdmin = computed(() => hasRole('super_admin'))
 
   // 初始化
   initUserInfo()
@@ -197,26 +180,22 @@ export const useAuthStore = defineStore('auth', () => {
     refreshToken,
     userInfo,
     permissions,
-    menuRoutes,
+    userMenus,
     
     // 计算属性
     isLoggedIn,
     userRoles,
-    userId,
-    username,
-    nickname,
-    avatar,
+    permissionCodes,
+    isSuperAdmin,
     
     // 方法
     login,
     logout,
     refreshAccessToken,
-    loadUserInfo,
-    loadUserPermissions,
-    changePassword,
+    getCurrentUserInfo,
+    getUserPermissions,
+    getUserMenus,
     hasPermission,
-    hasRole,
-    hasMenuPermission,
-    validateToken
+    hasRole
   }
 })

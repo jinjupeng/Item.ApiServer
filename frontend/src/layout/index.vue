@@ -1,185 +1,95 @@
 <template>
-  <div class="app-layout" :class="{ 'is-mobile': appStore.device === 'mobile' }">
-    <!-- 侧边栏 -->
-    <div
-      class="sidebar-container"
-      :class="{ 'is-collapsed': appStore.sidebarCollapsed }"
-    >
-      <AppSidebar />
-    </div>
-
-    <!-- 主内容区域 -->
-    <div class="main-container">
-      <!-- 顶部导航栏 -->
-      <div class="header-container">
-        <AppHeader />
-      </div>
-
-      <!-- 标签页 -->
-      <div v-if="appStore.settings.showTabs" class="tabs-container">
-        <AppTabs />
-      </div>
-
-      <!-- 面包屑导航 -->
-      <div v-if="appStore.settings.showBreadcrumb" class="breadcrumb-container">
-        <AppBreadcrumb />
-      </div>
-
-      <!-- 页面内容 -->
-      <div class="content-container">
-        <router-view v-slot="{ Component, route }">
-          <transition name="fade-transform" mode="out-in">
-            <keep-alive :include="cachedViews">
-              <component :is="Component" :key="route.path" />
-            </keep-alive>
-          </transition>
-        </router-view>
-      </div>
-
-      <!-- 底部 -->
-      <div v-if="appStore.settings.showFooter" class="footer-container">
-        <AppFooter />
-      </div>
-    </div>
-
-    <!-- 移动端遮罩 -->
-    <div
-      v-if="appStore.device === 'mobile' && !appStore.sidebarCollapsed"
-      class="mobile-mask"
-      @click="appStore.toggleSidebar"
-    />
+  <div class="app-layout">
+    <el-container>
+      <!-- 侧边栏 -->
+      <el-aside :width="sidebarWidth" class="sidebar-container">
+        <div class="logo-container">
+          <img src="/vite.svg" alt="Logo" class="logo" />
+          <h1 v-if="!appStore.sidebarCollapsed" class="title">RBAC管理系统</h1>
+        </div>
+        <Sidebar />
+      </el-aside>
+      
+      <!-- 主内容区 -->
+      <el-container>
+        <!-- 顶部导航 -->
+        <el-header class="header-container">
+          <Navbar />
+        </el-header>
+        
+        <!-- 内容区域 -->
+        <el-main class="main-container">
+          <router-view v-slot="{ Component }">
+            <transition name="fade-transform" mode="out-in">
+              <component :is="Component" />
+            </transition>
+          </router-view>
+        </el-main>
+      </el-container>
+    </el-container>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted } from 'vue'
+import { computed } from 'vue'
 import { useAppStore } from '@/stores/app'
-import AppSidebar from './components/Sidebar/index.vue'
-import AppHeader from './components/Header/index.vue'
-import AppTabs from './components/Tabs/index.vue'
-import AppBreadcrumb from './components/Breadcrumb/index.vue'
-import AppFooter from './components/Footer/index.vue'
+import Sidebar from './components/Sidebar.vue'
+import Navbar from './components/Navbar.vue'
 
 const appStore = useAppStore()
 
-// 缓存的视图组件
-const cachedViews = computed(() => {
-  return appStore.tabs.map(tab => tab.name)
-})
-
-// 监听窗口大小变化
-const handleResize = () => {
-  const width = window.innerWidth
-  if (width < 768) {
-    appStore.setDevice('mobile')
-  } else {
-    appStore.setDevice('desktop')
-  }
-}
-
-onMounted(() => {
-  handleResize()
-  window.addEventListener('resize', handleResize)
-})
-
-onUnmounted(() => {
-  window.removeEventListener('resize', handleResize)
+const sidebarWidth = computed(() => {
+  return appStore.sidebarCollapsed ? '64px' : '200px'
 })
 </script>
 
 <style lang="scss" scoped>
 .app-layout {
-  display: flex;
   height: 100vh;
-  width: 100%;
-
+  
+  .el-container {
+    height: 100%;
+  }
+  
   .sidebar-container {
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 100vh;
-    width: var(--app-sidebar-width);
-    background-color: var(--el-bg-color);
-    border-right: 1px solid var(--el-border-color-lighter);
-    transition: width var(--el-transition-duration);
-    z-index: 1001;
-
-    &.is-collapsed {
-      width: var(--app-sidebar-collapsed-width);
-    }
-  }
-
-  .main-container {
-    flex: 1;
-    margin-left: var(--app-sidebar-width);
-    display: flex;
-    flex-direction: column;
-    transition: margin-left var(--el-transition-duration);
-
-    .header-container {
-      height: var(--app-header-height);
-      background-color: var(--el-bg-color);
-      border-bottom: 1px solid var(--el-border-color-lighter);
-      position: sticky;
-      top: 0;
-      z-index: 1000;
-    }
-
-    .tabs-container {
-      height: var(--app-tabs-height);
-      background-color: var(--el-bg-color);
-      border-bottom: 1px solid var(--el-border-color-lighter);
-    }
-
-    .breadcrumb-container {
-      padding: 12px 20px;
-      background-color: var(--el-bg-color);
-      border-bottom: 1px solid var(--el-border-color-lighter);
-    }
-
-    .content-container {
-      flex: 1;
-      padding: 20px;
-      background-color: var(--el-bg-color-page);
-      overflow-y: auto;
-      @include scrollbar;
-    }
-
-    .footer-container {
-      height: var(--app-footer-height);
-      background-color: var(--el-bg-color);
-      border-top: 1px solid var(--el-border-color-lighter);
-    }
-  }
-
-  .mobile-mask {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background-color: rgba(0, 0, 0, 0.3);
-    z-index: 1000;
-  }
-
-  // 移动端适配
-  &.is-mobile {
-    .sidebar-container {
-      transform: translateX(-100%);
+    background: #304156;
+    transition: width 0.28s;
+    
+    .logo-container {
+      display: flex;
+      align-items: center;
+      padding: 16px;
+      background: #2b2f3a;
       
-      &:not(.is-collapsed) {
-        transform: translateX(0);
+      .logo {
+        width: 32px;
+        height: 32px;
+        margin-right: 12px;
+      }
+      
+      .title {
+        color: #fff;
+        font-size: 16px;
+        font-weight: 600;
+        margin: 0;
+        white-space: nowrap;
+        overflow: hidden;
       }
     }
-
-    .main-container {
-      margin-left: 0;
-    }
   }
-
-  // 侧边栏收起时的样式调整
-  .sidebar-container.is-collapsed + .main-container {
-    margin-left: var(--app-sidebar-collapsed-width);
+  
+  .header-container {
+    background: #fff;
+    border-bottom: 1px solid #e4e7ed;
+    padding: 0;
+    height: 60px;
+    line-height: 60px;
+  }
+  
+  .main-container {
+    background: #f0f2f5;
+    padding: 20px;
+    overflow-y: auto;
   }
 }
 
@@ -191,11 +101,11 @@ onUnmounted(() => {
 
 .fade-transform-enter-from {
   opacity: 0;
-  transform: translateX(30px);
+  transform: translateX(-30px);
 }
 
 .fade-transform-leave-to {
   opacity: 0;
-  transform: translateX(-30px);
+  transform: translateX(30px);
 }
 </style>

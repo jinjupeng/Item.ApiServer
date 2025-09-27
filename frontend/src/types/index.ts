@@ -1,3 +1,228 @@
-// 统一导出所有类型定义
-export * from './api'
-export * from './common'
+// 通用响应类型
+export interface ApiResponse<T = any> {
+  success: boolean
+  message: string
+  data: T
+  code?: number
+}
+
+// 分页响应类型
+export interface PagedResponse<T = any> {
+  items: T[]
+  totalCount: number
+  pageIndex: number
+  pageSize: number
+  totalPages: number
+}
+
+// 分页查询参数
+export interface PagedQuery {
+  pageIndex?: number
+  pageSize?: number
+  keyword?: string
+  sortField?: string
+  sortOrder?: 'asc' | 'desc'
+}
+
+// 用户相关类型
+export interface User {
+  id: number
+  username: string
+  email: string
+  realName: string
+  phone?: string
+  avatar?: string
+  status: UserStatus
+  organizationId?: number
+  organizationName?: string
+  roles: Role[]
+  createdAt: string
+  updatedAt: string
+}
+
+export interface CreateUserDto {
+  username: string
+  email: string
+  realName: string
+  phone?: string
+  password: string
+  organizationId?: number
+  roleIds: number[]
+}
+
+export interface UpdateUserDto {
+  email: string
+  realName: string
+  phone?: string
+  organizationId?: number
+  roleIds: number[]
+}
+
+export interface UserQueryDto extends PagedQuery {
+  status?: UserStatus
+  organizationId?: number
+}
+
+export enum UserStatus {
+  Active = 0,
+  Inactive = 1,
+  Locked = 2
+}
+
+// 角色相关类型
+export interface Role {
+  id: number
+  name: string
+  code: string
+  description?: string
+  isActive: boolean
+  permissions: Permission[]
+  createdAt: string
+  updatedAt: string
+}
+
+export interface CreateRoleDto {
+  name: string
+  code: string
+  description?: string
+}
+
+export interface UpdateRoleDto {
+  name: string
+  code: string
+  description?: string
+}
+
+export interface RoleQueryDto extends PagedQuery {
+  isActive?: boolean
+}
+
+export interface UserRoleAssignDto {
+  userId: number
+  roleIds: number[]
+}
+
+export interface RolePermissionDto {
+  roleId: number
+  permissionIds: number[]
+}
+
+// 权限相关类型
+export interface Permission {
+  id: number
+  name: string
+  code: string
+  description?: string
+  type: PermissionType
+  resource?: string
+  action?: string
+  createdAt: string
+}
+
+export enum PermissionType {
+  Menu = 0,
+  Button = 1,
+  Api = 2
+}
+
+// 菜单相关类型
+export interface Menu {
+  id: number
+  name: string
+  code: string
+  path?: string
+  component?: string
+  icon?: string
+  parentId?: number
+  sort: number
+  isActive: boolean
+  type: MenuType
+  children?: Menu[]
+  createdAt: string
+  updatedAt: string
+}
+
+export interface CreateMenuDto {
+  name: string
+  code: string
+  path?: string
+  component?: string
+  icon?: string
+  parentId?: number
+  sort: number
+  type: MenuType
+}
+
+export interface UpdateMenuDto {
+  name: string
+  code: string
+  path?: string
+  component?: string
+  icon?: string
+  parentId?: number
+  sort: number
+  type: MenuType
+}
+
+export interface MenuQueryDto {
+  keyword?: string
+  isActive?: boolean
+  type?: MenuType
+}
+
+export enum MenuType {
+  Directory = 0,
+  Menu = 1,
+  Button = 2
+}
+
+// 认证相关类型
+export interface LoginDto {
+  username: string
+  password: string
+  captchaKey?: string
+  captchaCode?: string
+  rememberMe?: boolean
+}
+// 登录响应
+export interface LoginResponse {
+  accessToken: string
+  refreshToken: string
+  tokenType: string
+  expiresIn: number
+  userInfo: User
+}
+
+export interface RefreshTokenDto {
+  refreshToken: string
+}
+export interface ChangePasswordDto {
+  oldPassword: string
+  newPassword: string
+  confirmPassword: string
+}
+
+export interface ResetPasswordDto {
+  usernameOrEmail: string
+  code: string
+  newPassword: string
+  confirmPassword: string
+}
+
+export interface CaptchaResponse {
+  key: string
+  image: string
+}
+
+// 组织相关类型
+export interface Organization {
+  id: number
+  name: string
+  code: string
+  parentId?: number
+  sort: number
+  isActive: boolean
+  children?: Organization[]
+  createdAt: string
+  updatedAt: string
+}
