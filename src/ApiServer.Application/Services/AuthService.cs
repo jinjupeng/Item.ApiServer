@@ -1,9 +1,12 @@
 using ApiServer.Application.DTOs.Auth;
+using ApiServer.Application.DTOs.Permission;
 using ApiServer.Application.Interfaces;
 using ApiServer.Application.Interfaces.Repositories;
 using ApiServer.Application.Interfaces.Services;
+using ApiServer.Domain.Entities;
 using ApiServer.Domain.Enums;
 using ApiServer.Shared.Common;
+using Mapster;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -262,7 +265,7 @@ namespace ApiServer.Application.Services
         }
 
         /// <summary>
-        /// 获取用户权限
+        /// 获取用户权限详情
         /// </summary>
         public async Task<ApiResult<UserPermissionDto>> GetUserPermissionsAsync(long userId)
         {
@@ -294,6 +297,55 @@ namespace ApiServer.Application.Services
             catch (Exception ex)
             {
                 return ApiResult<UserPermissionDto>.FailResult($"获取用户权限失败：{ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// 获取用户权限代码列表
+        /// </summary>
+        public async Task<ApiResult<List<string>>> GetUserPermissionListAsync(long userId)
+        {
+            try
+            {
+                var user = await _userRepository.GetUserWithRolesAsync(userId);
+                if (user == null)
+                {
+                    return ApiResult<List<string>>.FailResult("用户不存在");
+                }
+
+                var permissionCodes = new List<string>();
+
+                // 获取用户的所有角色的菜单权限
+                foreach (var userRole in user.UserRoles)
+                {
+                    var roleMenus = await _menuRepository.GetMenusByRoleIdAsync(userRole.RoleId);
+                    foreach (var menu in roleMenus)
+                    {
+                        if (!string.IsNullOrEmpty(menu.Code))
+                        {
+                            permissionCodes.Add(menu.Code);
+                        }
+                    }
+                }
+
+                // 获取用户的API/按钮权限
+                var userApis = await _userRepository.GetUserApisAsync(userId);
+                foreach (var api in userApis)
+                {
+                    if (!string.IsNullOrEmpty(api.Code))
+                    {
+                        permissionCodes.Add(api.Code);
+                    }
+                }
+
+                // 去重
+                var uniquePermissions = permissionCodes.Distinct().ToList();
+                
+                return ApiResult<List<string>>.SuccessResult(uniquePermissions);
+            }
+            catch (Exception ex)
+            {
+                return ApiResult<List<string>>.FailResult($"获取用户权限列表失败：{ex.Message}");
             }
         }
 

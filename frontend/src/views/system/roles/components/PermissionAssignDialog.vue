@@ -83,7 +83,7 @@
 import { ref, watch, nextTick } from 'vue'
 import { ElMessage, ElTree } from 'element-plus'
 import { menusApi } from '@/api/menus'
-import type { Role, Menu, MenuType } from '@/types'
+import type { Role, Menu } from '@/types'
 import { MenuType } from '@/types'
 
 interface Props {

@@ -21,6 +21,13 @@ namespace ApiServer.Domain.Entities
         public string Name { get; set; } = string.Empty;
 
         /// <summary>
+        /// 编码
+        /// </summary>
+        [Required]
+        [StringLength(256)]
+        public string Code { get; set; } = string.Empty;
+
+        /// <summary>
         /// 父接口ID
         /// </summary>
         public long? ParentId { get; set; }

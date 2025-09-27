@@ -350,6 +350,7 @@ namespace ApiServer.Infrastructure.Data
                 new Permission
                 {
                     Id = 1,
+                    Code = "system:user:list",
                     Name = "用户查询",
                     ParentId = null,
                     ParentIds = "0",
@@ -363,6 +364,7 @@ namespace ApiServer.Infrastructure.Data
                 new Permission
                 {
                     Id = 2,
+                    Code = "system:user:create",
                     Name = "用户新增",
                     ParentId = null,
                     ParentIds = "0",
@@ -376,6 +378,7 @@ namespace ApiServer.Infrastructure.Data
                 new Permission
                 {
                     Id = 3,
+                    Code = "system:user:update",
                     Name = "用户修改",
                     ParentId = null,
                     ParentIds = "0",
@@ -389,6 +392,7 @@ namespace ApiServer.Infrastructure.Data
                 new Permission
                 {
                     Id = 4,
+                    Code = "system:user:delete",
                     Name = "用户删除",
                     ParentId = null,
                     ParentIds = "0",
@@ -403,6 +407,7 @@ namespace ApiServer.Infrastructure.Data
                 new Permission
                 {
                     Id = 5,
+                    Code = "system:role:list",
                     Name = "角色查询",
                     ParentId = null,
                     ParentIds = "0",
@@ -416,6 +421,7 @@ namespace ApiServer.Infrastructure.Data
                 new Permission
                 {
                     Id = 6,
+                    Code = "system:role:create",
                     Name = "角色新增",
                     ParentId = null,
                     ParentIds = "0",
@@ -429,6 +435,7 @@ namespace ApiServer.Infrastructure.Data
                 new Permission
                 {
                     Id = 7,
+                    Code = "system:role:update",
                     Name = "角色修改",
                     ParentId = null,
                     ParentIds = "0",
@@ -442,6 +449,7 @@ namespace ApiServer.Infrastructure.Data
                 new Permission
                 {
                     Id = 8,
+                    Code = "system:role:delete",
                     Name = "角色删除",
                     ParentId = null,
                     ParentIds = "0",
@@ -450,6 +458,21 @@ namespace ApiServer.Infrastructure.Data
                     Sort = 8,
                     Status = true,
                     Url = "/api/role/delete",
+                    CreateTime = DateTime.Now
+                },
+                // 菜单管理权限
+                new Permission
+                {
+                    Id = 9,
+                    Code = "system:menu:list",
+                    Name = "菜单查询",
+                    ParentId = null,
+                    ParentIds = "0",
+                    IsLeaf = true,
+                    Level = 1,
+                    Sort = 9,
+                    Status = true,
+                    Url = "/api/menu/query",
                     CreateTime = DateTime.Now
                 }
             };
@@ -536,16 +559,19 @@ namespace ApiServer.Infrastructure.Data
                 new RolePermission { Id = 6, RoleId = 1, PermissionId = 6, CreateTime = DateTime.Now },
                 new RolePermission { Id = 7, RoleId = 1, PermissionId = 7, CreateTime = DateTime.Now },
                 new RolePermission { Id = 8, RoleId = 1, PermissionId = 8, CreateTime = DateTime.Now },
+                new RolePermission { Id = 9, RoleId = 1, PermissionId = 9, CreateTime = DateTime.Now },
                 
                 // 管理员拥有查询和修改权限
-                new RolePermission { Id = 9, RoleId = 2, PermissionId = 1, CreateTime = DateTime.Now },
-                new RolePermission { Id = 10, RoleId = 2, PermissionId = 3, CreateTime = DateTime.Now },
-                new RolePermission { Id = 11, RoleId = 2, PermissionId = 5, CreateTime = DateTime.Now },
-                new RolePermission { Id = 12, RoleId = 2, PermissionId = 7, CreateTime = DateTime.Now },
+                new RolePermission { Id = 10, RoleId = 2, PermissionId = 1, CreateTime = DateTime.Now },
+                new RolePermission { Id = 11, RoleId = 2, PermissionId = 3, CreateTime = DateTime.Now },
+                new RolePermission { Id = 12, RoleId = 2, PermissionId = 5, CreateTime = DateTime.Now },
+                new RolePermission { Id = 13, RoleId = 2, PermissionId = 7, CreateTime = DateTime.Now },
+                new RolePermission { Id = 14, RoleId = 2, PermissionId = 9, CreateTime = DateTime.Now },
                 
                 // 普通用户只有查询权限
-                new RolePermission { Id = 13, RoleId = 3, PermissionId = 1, CreateTime = DateTime.Now },
-                new RolePermission { Id = 14, RoleId = 3, PermissionId = 5, CreateTime = DateTime.Now }
+                new RolePermission { Id = 15, RoleId = 3, PermissionId = 1, CreateTime = DateTime.Now },
+                new RolePermission { Id = 16, RoleId = 3, PermissionId = 5, CreateTime = DateTime.Now },
+                new RolePermission { Id = 17, RoleId = 3, PermissionId = 9, CreateTime = DateTime.Now }
             };
 
             await _context.RolePermissions.AddRangeAsync(rolePermissions);

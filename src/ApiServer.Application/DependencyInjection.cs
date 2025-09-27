@@ -48,10 +48,9 @@ namespace ApiServer.Application
             // 配置Mapster映射规则
             var config = TypeAdapterConfig.GlobalSettings;
             config.Scan(Assembly.GetExecutingAssembly());
-            
-            // 配置特定的映射规则
+
             ConfigureMappings(config);
-            
+
             return services;
         }
 
@@ -61,6 +60,18 @@ namespace ApiServer.Application
         /// <param name="config">配置对象</param>
         private static void ConfigureMappings(TypeAdapterConfig config)
         {
+            // 配置Menu实体与MenuTreeDto之间的映射
+            config.NewConfig<ApiServer.Domain.Entities.Menu, ApiServer.Application.DTOs.Menu.MenuTreeDto>()
+                  .Map(dest => dest.Title, src => src.Name)
+                  .Map(dest => dest.Key, src => src.Code)
+                  .Map(dest => dest.Url, src => src.Url)
+                  .Map(dest => dest.Icon, src => src.Icon)
+                  .Map(dest => dest.ParentId, src => src.ParentId)
+                  .Map(dest => dest.Sort, src => src.Sort)
+                  //.Map(dest => dest.MenuType, src => src.MenuType)
+                  .Map(dest => dest.Expanded, src => false)
+                  .Map(dest => dest.Checked, src => false);
+
             // 示例：配置User实体与DTO之间的映射
             // config.NewConfig<User, UserDto>()
             //       .Map(dest => dest.OrgName, src => src.Organization.OrgName)

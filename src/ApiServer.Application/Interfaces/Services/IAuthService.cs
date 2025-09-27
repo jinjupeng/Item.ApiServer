@@ -44,6 +44,11 @@ namespace ApiServer.Application.Interfaces.Services
         Task<ApiResult<UserPermissionDto>> GetUserPermissionsAsync(long userId);
 
         /// <summary>
+        /// 获取用户权限代码列表
+        /// </summary>
+        Task<ApiResult<List<string>>> GetUserPermissionListAsync(long userId);
+
+        /// <summary>
         /// 验证令牌
         /// </summary>
         Task<ApiResult<bool>> ValidateTokenAsync(string token);

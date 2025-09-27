@@ -153,6 +153,24 @@ namespace ApiServer.WebApi.Controllers
                 return Unauthorized();
             }
 
+            var result = await _authService.GetUserPermissionListAsync(userId.Value);
+            return HandleResult(result);
+        }
+
+        /// <summary>
+        /// 获取用户权限详情
+        /// </summary>
+        /// <returns>用户权限详情</returns>
+        [HttpGet("permissions/detail")]
+        [Authorize]
+        public async Task<IActionResult> GetUserPermissionDetail()
+        {
+            var userId = GetCurrentUserId();
+            if (!userId.HasValue)
+            {
+                return Unauthorized();
+            }
+
             var result = await _authService.GetUserPermissionsAsync(userId.Value);
             return HandleResult(result);
         }

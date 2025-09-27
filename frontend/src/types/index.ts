@@ -128,46 +128,46 @@ export enum PermissionType {
 // 菜单相关类型
 export interface Menu {
   id: number
-  name: string
-  code: string
-  path?: string
+  menuName: string
+  menuCode: string
+  url?: string
   component?: string
   icon?: string
-  parentId?: number
+  menuPid?: number
   sort: number
-  isActive: boolean
-  type: MenuType
+  status: boolean
+  menuType: MenuType
   children?: Menu[]
   createdAt: string
   updatedAt: string
 }
 
 export interface CreateMenuDto {
-  name: string
-  code: string
-  path?: string
+  menuName: string
+  menuCode: string
+  url?: string
   component?: string
   icon?: string
-  parentId?: number
+  menuPid?: number
   sort: number
-  type: MenuType
+  menuType: MenuType
 }
 
 export interface UpdateMenuDto {
-  name: string
-  code: string
-  path?: string
+  menuName: string
+  menuCode: string
+  url?: string
   component?: string
   icon?: string
-  parentId?: number
+  menuPid?: number
   sort: number
-  type: MenuType
+  menuType: MenuType
 }
 
 export interface MenuQueryDto {
-  keyword?: string
-  isActive?: boolean
-  type?: MenuType
+  menuName?: string
+  status?: boolean
+  menuType?: MenuType
 }
 
 export enum MenuType {

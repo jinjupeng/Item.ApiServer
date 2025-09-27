@@ -8,10 +8,10 @@
         :inline="true"
         label-width="80px"
       >
-        <el-form-item label="关键词">
+        <el-form-item label="菜单名称">
           <el-input
-            v-model="searchForm.keyword"
-            placeholder="菜单名称/编码"
+            v-model="searchForm.menuName"
+            placeholder="菜单名称"
             clearable
             style="width: 200px"
             @keyup.enter="handleSearch"
@@ -20,7 +20,7 @@
         
         <el-form-item label="状态">
           <el-select
-            v-model="searchForm.isActive"
+            v-model="searchForm.status"
             placeholder="请选择状态"
             clearable
             style="width: 120px"
@@ -32,7 +32,7 @@
         
         <el-form-item label="类型">
           <el-select
-            v-model="searchForm.type"
+            v-model="searchForm.menuType"
             placeholder="请选择类型"
             clearable
             style="width: 120px"
@@ -91,31 +91,31 @@
       :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
       :default-expand-all="false"
     >
-      <el-table-column prop="name" label="菜单名称" min-width="200">
+      <el-table-column prop="menuName" label="菜单名称" min-width="200">
         <template #default="{ row }">
           <div class="menu-name">
             <el-icon v-if="row.icon" class="menu-icon">
               <component :is="row.icon" />
             </el-icon>
-            <span>{{ row.name }}</span>
+            <span>{{ row.menuName }}</span>
           </div>
         </template>
       </el-table-column>
       
-      <el-table-column prop="code" label="菜单编码" min-width="150" />
+      <el-table-column prop="menuCode" label="菜单编码" min-width="150" />
       
       <el-table-column label="类型" width="80">
         <template #default="{ row }">
           <el-tag
-            :type="getMenuTypeTagType(row.type)"
+            :type="getMenuTypeTagType(row.menuType)"
             size="small"
           >
-            {{ getMenuTypeText(row.type) }}
+            {{ getMenuTypeText(row.menuType) }}
           </el-tag>
         </template>
       </el-table-column>
       
-      <el-table-column prop="path" label="路由路径" min-width="150" show-overflow-tooltip />
+      <el-table-column prop="url" label="路由路径" min-width="150" show-overflow-tooltip />
       
       <el-table-column prop="component" label="组件路径" min-width="150" show-overflow-tooltip />
       
@@ -124,10 +124,10 @@
       <el-table-column label="状态" width="80">
         <template #default="{ row }">
           <el-tag
-            :type="row.isActive ? 'success' : 'danger'"
+            :type="row.status ? 'success' : 'danger'"
             size="small"
           >
-            {{ row.isActive ? '启用' : '禁用' }}
+            {{ row.status ? '启用' : '禁用' }}
           </el-tag>
         </template>
       </el-table-column>
@@ -215,9 +215,9 @@ const parentMenu = ref<Menu | null>(null)
 
 // 搜索表单
 const searchForm = reactive<MenuQueryDto>({
-  keyword: '',
-  isActive: undefined,
-  type: undefined
+  menuName: '',
+  status: undefined,
+  menuType: undefined
 })
 
 // 获取菜单列表
@@ -245,9 +245,9 @@ const handleReset = () => {
     searchFormRef.value.resetFields()
   }
   Object.assign(searchForm, {
-    keyword: '',
-    isActive: undefined,
-    type: undefined
+    menuName: '',
+    status: undefined,
+    menuType: undefined
   })
   handleSearch()
 }
@@ -306,10 +306,10 @@ const handleEdit = (menu: Menu) => {
 // 切换菜单状态
 const handleToggleStatus = async (menu: Menu) => {
   try {
-    const newStatus = !menu.isActive
+    const newStatus = !menu.status
     const action = newStatus ? '启用' : '禁用'
     
-    await ElMessageBox.confirm(`确定要${action}菜单"${menu.name}"吗？`, '提示', {
+    await ElMessageBox.confirm(`确定要${action}菜单"${menu.menuName}"吗？`, '提示', {
       confirmButtonText: '确定',
       cancelButtonText: '取消',
       type: 'warning'
@@ -327,7 +327,7 @@ const handleToggleStatus = async (menu: Menu) => {
 // 删除菜单
 const handleDelete = async (menu: Menu) => {
   try {
-    await ElMessageBox.confirm(`确定要删除菜单"${menu.name}"吗？`, '提示', {
+    await ElMessageBox.confirm(`确定要删除菜单"${menu.menuName}"吗？`, '提示', {
       confirmButtonText: '确定',
       cancelButtonText: '取消',
       type: 'warning'

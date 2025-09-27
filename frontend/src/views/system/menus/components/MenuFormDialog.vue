@@ -13,9 +13,9 @@
     >
       <el-row :gutter="20">
         <el-col :span="12">
-          <el-form-item label="菜单名称" prop="name">
+          <el-form-item label="菜单名称" prop="menuName">
             <el-input
-              v-model="form.name"
+              v-model="form.menuName"
               placeholder="请输入菜单名称"
               clearable
             />
@@ -23,9 +23,9 @@
         </el-col>
         
         <el-col :span="12">
-          <el-form-item label="菜单编码" prop="code">
+          <el-form-item label="菜单编码" prop="menuCode">
             <el-input
-              v-model="form.code"
+              v-model="form.menuCode"
               placeholder="请输入菜单编码"
               clearable
             />
@@ -35,9 +35,9 @@
       
       <el-row :gutter="20">
         <el-col :span="12">
-          <el-form-item label="菜单类型" prop="type">
+          <el-form-item label="菜单类型" prop="menuType">
             <el-select
-              v-model="form.type"
+              v-model="form.menuType"
               placeholder="请选择菜单类型"
               style="width: 100%"
               @change="handleTypeChange"
@@ -52,7 +52,7 @@
         <el-col :span="12">
           <el-form-item label="父级菜单" prop="parentId">
             <el-tree-select
-              v-model="form.parentId"
+              v-model="form.menuPid"
               :data="parentMenuOptions"
               :props="treeSelectProps"
               placeholder="请选择父级菜单"
@@ -64,11 +64,11 @@
         </el-col>
       </el-row>
       
-      <el-row v-if="form.type !== MenuType.Button" :gutter="20">
+      <el-row v-if="form.menuType !== MenuType.Button" :gutter="20">
         <el-col :span="12">
           <el-form-item label="路由路径" prop="path">
             <el-input
-              v-model="form.path"
+              v-model="form.url"
               placeholder="请输入路由路径"
               clearable
             />
@@ -131,7 +131,7 @@
 import { ref, reactive, computed, watch, onMounted } from 'vue'
 import { ElMessage, FormInstance, FormRules } from 'element-plus'
 import { menusApi } from '@/api/menus'
-import type { Menu, CreateMenuDto, UpdateMenuDto, MenuType } from '@/types'
+import type { Menu, CreateMenuDto, UpdateMenuDto } from '@/types'
 import { MenuType } from '@/types'
 
 interface Props {
@@ -161,7 +161,7 @@ const dialogTitle = computed(() => {
   if (isEdit.value) {
     return '编辑菜单'
   } else if (props.parentMenu) {
-    return `新增子菜单 - ${props.parentMenu.name}`
+    return `新增子菜单 - ${props.parentMenu.menuName}`
   } else {
     return '新增菜单'
   }
@@ -169,22 +169,22 @@ const dialogTitle = computed(() => {
 
 // 表单数据
 const form = reactive<CreateMenuDto & UpdateMenuDto>({
-  name: '',
-  code: '',
-  path: '',
+  menuName: '',
+  menuCode: '',
+  url: '',
   component: '',
   icon: '',
-  parentId: undefined,
+  menuPid: undefined,
   sort: 0,
-  type: MenuType.Menu
+  menuType: MenuType.Menu
 })
 
 // 树形选择器属性配置
 const treeSelectProps = {
   children: 'children',
-  label: 'name',
+  label: 'menuName',
   value: 'id',
-  disabled: (data: Menu) => !data.isActive
+  disabled: (data: Menu) => !data.status
 }
 
 // 验证菜单编码唯一性
@@ -209,20 +209,20 @@ const validateCode = async (rule: any, value: string, callback: any) => {
 
 // 表单验证规则
 const rules: FormRules = {
-  name: [
+  menuName: [
     { required: true, message: '请输入菜单名称', trigger: 'blur' },
     { min: 2, max: 20, message: '菜单名称长度在 2 到 20 个字符', trigger: 'blur' }
   ],
-  code: [
+  menuCode: [
     { required: true, message: '请输入菜单编码', trigger: 'blur' },
     { min: 2, max: 50, message: '菜单编码长度在 2 到 50 个字符', trigger: 'blur' },
     { pattern: /^[a-zA-Z0-9_:]+$/, message: '菜单编码只能包含字母、数字、下划线和冒号', trigger: 'blur' },
     { validator: validateCode, trigger: 'blur' }
   ],
-  type: [
+  menuType: [
     { required: true, message: '请选择菜单类型', trigger: 'change' }
   ],
-  path: [
+  url: [
     { required: true, message: '请输入路由路径', trigger: 'blur' }
   ],
   sort: [
@@ -251,7 +251,7 @@ watch(visible, (val) => {
 const handleTypeChange = (type: MenuType) => {
   if (type === MenuType.Button) {
     // 按钮类型不需要路由和组件
-    form.path = ''
+    form.url = ''
     form.component = ''
   }
 }
@@ -261,20 +261,20 @@ const initForm = () => {
   if (props.menu) {
     // 编辑模式
     Object.assign(form, {
-      name: props.menu.name,
-      code: props.menu.code,
-      path: props.menu.path || '',
+      menuName: props.menu.menuName,
+      menuCode: props.menu.menuCode,
+      url: props.menu.url || '',
       component: props.menu.component || '',
       icon: props.menu.icon || '',
-      parentId: props.menu.parentId,
+      menuPid: props.menu.menuPid,
       sort: props.menu.sort,
-      type: props.menu.type
+      menuType: props.menu.menuType
     })
   } else {
     // 新增模式
     resetForm()
     if (props.parentMenu) {
-      form.parentId = props.parentMenu.id
+      form.menuPid = props.parentMenu.id
     }
   }
 }
@@ -285,14 +285,14 @@ const resetForm = () => {
     formRef.value.resetFields()
   }
   Object.assign(form, {
-    name: '',
-    code: '',
-    path: '',
+    menuName: '',
+    menuCode: '',
+    url: '',
     component: '',
     icon: '',
-    parentId: undefined,
+    menuPid: undefined,
     sort: 0,
-    type: MenuType.Menu
+    menuType: MenuType.Menu
   })
 }
 
@@ -322,28 +322,28 @@ const handleSubmit = async () => {
     if (isEdit.value) {
       // 编辑菜单
       const updateData: UpdateMenuDto = {
-        name: form.name,
-        code: form.code,
-        path: form.path,
+        menuName: form.menuName,
+        menuCode: form.menuCode,
+        url: form.url,
         component: form.component,
         icon: form.icon,
-        parentId: form.parentId,
+        menuPid: form.menuPid,
         sort: form.sort,
-        type: form.type
+        menuType: form.menuType
       }
       await menusApi.updateMenu(props.menu!.id, updateData)
       ElMessage.success('菜单更新成功')
     } else {
       // 新增菜单
       const createData: CreateMenuDto = {
-        name: form.name,
-        code: form.code,
-        path: form.path,
+        menuName: form.menuName,
+        menuCode: form.menuCode,
+        url: form.url,
         component: form.component,
         icon: form.icon,
-        parentId: form.parentId,
+        menuPid: form.menuPid,
         sort: form.sort,
-        type: form.type
+        menuType: form.menuType
       }
       await menusApi.createMenu(createData)
       ElMessage.success('菜单创建成功')
