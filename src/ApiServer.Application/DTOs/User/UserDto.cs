@@ -15,12 +15,12 @@ namespace ApiServer.Application.DTOs.User
         /// <summary>
         /// 用户名
         /// </summary>
-        public string Username { get; set; } = string.Empty;
+        public string UserName { get; set; } = string.Empty;
 
         /// <summary>
         /// 昵称
         /// </summary>
-        public string Nickname { get; set; } = string.Empty;
+        public string NickName { get; set; } = string.Empty;
 
         /// <summary>
         /// 邮箱
@@ -80,7 +80,7 @@ namespace ApiServer.Application.DTOs.User
         /// <summary>
         /// 创建时间
         /// </summary>
-        public DateTime CreateTime { get; set; }
+        public DateTime CreatedAt { get; set; }
 
         /// <summary>
         /// 最后修改时间

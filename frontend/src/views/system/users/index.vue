@@ -82,9 +82,9 @@
       
       <el-table-column prop="id" label="ID" width="80" />
       
-      <el-table-column prop="username" label="用户名" min-width="120" />
+      <el-table-column prop="userName" label="用户名" min-width="120" />
       
-      <el-table-column prop="realName" label="姓名" min-width="100" />
+      <el-table-column prop="nickName" label="姓名" min-width="100" />
       
       <el-table-column prop="email" label="邮箱" min-width="180" />
       
@@ -191,7 +191,7 @@ import { ElMessage, ElMessageBox, FormInstance } from 'element-plus'
 import { useAuthStore } from '@/stores/auth'
 import { usersApi } from '@/api/users'
 import UserFormDialog from './components/UserFormDialog.vue'
-import type { User, UserQueryDto, UserStatus } from '@/types'
+import type { User, UserQueryDto } from '@/types'
 import { UserStatus } from '@/types'
 import dayjs from 'dayjs'
 

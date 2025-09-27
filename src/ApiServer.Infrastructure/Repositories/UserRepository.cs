@@ -25,7 +25,7 @@ namespace ApiServer.Infrastructure.Repositories
                 .Include(u => u.Organization)
                 .Include(u => u.UserRoles)
                     .ThenInclude(ur => ur.Role)
-                .FirstOrDefaultAsync(u => u.Username == username);
+                .FirstOrDefaultAsync(u => u.Name == username);
         }
 
         /// <summary>
@@ -94,7 +94,7 @@ namespace ApiServer.Infrastructure.Repositories
         /// </summary>
         public async Task<bool> IsUsernameExistsAsync(string username, long? excludeUserId = null)
         {
-            var query = _dbSet.Where(u => !u.IsDeleted && u.Username == username);
+            var query = _dbSet.Where(u => !u.IsDeleted && u.Name == username);
             
             if (excludeUserId.HasValue)
             {
@@ -135,8 +135,8 @@ namespace ApiServer.Infrastructure.Repositories
             if (!string.IsNullOrWhiteSpace(keyword))
             {
                 query = query.Where(u => 
-                    u.Username.Contains(keyword) ||
-                    (u.Nickname != null && u.Nickname.Contains(keyword)) ||
+                    u.Name.Contains(keyword) ||
+                    (u.NickName != null && u.NickName.Contains(keyword)) ||
                     (u.Email != null && u.Email.Contains(keyword)) ||
                     (u.Phone != null && u.Phone.Contains(keyword)));
             }

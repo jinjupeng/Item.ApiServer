@@ -10,22 +10,32 @@ namespace ApiServer.Application.DTOs.Role
         /// <summary>
         /// 角色名称
         /// </summary>
-        public string RoleName { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
+
+        /// <summary>
+        /// 编码
+        /// </summary>
+        public string Code { get; set; } = string.Empty;
 
         /// <summary>
         /// 角色描述
         /// </summary>
-        public string? RoleDesc { get; set; }
+        public string? Description { get; set; }
 
         /// <summary>
         /// 是否启用
         /// </summary>
-        public bool Status { get; set; } = true;
+        public bool IsActive { get; set; } = true;
 
         /// <summary>
-        /// 用户数量
+        /// 创建时间字符串
         /// </summary>
-        public int UserCount { get; set; }
+        public string CreatedAt => CreateTime.ToString("yyyy-MM-dd HH:mm:ss");
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public int Sort { get; set; }
 
         /// <summary>
         /// 菜单权限ID列表
@@ -35,7 +45,7 @@ namespace ApiServer.Application.DTOs.Role
         /// <summary>
         /// API权限ID列表
         /// </summary>
-        public List<long> ApiIds { get; set; } = new();
+        public List<long> PermissionIds { get; set; } = new();
     }
 
     /// <summary>

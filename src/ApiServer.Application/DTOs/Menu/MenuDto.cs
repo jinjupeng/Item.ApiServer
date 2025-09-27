@@ -87,12 +87,17 @@ namespace ApiServer.Application.DTOs.Menu
         /// <summary>
         /// 菜单名称
         /// </summary>
-        public string Title { get; set; } = string.Empty;
+        public string MenuName { get; set; } = string.Empty;
 
         /// <summary>
         /// 菜单编码
         /// </summary>
-        public string? Key { get; set; }
+        public string? MenuCode { get; set; }
+        
+        /// <summary>
+        /// 状态
+        /// </summary>
+        public bool Status { get; set; }
 
         /// <summary>
         /// 图标

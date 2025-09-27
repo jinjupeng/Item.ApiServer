@@ -13,18 +13,28 @@ namespace ApiServer.Domain.Entities
         /// </summary>
         [Required]
         [StringLength(32)]
-        public string RoleName { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
         
         /// <summary>
         /// 角色描述
         /// </summary>
         [StringLength(128)]
-        public string? RoleDesc { get; set; }
+        public string? Desc { get; set; }
         
+        /// <summary>
+        /// 角色编码
+        /// </summary>
+        [StringLength(64)]
+        public string? Code { get; set; }
         /// <summary>
         /// 状态（是否启用）
         /// </summary>
         public bool Status { get; set; } = true;
+
+        /// <summary>
+        /// 排序
+        /// </summary>
+        public int Sort { get; set; } = 0;
 
         // 导航属性
         /// <summary>
@@ -40,6 +50,6 @@ namespace ApiServer.Domain.Entities
         /// <summary>
         /// 角色API关联
         /// </summary>
-        public virtual ICollection<RolePermission> RoleApis { get; set; } = new List<RolePermission>();
+        public virtual ICollection<RolePermission> RolePermissions { get; set; } = new List<RolePermission>();
     }
 }

@@ -9,10 +9,10 @@
       <div class="role-info">
         <el-descriptions :column="2" border>
           <el-descriptions-item label="角色名称">
-            {{ role?.name }}
+            {{ role?.menuName }}
           </el-descriptions-item>
           <el-descriptions-item label="角色编码">
-            {{ role?.code }}
+            {{ role?.menuCode }}
           </el-descriptions-item>
         </el-descriptions>
       </div>
@@ -53,14 +53,14 @@
               <el-icon v-if="data.icon" class="node-icon">
                 <component :is="data.icon" />
               </el-icon>
-              <span class="node-label">{{ data.name }}</span>
+              <span class="node-label">{{ data.menuName }}</span>
               <el-tag
                 v-if="data.type !== undefined"
-                :type="getMenuTypeTagType(data.type)"
+                :type="getMenuTypeTagType(data.menuType)"
                 size="small"
                 class="node-type"
               >
-                {{ getMenuTypeText(data.type) }}
+                {{ getMenuTypeText(data.menuType) }}
               </el-tag>
             </div>
           </template>

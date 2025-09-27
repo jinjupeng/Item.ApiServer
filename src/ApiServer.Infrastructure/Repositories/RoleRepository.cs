@@ -21,7 +21,7 @@ namespace ApiServer.Infrastructure.Repositories
         public async Task<Role?> GetByRoleNameAsync(string roleName)
         {
             return await GetQueryable()
-                .FirstOrDefaultAsync(r => r.RoleName == roleName);
+                .FirstOrDefaultAsync(r => r.Name == roleName);
         }
 
         /// <summary>
@@ -40,7 +40,7 @@ namespace ApiServer.Infrastructure.Repositories
         /// </summary>
         public async Task<bool> IsRoleNameExistsAsync(string roleName, long? excludeRoleId = null)
         {
-            var query = GetQueryable().Where(r => r.RoleName == roleName);
+            var query = GetQueryable().Where(r => r.Name == roleName);
             
             if (excludeRoleId.HasValue)
             {
@@ -64,7 +64,7 @@ namespace ApiServer.Infrastructure.Repositories
             // 角色名称过滤
             if (!string.IsNullOrWhiteSpace(roleName))
             {
-                query = query.Where(r => r.RoleName.Contains(roleName));
+                query = query.Where(r => r.Name.Contains(roleName));
             }
 
             // 状态过滤

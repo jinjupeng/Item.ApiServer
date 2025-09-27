@@ -163,7 +163,7 @@ namespace ApiServer.Application.Services
                 var apis = await _roleRepository.GetRoleApisAsync(id);
                 
                 roleDto.MenuIds = menus.Select(m => m.Id).ToList();
-                roleDto.ApiIds = apis.Select(a => a.Id).ToList();
+                roleDto.PermissionIds = apis.Select(a => a.Id).ToList();
 
                 return ApiResult<RoleDto>.SuccessResult(roleDto);
             }
@@ -190,7 +190,6 @@ namespace ApiServer.Application.Services
                 foreach (var role in roles)
                 {
                     var roleDto = role.Adapt<RoleDto>();
-                    roleDto.UserCount = await _roleRepository.GetUserCountByRoleIdAsync(role.Id);
                     roleDtos.Add(roleDto);
                 }
 

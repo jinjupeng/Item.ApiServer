@@ -60,17 +60,40 @@ namespace ApiServer.Application
         /// <param name="config">配置对象</param>
         private static void ConfigureMappings(TypeAdapterConfig config)
         {
+
+            // 配置User实体与UserDto之间的映射
+            config.NewConfig<Domain.Entities.User, DTOs.User.UserDto>()
+                  .Map(dest => dest.Id, src => src.Id)
+                  .Map(dest => dest.UserName, src => src.Name)
+                  .Map(dest => dest.NickName, src => src.NickName)
+                  .Map(dest => dest.Email, src => src.Email)
+                  .Map(dest => dest.Phone, src => src.Phone)
+                  .Map(dest => dest.Status, src => src.Status)
+                  .Map(dest => dest.CreatedAt, src => src.CreateTime);
+
             // 配置Menu实体与MenuTreeDto之间的映射
-            config.NewConfig<ApiServer.Domain.Entities.Menu, ApiServer.Application.DTOs.Menu.MenuTreeDto>()
-                  .Map(dest => dest.Title, src => src.Name)
-                  .Map(dest => dest.Key, src => src.Code)
+            config.NewConfig<Domain.Entities.Menu, DTOs.Menu.MenuTreeDto>()
+                  .Map(dest => dest.MenuName, src => src.Name)
+                  .Map(dest => dest.MenuCode, src => src.Code)
                   .Map(dest => dest.Url, src => src.Url)
                   .Map(dest => dest.Icon, src => src.Icon)
                   .Map(dest => dest.ParentId, src => src.ParentId)
                   .Map(dest => dest.Sort, src => src.Sort)
-                  //.Map(dest => dest.MenuType, src => src.MenuType)
+                  .Map(dest => dest.MenuType, src => src.Type)
                   .Map(dest => dest.Expanded, src => false)
+                  .Map(dest => dest.Status, src => src.Status)
                   .Map(dest => dest.Checked, src => false);
+
+
+            // 配置Role实体与RoleDto之间的映射
+            config.NewConfig<Domain.Entities.Role, DTOs.Role.RoleDto>()
+                  .Map(dest => dest.Id, src => src.Id)
+                  .Map(dest => dest.Name, src => src.Name)
+                  .Map(dest => dest.Code, src => src.Code)
+                  .Map(dest => dest.Description, src => src.Desc)
+                  .Map(dest => dest.IsActive, src => src.Status)
+                  .Map(dest => dest.CreateTime, src => src.CreateTime)
+                  .Map(dest => dest.Sort, src => src.Sort);
 
             // 示例：配置User实体与DTO之间的映射
             // config.NewConfig<User, UserDto>()

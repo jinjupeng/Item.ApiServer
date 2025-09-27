@@ -14,7 +14,7 @@ namespace ApiServer.Domain.Entities
         /// </summary>
         [Required]
         [StringLength(20)]
-        public string Username { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
         
         /// <summary>
         /// 密码
@@ -27,7 +27,7 @@ namespace ApiServer.Domain.Entities
         /// 昵称
         /// </summary>
         [StringLength(20)]
-        public string? Nickname { get; set; }
+        public string? NickName { get; set; }
         
         /// <summary>
         /// 头像

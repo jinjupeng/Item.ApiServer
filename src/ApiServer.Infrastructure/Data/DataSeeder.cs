@@ -152,24 +152,24 @@ namespace ApiServer.Infrastructure.Data
                 new Role
                 {
                     Id = 1,
-                    RoleName = "超级管理员",
-                    RoleDesc = "系统超级管理员，拥有所有权限",
+                    Name = "超级管理员",
+                    Desc = "系统超级管理员，拥有所有权限",
                     Status = true,
                     CreateTime = DateTime.Now
                 },
                 new Role
                 {
                     Id = 2,
-                    RoleName = "管理员",
-                    RoleDesc = "系统管理员，拥有大部分权限",
+                    Name = "管理员",
+                    Desc = "系统管理员，拥有大部分权限",
                     Status = true,
                     CreateTime = DateTime.Now
                 },
                 new Role
                 {
                     Id = 3,
-                    RoleName = "普通用户",
-                    RoleDesc = "普通用户，拥有基本权限",
+                    Name = "普通用户",
+                    Desc = "普通用户，拥有基本权限",
                     Status = true,
                     CreateTime = DateTime.Now
                 }
@@ -195,9 +195,9 @@ namespace ApiServer.Infrastructure.Data
                 new User
                 {
                     Id = 1,
-                    Username = "admin",
+                    Name = "admin",
                     Password = "E10ADC3949BA59ABBE56E057F20F883E", // 123456的MD5
-                    Nickname = "超级管理员",
+                    NickName = "超级管理员",
                     OrgId = 1,
                     Status = UserStatus.Enabled,
                     Email = "admin@example.com",
@@ -207,9 +207,9 @@ namespace ApiServer.Infrastructure.Data
                 new User
                 {
                     Id = 2,
-                    Username = "manager",
+                    Name = "manager",
                     Password = "E10ADC3949BA59ABBE56E057F20F883E", // 123456的MD5
-                    Nickname = "部门经理",
+                    NickName = "部门经理",
                     OrgId = 2,
                     Status = UserStatus.Enabled,
                     Email = "manager@example.com",
@@ -219,9 +219,9 @@ namespace ApiServer.Infrastructure.Data
                 new User
                 {
                     Id = 3,
-                    Username = "user",
+                    Name = "user",
                     Password = "E10ADC3949BA59ABBE56E057F20F883E", // 123456的MD5
-                    Nickname = "普通用户",
+                    NickName = "普通用户",
                     OrgId = 2,
                     Status = UserStatus.Enabled,
                     Email = "user@example.com",
@@ -276,7 +276,7 @@ namespace ApiServer.Infrastructure.Data
                     Sort = 1,
                     Status = true,
                     Icon = "user",
-                    Url = "/system/user",
+                    Url = "/system/users",
                     CreateTime = DateTime.Now
                 },
                 // 角色管理
@@ -292,7 +292,7 @@ namespace ApiServer.Infrastructure.Data
                     Sort = 2,
                     Status = true,
                     Icon = "role",
-                    Url = "/system/role",
+                    Url = "/system/roles",
                     CreateTime = DateTime.Now
                 },
                 // 组织管理
@@ -324,7 +324,7 @@ namespace ApiServer.Infrastructure.Data
                     Sort = 4,
                     Status = true,
                     Icon = "menu",
-                    Url = "/system/menu",
+                    Url = "/system/menus",
                     CreateTime = DateTime.Now
                 }
             };

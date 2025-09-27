@@ -199,7 +199,7 @@ import { ElMessage, ElMessageBox, ElTable, FormInstance } from 'element-plus'
 import { useAuthStore } from '@/stores/auth'
 import { menusApi } from '@/api/menus'
 import MenuFormDialog from './components/MenuFormDialog.vue'
-import type { Menu, MenuQueryDto, MenuType } from '@/types'
+import type { Menu, MenuQueryDto } from '@/types'
 import { MenuType } from '@/types'
 import dayjs from 'dayjs'
 

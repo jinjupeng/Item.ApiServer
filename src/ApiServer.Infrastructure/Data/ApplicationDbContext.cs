@@ -99,7 +99,7 @@ namespace ApiServer.Infrastructure.Data
             // 角色API多对多关系
             modelBuilder.Entity<RolePermission>()
                 .HasOne(ra => ra.Role)
-                .WithMany(r => r.RoleApis)
+                .WithMany(r => r.RolePermissions)
                 .HasForeignKey(ra => ra.RoleId)
                 .OnDelete(DeleteBehavior.Cascade);
 
@@ -138,7 +138,7 @@ namespace ApiServer.Infrastructure.Data
         {
             // 用户表索引
             modelBuilder.Entity<User>()
-                .HasIndex(u => u.Username)
+                .HasIndex(u => u.Name)
                 .IsUnique()
                 .HasDatabaseName("IX_User_Username");
 

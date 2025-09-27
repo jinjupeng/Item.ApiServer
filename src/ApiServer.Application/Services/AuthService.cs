@@ -69,8 +69,8 @@ namespace ApiServer.Application.Services
                 var userInfo = new UserInfoDto
                 {
                     UserId = user.Id,
-                    Username = user.Username,
-                    Nickname = user.Nickname ?? user.Username,
+                    Username = user.Name,
+                    Nickname = user.NickName ?? user.Name,
                     Avatar = user.Portrait,
                     Email = user.Email,
                     Phone = user.Phone,
@@ -82,7 +82,7 @@ namespace ApiServer.Application.Services
                 var userRoles = await _userRepository.GetUserWithRolesAsync(user.Id);
                 if (userRoles != null)
                 {
-                    userInfo.Roles = userRoles.UserRoles.Select(ur => ur.Role.RoleName).ToList();
+                    userInfo.Roles = userRoles.UserRoles.Select(ur => ur.Role.Name).ToList();
                 }
 
                 var response = new LoginResponseDto
@@ -246,14 +246,14 @@ namespace ApiServer.Application.Services
                 var userInfo = new UserInfoDto
                 {
                     UserId = user.Id,
-                    Username = user.Username,
-                    Nickname = user.Nickname ?? user.Username,
+                    Username = user.Name,
+                    Nickname = user.NickName ?? user.Name,
                     Avatar = user.Portrait,
                     Email = user.Email,
                     Phone = user.Phone,
                     OrgId = user.OrgId,
                     OrgName = user.Organization?.Name,
-                    Roles = user.UserRoles.Select(ur => ur.Role.RoleName).ToList()
+                    Roles = user.UserRoles.Select(ur => ur.Role.Name).ToList()
                 };
 
                 return ApiResult<UserInfoDto>.SuccessResult(userInfo);
@@ -435,8 +435,8 @@ namespace ApiServer.Application.Services
             var claims = new[]
             {
                 new Claim("UserId", user.Id.ToString()),
-                new Claim("Username", user.Username),
-                new Claim(ClaimTypes.Name, user.Username),
+                new Claim("Username", user.Name),
+                new Claim(ClaimTypes.Name, user.Name),
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
             };
 
