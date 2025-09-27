@@ -1,0 +1,436 @@
+using ApiServer.Application.DTOs.Organization;
+using ApiServer.Application.Interfaces;
+using ApiServer.Application.Interfaces.Repositories;
+using ApiServer.Application.Interfaces.Services;
+using ApiServer.Domain.Entities;
+using ApiServer.Shared.Common;
+using Mapster;
+
+namespace ApiServer.Application.Services
+{
+    /// <summary>
+    /// 组织服务实现
+    /// </summary>
+    public class OrganizationService : IOrganizationService
+    {
+        private readonly IOrganizationRepository _organizationRepository;
+        private readonly IUnitOfWork _unitOfWork;
+
+        public OrganizationService(
+            IOrganizationRepository organizationRepository,
+            IUnitOfWork unitOfWork)
+        {
+            _organizationRepository = organizationRepository;
+            _unitOfWork = unitOfWork;
+        }
+
+        /// <summary>
+        /// 创建组织
+        /// </summary>
+        public async Task<ApiResult<long>> CreateOrganizationAsync(CreateOrganizationDto dto)
+        {
+            try
+            {
+                // 检查组织编码是否已存在
+                if (!string.IsNullOrEmpty(dto.OrgCode))
+                {
+                    var codeExists = await _organizationRepository.IsOrgCodeExistsAsync(dto.OrgCode);
+                    if (codeExists)
+                    {
+                        return ApiResult<long>.FailResult("组织编码已存在");
+                    }
+                }
+
+                // 验证父组织是否存在
+                if (dto.OrgPid.HasValue)
+                {
+                    var parent = await _organizationRepository.GetByIdAsync(dto.OrgPid.Value);
+                    if (parent == null)
+                    {
+                        return ApiResult<long>.FailResult("父组织不存在");
+                    }
+                }
+
+                var organization = dto.Adapt<Organization>();
+                
+                // 设置组织路径和层级
+                await SetOrganizationHierarchyAsync(organization);
+
+                var result = await _organizationRepository.AddAsync(organization);
+                await _unitOfWork.SaveChangesAsync();
+
+                return ApiResult<long>.SuccessResult(result.Id, "组织创建成功");
+            }
+            catch (Exception ex)
+            {
+                return ApiResult<long>.FailResult($"创建组织失败: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// 更新组织
+        /// </summary>
+        public async Task<ApiResult> UpdateOrganizationAsync(long id, UpdateOrganizationDto dto)
+        {
+            try
+            {
+                var organization = await _organizationRepository.GetByIdAsync(id);
+                if (organization == null)
+                {
+                    return ApiResult.FailResult("组织不存在");
+                }
+
+                // 检查组织编码是否已存在
+                if (!string.IsNullOrEmpty(dto.OrgCode))
+                {
+                    var codeExists = await _organizationRepository.IsOrgCodeExistsAsync(dto.OrgCode, id);
+                    if (codeExists)
+                    {
+                        return ApiResult.FailResult("组织编码已存在");
+                    }
+                }
+
+                // 验证父组织是否存在
+                if (dto.OrgPid.HasValue)
+                {
+                    var parent = await _organizationRepository.GetByIdAsync(dto.OrgPid.Value);
+                    if (parent == null)
+                    {
+                        return ApiResult.FailResult("父组织不存在");
+                    }
+
+                    // 不能将自己设为父组织
+                    if (dto.OrgPid.Value == id)
+                    {
+                        return ApiResult.FailResult("不能将自己设为父组织");
+                    }
+                }
+
+                dto.Adapt(organization);
+                
+                // 重新设置组织路径和层级
+                await SetOrganizationHierarchyAsync(organization);
+
+                await _organizationRepository.UpdateAsync(organization);
+                await _unitOfWork.SaveChangesAsync();
+
+                return ApiResult.SuccessResult("组织更新成功");
+            }
+            catch (Exception ex)
+            {
+                return ApiResult.FailResult($"更新组织失败: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// 删除组织
+        /// </summary>
+        public async Task<ApiResult> DeleteOrganizationAsync(long id)
+        {
+            try
+            {
+                var organization = await _organizationRepository.GetByIdAsync(id);
+                if (organization == null)
+                {
+                    return ApiResult.FailResult("组织不存在");
+                }
+
+                // 检查是否有子组织
+                var children = await _organizationRepository.GetChildOrganizationsAsync(id);
+                if (children.Any())
+                {
+                    return ApiResult.FailResult("存在子组织，无法删除");
+                }
+
+                await _organizationRepository.DeleteAsync(id);
+                await _unitOfWork.SaveChangesAsync();
+
+                return ApiResult.SuccessResult("组织删除成功");
+            }
+            catch (Exception ex)
+            {
+                return ApiResult.FailResult($"删除组织失败: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// 获取组织详情
+        /// </summary>
+        public async Task<ApiResult<OrganizationDto>> GetOrganizationByIdAsync(long id)
+        {
+            try
+            {
+                var organization = await _organizationRepository.GetByIdAsync(id);
+                if (organization == null)
+                {
+                    return ApiResult<OrganizationDto>.FailResult("组织不存在");
+                }
+
+                var dto = organization.Adapt<OrganizationDto>();
+                return ApiResult<OrganizationDto>.SuccessResult(dto);
+            }
+            catch (Exception ex)
+            {
+                return ApiResult<OrganizationDto>.FailResult($"获取组织详情失败: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// 获取组织树
+        /// </summary>
+        public async Task<ApiResult<List<OrganizationTreeDto>>> GetOrganizationTreeAsync(OrganizationQueryDto? query = null)
+        {
+            try
+            {
+                var organizations = await _organizationRepository.GetOrganizationTreeAsync();
+                var treeDtos = organizations.Adapt<List<OrganizationTreeDto>>();
+                
+                return ApiResult<List<OrganizationTreeDto>>.SuccessResult(treeDtos);
+            }
+            catch (Exception ex)
+            {
+                return ApiResult<List<OrganizationTreeDto>>.FailResult($"获取组织树失败: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// 根据父ID获取子组织
+        /// </summary>
+        public async Task<ApiResult<List<OrganizationDto>>> GetChildOrganizationsAsync(long parentId)
+        {
+            try
+            {
+                var organizations = await _organizationRepository.GetChildOrganizationsAsync(parentId);
+                var dtos = organizations.Adapt<List<OrganizationDto>>();
+                
+                return ApiResult<List<OrganizationDto>>.SuccessResult(dtos);
+            }
+            catch (Exception ex)
+            {
+                return ApiResult<List<OrganizationDto>>.FailResult($"获取子组织失败: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// 检查组织编码是否存在
+        /// </summary>
+        public async Task<ApiResult<bool>> OrgCodeExistsAsync(string orgCode, long? excludeId = null)
+        {
+            try
+            {
+                var exists = await _organizationRepository.IsOrgCodeExistsAsync(orgCode, excludeId);
+                return ApiResult<bool>.SuccessResult(exists);
+            }
+            catch (Exception ex)
+            {
+                return ApiResult<bool>.FailResult($"检查组织编码失败: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// 获取父组织列表
+        /// </summary>
+        public async Task<ApiResult<List<OrganizationDto>>> GetParentOrganizationsAsync()
+        {
+            try
+            {
+                var organizations = await _organizationRepository.GetParentOrganizationsAsync();
+                var dtos = organizations.Adapt<List<OrganizationDto>>();
+                
+                return ApiResult<List<OrganizationDto>>.SuccessResult(dtos);
+            }
+            catch (Exception ex)
+            {
+                return ApiResult<List<OrganizationDto>>.FailResult($"获取父组织列表失败: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// 更新组织排序
+        /// </summary>
+        public async Task<ApiResult> UpdateOrganizationSortAsync(long orgId, int sort)
+        {
+            try
+            {
+                var organization = await _organizationRepository.GetByIdAsync(orgId);
+                if (organization == null)
+                {
+                    return ApiResult.FailResult("组织不存在");
+                }
+
+                organization.Sort = sort;
+                await _organizationRepository.UpdateAsync(organization);
+                await _unitOfWork.SaveChangesAsync();
+
+                return ApiResult.SuccessResult("排序更新成功");
+            }
+            catch (Exception ex)
+            {
+                return ApiResult.FailResult($"更新排序失败: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// 获取组织下的用户数量
+        /// </summary>
+        public async Task<ApiResult<int>> GetUserCountByOrgIdAsync(long orgId)
+        {
+            try
+            {
+                // 这里需要注入用户仓储来查询用户数量
+                // 暂时返回0
+                return ApiResult<int>.SuccessResult(0);
+            }
+            catch (Exception ex)
+            {
+                return ApiResult<int>.FailResult($"获取用户数量失败: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// 更新组织状态
+        /// </summary>
+        public async Task<ApiResult> UpdateOrganizationStatusAsync(long id, bool status)
+        {
+            try
+            {
+                var organization = await _organizationRepository.GetByIdAsync(id);
+                if (organization == null)
+                {
+                    return ApiResult.FailResult("组织不存在");
+                }
+
+                organization.Status = status;
+                await _organizationRepository.UpdateAsync(organization);
+                await _unitOfWork.SaveChangesAsync();
+
+                return ApiResult.SuccessResult("状态更新成功");
+            }
+            catch (Exception ex)
+            {
+                return ApiResult.FailResult($"更新状态失败: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// 获取所有组织（扁平列表）
+        /// </summary>
+        public async Task<ApiResult<List<OrganizationDto>>> GetAllOrganizationsAsync()
+        {
+            try
+            {
+                var organizations = await _organizationRepository.GetAllAsync();
+                var dtos = organizations.Adapt<List<OrganizationDto>>();
+                
+                return ApiResult<List<OrganizationDto>>.SuccessResult(dtos);
+            }
+            catch (Exception ex)
+            {
+                return ApiResult<List<OrganizationDto>>.FailResult($"获取组织列表失败: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// 移动组织到新的父组织下
+        /// </summary>
+        public async Task<ApiResult> MoveOrganizationAsync(long orgId, long? newParentId)
+        {
+            try
+            {
+                var organization = await _organizationRepository.GetByIdAsync(orgId);
+                if (organization == null)
+                {
+                    return ApiResult.FailResult("组织不存在");
+                }
+
+                if (newParentId.HasValue)
+                {
+                    var newParent = await _organizationRepository.GetByIdAsync(newParentId.Value);
+                    if (newParent == null)
+                    {
+                        return ApiResult.FailResult("新父组织不存在");
+                    }
+
+                    if (newParentId.Value == orgId)
+                    {
+                        return ApiResult.FailResult("不能将组织移动到自己下面");
+                    }
+                }
+
+                organization.ParentId = newParentId;
+                await SetOrganizationHierarchyAsync(organization);
+                
+                await _organizationRepository.UpdateAsync(organization);
+                await _unitOfWork.SaveChangesAsync();
+
+                return ApiResult.SuccessResult("组织移动成功");
+            }
+            catch (Exception ex)
+            {
+                return ApiResult.FailResult($"移动组织失败: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// 检查是否可以删除组织（是否有子组织或用户）
+        /// </summary>
+        public async Task<ApiResult<bool>> CanDeleteOrganizationAsync(long orgId)
+        {
+            try
+            {
+                // 检查是否有子组织
+                var children = await _organizationRepository.GetChildOrganizationsAsync(orgId);
+                if (children.Any())
+                {
+                    return ApiResult<bool>.SuccessResult(false);
+                }
+
+                // 这里需要检查是否有用户，暂时返回true
+                return ApiResult<bool>.SuccessResult(true);
+            }
+            catch (Exception ex)
+            {
+                return ApiResult<bool>.FailResult($"检查删除权限失败: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// 分页查询组织
+        /// </summary>
+        public async Task<ApiResult<PagedResult<OrganizationDto>>> GetPagedOrganizationsAsync(OrganizationQueryDto query)
+        {
+            try
+            {
+                // 这里需要实现分页查询逻辑
+                // 暂时返回空结果
+                var pagedResult = PagedResult<OrganizationDto>.Empty(query.PageIndex, query.PageSize);
+                return ApiResult<PagedResult<OrganizationDto>>.SuccessResult(pagedResult);
+            }
+            catch (Exception ex)
+            {
+                return ApiResult<PagedResult<OrganizationDto>>.FailResult($"查询组织失败: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// 设置组织层级信息
+        /// </summary>
+        private async Task SetOrganizationHierarchyAsync(Organization organization)
+        {
+            if (organization.ParentId.HasValue)
+            {
+                var parent = await _organizationRepository.GetByIdAsync(organization.ParentId.Value);
+                if (parent != null)
+                {
+                    organization.Level = parent.Level + 1;
+                    organization.ParentIds = $"{parent.ParentIds},{parent.Id}";
+                }
+            }
+            else
+            {
+                organization.Level = 1;
+                organization.ParentIds = "0";
+            }
+        }
+    }
+}

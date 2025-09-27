@@ -1,26 +1,27 @@
 <template>
   <div id="app">
-    <router-view/>
+    <router-view />
   </div>
 </template>
-<script>
-    export default {
-        name: 'app',
-        components: {}
-    }
+
+<script setup lang="ts">
+import { onMounted } from 'vue'
+import { useAppStore } from '@/stores/app'
+
+const appStore = useAppStore()
+
+onMounted(() => {
+  // 初始化主题
+  const isDark = localStorage.getItem('theme') === 'dark'
+  if (isDark) {
+    appStore.toggleTheme()
+  }
+})
 </script>
+
 <style lang="scss">
-html,body,#app {
+#app {
   height: 100%;
-  padding: 0;
-  margin: 0;
-  font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
-}
-a{
-  text-decoration:none;
-}
-#nprogress .bar {
-    background: black !important; //自定义颜色
-    height:5px;
+  width: 100%;
 }
 </style>
