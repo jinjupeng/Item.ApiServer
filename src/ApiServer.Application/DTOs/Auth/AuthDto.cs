@@ -1,3 +1,5 @@
+using ApiServer.Application.DTOs.Role;
+
 namespace ApiServer.Application.DTOs.Auth
 {
     /// <summary>
@@ -75,12 +77,12 @@ namespace ApiServer.Application.DTOs.Auth
         /// <summary>
         /// 用户名
         /// </summary>
-        public string Username { get; set; } = string.Empty;
+        public string UserName { get; set; } = string.Empty;
 
         /// <summary>
         /// 昵称
         /// </summary>
-        public string Nickname { get; set; } = string.Empty;
+        public string NickName { get; set; } = string.Empty;
 
         /// <summary>
         /// 头像
@@ -110,7 +112,7 @@ namespace ApiServer.Application.DTOs.Auth
         /// <summary>
         /// 角色列表
         /// </summary>
-        public List<string> Roles { get; set; } = new();
+        public List<BaseRoleDto> Roles { get; set; } = new();
 
         /// <summary>
         /// 权限列表

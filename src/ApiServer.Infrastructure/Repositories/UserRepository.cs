@@ -125,7 +125,7 @@ namespace ApiServer.Infrastructure.Repositories
         /// </summary>
         public async Task<(IEnumerable<User> users, int total)> GetPagedUsersAsync(
             int page, 
-            int pageSize, 
+            int pageSize = 10, 
             string? keyword = null, 
             long? orgId = null, 
             int? status = null)
@@ -148,14 +148,15 @@ namespace ApiServer.Infrastructure.Repositories
                 query = query.Where(u => u.OrgId == orgId);
             }
 
-            // 状态过滤
             if (status.HasValue)
             {
                 query = query.Where(u => (int)u.Status == status);
             }
 
             // 添加Include在最后
-            query = query.Include(u => u.Organization);
+            query = query.Include(u => u.Organization)
+                         .Include(u => u.UserRoles)
+                         .ThenInclude(ur => ur.Role);
 
             var total = await query.CountAsync();
             var users = await query

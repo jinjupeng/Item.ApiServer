@@ -13,9 +13,9 @@
     >
       <el-row :gutter="20">
         <el-col :span="12">
-          <el-form-item label="用户名" prop="username">
+          <el-form-item label="用户名" prop="userName">
             <el-input
-              v-model="form.username"
+              v-model="form.userName"
               placeholder="请输入用户名"
               :disabled="isEdit"
               clearable
@@ -24,9 +24,9 @@
         </el-col>
         
         <el-col :span="12">
-          <el-form-item label="姓名" prop="realName">
+          <el-form-item label="姓名" prop="nickName">
             <el-input
-              v-model="form.realName"
+              v-model="form.nickName"
               placeholder="请输入姓名"
               clearable
             />
@@ -124,9 +124,9 @@ const isEdit = computed(() => !!props.user)
 
 // 表单数据
 const form = reactive<CreateUserDto & UpdateUserDto>({
-  username: '',
+  userName: '',
   email: '',
-  realName: '',
+  nickName: '',
   phone: '',
   password: '',
   roleIds: []
@@ -152,12 +152,12 @@ const validatePhone = (rule: any, value: string, callback: any) => {
 
 // 表单验证规则
 const rules: FormRules = {
-  username: [
+  userName: [
     { required: true, message: '请输入用户名', trigger: 'blur' },
     { min: 3, max: 20, message: '用户名长度在 3 到 20 个字符', trigger: 'blur' },
     { pattern: /^[a-zA-Z0-9_]+$/, message: '用户名只能包含字母、数字和下划线', trigger: 'blur' }
   ],
-  realName: [
+  nickName: [
     { required: true, message: '请输入姓名', trigger: 'blur' },
     { min: 2, max: 10, message: '姓名长度在 2 到 10 个字符', trigger: 'blur' }
   ],
@@ -198,11 +198,11 @@ const initForm = () => {
   if (props.user) {
     // 编辑模式
     Object.assign(form, {
-      username: props.user.username,
+      userName: props.user.userName,
       email: props.user.email,
-      realName: props.user.realName,
+      nickName: props.user.nickName,
       phone: props.user.phone || '',
-      roleIds: props.user.roles.map(role => role.id)
+      roleIds: props.user.roles?.map(role => role.id) || []
     })
   } else {
     // 新增模式
@@ -216,9 +216,9 @@ const resetForm = () => {
     formRef.value.resetFields()
   }
   Object.assign(form, {
-    username: '',
+    userName: '',
     email: '',
-    realName: '',
+    nickName: '',
     phone: '',
     password: '',
     roleIds: []
@@ -252,7 +252,7 @@ const handleSubmit = async () => {
       // 编辑用户
       const updateData: UpdateUserDto = {
         email: form.email,
-        realName: form.realName,
+        nickName: form.nickName,
         phone: form.phone,
         roleIds: form.roleIds
       }
@@ -261,9 +261,9 @@ const handleSubmit = async () => {
     } else {
       // 新增用户
       const createData: CreateUserDto = {
-        username: form.username,
+        userName: form.userName,
         email: form.email,
-        realName: form.realName,
+        nickName: form.nickName,
         phone: form.phone,
         password: form.password,
         roleIds: form.roleIds

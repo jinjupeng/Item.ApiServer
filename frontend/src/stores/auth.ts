@@ -68,7 +68,8 @@ export const useAuthStore = defineStore('auth', () => {
       token.value = loginResult.accessToken
       refreshToken.value = loginResult.refreshToken
       userInfo.value = loginResult.userInfo
-
+      console.log('用户登录信息:', userInfo.value)
+      console.log('用户角色:', userRoles.value)
       console.log('保存token到状态:', loginResult.accessToken)
 
       // 持久化存储
@@ -157,11 +158,10 @@ export const useAuthStore = defineStore('auth', () => {
   // 获取用户权限
   const getUserPermissions = async () => {
     try {
-      console.log('获取用户权限，用户名:', userInfo.value?.username)
+      console.log('获取用户权限，用户名:', userInfo.value?.userName)
       const response = await authApi.getUserPermissions()
       permissions.value = response.data
       console.log('获取到的权限数据:', permissions.value)
-      console.log('权限代码列表:', permissionCodes.value)
     } catch (error) {
       console.error('获取用户权限失败:', error)
       permissions.value = []
@@ -170,9 +170,9 @@ export const useAuthStore = defineStore('auth', () => {
   // 获取用户菜单
   const getUserMenus = async () => {
     try {
-      if (!userInfo.value?.username) return
+      if (!userInfo.value?.userName) return
 
-      const response = await menusApi.getUserMenuTreeByUsername(userInfo.value.username)
+      const response = await menusApi.getUserMenuTreeByUsername(userInfo.value.userName)
       userMenus.value = response.data
     } catch (error) {
       console.error('获取用户菜单失败:', error)
@@ -183,7 +183,6 @@ export const useAuthStore = defineStore('auth', () => {
   // 检查权限
   const hasPermission = (permissionCode: string): boolean => {
     console.log('检查权限:', permissionCode)
-    console.log('用户权限列表:', permissionCodes.value)
     
     // 临时解决方案：如果用户已登录，允许访问（用于开发调试）
     if (isLoggedIn.value) {

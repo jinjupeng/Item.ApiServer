@@ -125,7 +125,7 @@ namespace ApiServer.Infrastructure.Repositories
             }
 
             var allMenus = await query.OrderBy(m => m.Sort).ToListAsync();
-            return BuildMenuTree(allMenus, null);
+            return allMenus;
         }
 
         /// <summary>

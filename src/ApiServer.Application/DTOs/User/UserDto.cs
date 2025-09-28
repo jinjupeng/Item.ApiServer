@@ -1,3 +1,4 @@
+using ApiServer.Application.DTOs.Role;
 using ApiServer.Domain.Enums;
 
 namespace ApiServer.Application.DTOs.User
@@ -53,14 +54,9 @@ namespace ApiServer.Application.DTOs.User
         public string OrgName { get; set; } = string.Empty;
 
         /// <summary>
-        /// 角色ID列表
+        /// 角色列表
         /// </summary>
-        public List<long> RoleIds { get; set; } = new();
-
-        /// <summary>
-        /// 角色名称列表
-        /// </summary>
-        public List<string> RoleNames { get; set; } = new();
+        public List<BaseRoleDto> Roles { get; set; } = new();
 
         /// <summary>
         /// 最后登录时间

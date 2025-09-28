@@ -27,9 +27,9 @@ export interface PagedQuery {
 // 用户相关类型
 export interface User {
   id: number
-  username: string
+  userName: string
   email: string
-  realName: string
+  nickName: string
   phone?: string
   avatar?: string
   status: UserStatus
@@ -41,9 +41,9 @@ export interface User {
 }
 
 export interface CreateUserDto {
-  username: string
+  userName: string
   email: string
-  realName: string
+  nickName: string
   phone?: string
   password: string
   organizationId?: number
@@ -52,7 +52,7 @@ export interface CreateUserDto {
 
 export interface UpdateUserDto {
   email: string
-  realName: string
+  nickName: string
   phone?: string
   organizationId?: number
   roleIds: number[]
@@ -203,7 +203,7 @@ export interface ChangePasswordDto {
 }
 
 export interface ResetPasswordDto {
-  usernameOrEmail: string
+  userNameOrEmail: string
   code: string
   newPassword: string
   confirmPassword: string

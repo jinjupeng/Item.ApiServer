@@ -6,7 +6,8 @@ import type {
   UserQueryDto,
   UserStatus,
   PagedResponse,
-  ApiResponse
+  ApiResponse,
+  ResetPasswordDto
 } from '@/types'
 
 // 用户管理API
@@ -42,7 +43,7 @@ export const usersApi = {
   },
 
   // 重置用户密码
-  resetPassword(id: number, newPassword: string): Promise<ApiResponse<void>> {
-    return request.post(`/users/${id}/reset-password`, newPassword)
+  resetPassword(id: number, resetPassword: ResetPasswordDto): Promise<ApiResponse<void>> {
+    return request.post(`/users/${id}/reset-password`, resetPassword)
   }
 }

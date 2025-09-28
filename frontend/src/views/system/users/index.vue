@@ -194,6 +194,7 @@ import UserFormDialog from './components/UserFormDialog.vue'
 import type { User, UserQueryDto } from '@/types'
 import { UserStatus } from '@/types'
 import dayjs from 'dayjs'
+import { ResetPasswordDto } from '@/types'
 
 const authStore = useAuthStore()
 
@@ -285,7 +286,7 @@ const handleToggleStatus = async (user: User) => {
     const newStatus = user.status === UserStatus.Active ? UserStatus.Inactive : UserStatus.Active
     const action = newStatus === UserStatus.Active ? '启用' : '禁用'
     
-    await ElMessageBox.confirm(`确定要${action}用户"${user.realName}"吗？`, '提示', {
+    await ElMessageBox.confirm(`确定要${action}用户"${user.nickName}"吗？`, '提示', {
       confirmButtonText: '确定',
       cancelButtonText: '取消',
       type: 'warning'
@@ -303,16 +304,22 @@ const handleToggleStatus = async (user: User) => {
 // 重置密码
 const handleResetPassword = async (user: User) => {
   try {
-    await ElMessageBox.confirm(`确定要重置用户"${user.realName}"的密码吗？`, '提示', {
+    await ElMessageBox.confirm(`确定要重置用户"${user.userName}"的密码吗？`, '提示', {
       confirmButtonText: '确定',
       cancelButtonText: '取消',
       type: 'warning'
     })
     
     const newPassword = '123456' // 默认密码
-    await usersApi.resetPassword(user.id, newPassword)
+    const payload: ResetPasswordDto = {
+      newPassword: newPassword,
+      confirmPassword: newPassword,
+      userNameOrEmail: user.userName,
+      code: '' // 后端不需要验证码，传空字符串即可
+    }
+    await usersApi.resetPassword(user.id, payload)
     
-    ElMessage.success(`密码重置成功，新密码为：${newPassword}`)
+    ElMessage.success(`密码重置成功`)
   } catch (error) {
     // 用户取消操作
   }
@@ -321,7 +328,7 @@ const handleResetPassword = async (user: User) => {
 // 删除用户
 const handleDelete = async (user: User) => {
   try {
-    await ElMessageBox.confirm(`确定要删除用户"${user.realName}"吗？`, '提示', {
+    await ElMessageBox.confirm(`确定要删除用户"${user.nickName}"吗？`, '提示', {
       confirmButtonText: '确定',
       cancelButtonText: '取消',
       type: 'warning'

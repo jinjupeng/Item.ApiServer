@@ -60,7 +60,6 @@ namespace ApiServer.Application
         }
 
         /// <summary>
-        /// 配置实体映射规则
         /// </summary>
         /// <param name="config">配置对象</param>
         private static void ConfigureMappings(TypeAdapterConfig config)
@@ -74,13 +73,19 @@ namespace ApiServer.Application
                   .Map(dest => dest.Email, src => src.Email)
                   .Map(dest => dest.Phone, src => src.Phone)
                   .Map(dest => dest.Status, src => src.Status)
-                  .Map(dest => dest.CreatedAt, src => src.CreateTime);
+                  .Map(dest => dest.CreatedAt, src => src.CreateTime)
+                  .Map(dest => dest.OrgName, src => src.Organization != null ? src.Organization.Name : "")
+                  .Map(dest => dest.Roles, src => src.UserRoles.Select(ur => new DTOs.Role.BaseRoleDto 
+                  { 
+                      Id = ur.Role.Id, 
+                      Name = ur.Role.Name, 
+                      Code = ur.Role.Code ?? ""
+                  }).ToList());
 
             // 配置Menu实体与MenuTreeDto之间的映射
             config.NewConfig<Domain.Entities.Permission, DTOs.Menu.MenuTreeDto>()
                   .Map(dest => dest.MenuName, src => src.Name)
                   .Map(dest => dest.MenuCode, src => src.Code)
-                  .Map(dest => dest.Url, src => src.Url)
                   .Map(dest => dest.Icon, src => src.Icon)
                   .Map(dest => dest.ParentId, src => src.ParentId)
                   .Map(dest => dest.Sort, src => src.Sort)

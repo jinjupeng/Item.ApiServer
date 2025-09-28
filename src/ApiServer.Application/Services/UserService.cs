@@ -136,6 +136,12 @@ namespace ApiServer.Application.Services
                 }
 
                 var userDto = user.Adapt<UserDto>();
+                userDto.Roles = user.UserRoles.Select(x => new DTOs.Role.BaseRoleDto
+                {
+                    Id = x.Role.Id,
+                    Name = x.Role.Name,
+                    Code = x.Role.Code ?? ""
+                }).ToList();
                 return ApiResult<UserDto>.Succeed(userDto);
             }
             catch (Exception ex)
@@ -246,7 +252,7 @@ namespace ApiServer.Application.Services
         /// <summary>
         /// 重置用户密码
         /// </summary>
-        public async Task<ApiResult> ResetPasswordAsync(long id, string newPassword)
+        public async Task<ApiResult> ResetPasswordAsync(long id, ResetPasswordDto resetPassword)
         {
             try
             {
@@ -256,7 +262,7 @@ namespace ApiServer.Application.Services
                     return ApiResult.Failed("用户不存在");
                 }
 
-                user.Password = BCrypt.Net.BCrypt.HashPassword(newPassword);
+                user.Password = BCrypt.Net.BCrypt.HashPassword(resetPassword.NewPassword);
                 await _userRepository.UpdateAsync(user);
                 await _unitOfWork.SaveChangesAsync();
 

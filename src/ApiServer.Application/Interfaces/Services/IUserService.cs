@@ -52,6 +52,6 @@ namespace ApiServer.Application.Interfaces.Services
         /// <summary>
         /// 重置用户密码
         /// </summary>
-        Task<ApiResult> ResetPasswordAsync(long id, string newPassword);
+        Task<ApiResult> ResetPasswordAsync(long id, ResetPasswordDto newPassword);
     }
 }

@@ -1,5 +1,6 @@
 using ApiServer.Application.DTOs.Auth;
 using ApiServer.Application.DTOs.Permission;
+using ApiServer.Application.DTOs.Role;
 using ApiServer.Application.Interfaces;
 using ApiServer.Application.Interfaces.Repositories;
 using ApiServer.Application.Interfaces.Services;
@@ -50,11 +51,10 @@ namespace ApiServer.Application.Services
                 {
                     return ApiResult<LoginResponseDto>.Failed("用户名或密码错误");
                 }
-
-                //if (!BCrypt.Net.BCrypt.Verify(dto.Password, user.Password))
-                //{
-                //    return ApiResult<LoginResponseDto>.FailResult("用户名或密码错误");
-                //}
+                if (!BCrypt.Net.BCrypt.Verify(dto.Password, user.Password))
+                {
+                    return ApiResult<LoginResponseDto>.Failed("用户名或密码错误");
+                }
 
                 if (user.Status != UserStatus.Enabled)
                 {
@@ -69,8 +69,8 @@ namespace ApiServer.Application.Services
                 var userInfo = new UserInfoDto
                 {
                     UserId = user.Id,
-                    Username = user.Name,
-                    Nickname = user.NickName ?? user.Name,
+                    UserName = user.Name,
+                    NickName = user.NickName ?? user.Name,
                     Avatar = user.Portrait,
                     Email = user.Email,
                     Phone = user.Phone,
@@ -82,7 +82,12 @@ namespace ApiServer.Application.Services
                 var userRoles = await _userRepository.GetUserWithRolesAsync(user.Id);
                 if (userRoles != null)
                 {
-                    userInfo.Roles = userRoles.UserRoles.Select(ur => ur.Role.Name).ToList();
+                    userInfo.Roles = userRoles.UserRoles.Select(ur => new BaseRoleDto
+                    {
+                        Id = ur.Role.Id,
+                        Name = ur.Role.Name,
+                        Code = ur.Role.Code ?? ""
+                    }).ToList();
                 }
 
                 var response = new LoginResponseDto
@@ -246,14 +251,19 @@ namespace ApiServer.Application.Services
                 var userInfo = new UserInfoDto
                 {
                     UserId = user.Id,
-                    Username = user.Name,
-                    Nickname = user.NickName ?? user.Name,
+                    UserName = user.Name,
+                    NickName = user.NickName ?? user.Name,
                     Avatar = user.Portrait,
                     Email = user.Email,
                     Phone = user.Phone,
                     OrgId = user.OrgId,
                     OrgName = user.Organization?.Name,
-                    Roles = user.UserRoles.Select(ur => ur.Role.Name).ToList()
+                    Roles = user.UserRoles.Select(ur => new BaseRoleDto
+                    {
+                        Id = ur.Role.Id,
+                        Name = ur.Role.Name,
+                        Code = ur.Role.Code ?? ""
+                    }).ToList()
                 };
 
                 return ApiResult<UserInfoDto>.Succeed(userInfo);

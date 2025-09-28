@@ -116,7 +116,7 @@
           <div class="system-info">
             <div class="info-item">
               <span class="label">当前用户：</span>
-              <span class="value">{{ authStore.userInfo?.realName }}</span>
+              <span class="value">{{ authStore.userInfo?.userName }}</span>
             </div>
             <div class="info-item">
               <span class="label">用户角色：</span>
@@ -149,7 +149,6 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
-import { User, UserFilled, Menu, Connection } from '@element-plus/icons-vue'
 import dayjs from 'dayjs'
 
 const authStore = useAuthStore()

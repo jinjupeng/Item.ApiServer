@@ -99,12 +99,12 @@ namespace ApiServer.WebApi.Controllers
         /// 重置用户密码
         /// </summary>
         /// <param name="id">用户ID</param>
-        /// <param name="newPassword">新密码</param>
+        /// <param name="resetPassword">新密码</param>
         /// <returns>重置结果</returns>
         [HttpPost("{id}/reset-password")]
-        public async Task<IActionResult> ResetPassword(long id, [FromBody] string newPassword)
+        public async Task<IActionResult> ResetPassword(long id, [FromBody] ResetPasswordDto resetPassword)
         {
-            var result = await _userService.ResetPasswordAsync(id, newPassword);
+            var result = await _userService.ResetPasswordAsync(id, resetPassword);
             return HandleResult(result);
         }
     }

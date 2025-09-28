@@ -139,6 +139,7 @@ namespace ApiServer.Infrastructure.Data
                 {
                     Id = 1,
                     Name = "超级管理员",
+                    Code = "SUPER_ADMIN",
                     Desc = "系统超级管理员，拥有所有权限",
                     Status = true,
                     CreateTime = DateTime.Now
@@ -147,6 +148,7 @@ namespace ApiServer.Infrastructure.Data
                 {
                     Id = 2,
                     Name = "管理员",
+                    Code = "ADMIN",
                     Desc = "系统管理员，拥有大部分权限",
                     Status = true,
                     CreateTime = DateTime.Now
@@ -155,6 +157,7 @@ namespace ApiServer.Infrastructure.Data
                 {
                     Id = 3,
                     Name = "普通用户",
+                    Code = "USER",
                     Desc = "普通用户，拥有基本权限",
                     Status = true,
                     CreateTime = DateTime.Now
@@ -182,7 +185,7 @@ namespace ApiServer.Infrastructure.Data
                 {
                     Id = 1,
                     Name = "admin",
-                    Password = "E10ADC3949BA59ABBE56E057F20F883E", // 123456的MD5
+                    Password = BCrypt.Net.BCrypt.HashPassword("123456"),
                     NickName = "超级管理员",
                     OrgId = 1,
                     Status = UserStatus.Enabled,
@@ -194,7 +197,7 @@ namespace ApiServer.Infrastructure.Data
                 {
                     Id = 2,
                     Name = "manager",
-                    Password = "E10ADC3949BA59ABBE56E057F20F883E", // 123456的MD5
+                    Password = BCrypt.Net.BCrypt.HashPassword("123456"),
                     NickName = "部门经理",
                     OrgId = 2,
                     Status = UserStatus.Enabled,
@@ -206,7 +209,7 @@ namespace ApiServer.Infrastructure.Data
                 {
                     Id = 3,
                     Name = "user",
-                    Password = "E10ADC3949BA59ABBE56E057F20F883E", // 123456的MD5
+                    Password = BCrypt.Net.BCrypt.HashPassword("123456"),
                     NickName = "普通用户",
                     OrgId = 2,
                     Status = UserStatus.Enabled,
