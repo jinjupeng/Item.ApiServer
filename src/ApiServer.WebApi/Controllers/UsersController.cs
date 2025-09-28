@@ -1,6 +1,7 @@
 using ApiServer.Application.DTOs.User;
 using ApiServer.Application.Interfaces.Services;
 using ApiServer.Domain.Enums;
+using ApiServer.WebApi.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -49,6 +50,7 @@ namespace ApiServer.WebApi.Controllers
         /// <param name="dto">创建用户DTO</param>
         /// <returns>创建结果</returns>
         [HttpPost]
+        [PermissionAuthorize("system:user:create")]
         public async Task<IActionResult> CreateUser([FromBody] CreateUserDto dto)
         {
             var result = await _userService.CreateUserAsync(dto);

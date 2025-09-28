@@ -80,7 +80,7 @@ namespace ApiServer.Infrastructure.Repositories
         /// <summary>
         /// 获取用户的API权限
         /// </summary>
-        public async Task<IEnumerable<Permission>> GetUserApisAsync(long userId)
+        public async Task<IEnumerable<Permission>> GetUserPermissionsAsync(long userId)
         {
             return await _context.Permissions
                 .Where(a => !a.IsDeleted)

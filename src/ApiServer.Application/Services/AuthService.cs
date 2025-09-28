@@ -61,8 +61,8 @@ namespace ApiServer.Application.Services
                     return ApiResult<LoginResponseDto>.Failed("用户账号已被禁用");
                 }
 
-                // 生成JWT令牌
-                var token = GenerateJwtToken(user);
+                // 生成JWT令牌（包含角色与权限声明）
+                var token = await GenerateJwtToken(user);
                 var refreshToken = GenerateRefreshToken();
 
                 // 获取用户信息
@@ -78,7 +78,7 @@ namespace ApiServer.Application.Services
                     OrgName = user.Organization?.Name
                 };
 
-                // 获取用户角色和权限
+                // 获取用户角色
                 var userRoles = await _userRepository.GetUserWithRolesAsync(user.Id);
                 if (userRoles != null)
                 {
@@ -127,8 +127,8 @@ namespace ApiServer.Application.Services
                     return ApiResult<LoginResponseDto>.Failed("用户不存在");
                 }
 
-                // 生成新的令牌
-                var newToken = GenerateJwtToken(user);
+                // 生成新的令牌（包含角色与权限声明）
+                var newToken = await GenerateJwtToken(user);
                 var newRefreshToken = GenerateRefreshToken();
 
                 var response = new LoginResponseDto
@@ -272,7 +272,7 @@ namespace ApiServer.Application.Services
             try
             {
                 var menus = await _menuRepository.GetMenusByUserIdAsync(userId);
-                var apis = await _userRepository.GetUserApisAsync(userId);
+                var apis = await _userRepository.GetUserPermissionsAsync(userId);
 
                 var menuPermissions = menus.Select(m => new MenuPermissionDto
                 {
@@ -329,7 +329,7 @@ namespace ApiServer.Application.Services
                 }
 
                 // 获取用户的API/按钮权限
-                var userApis = await _userRepository.GetUserApisAsync(userId);
+                var userApis = await _userRepository.GetUserPermissionsAsync(userId);
                 foreach (var api in userApis)
                 {
                     if (!string.IsNullOrEmpty(api.Code))
@@ -425,20 +425,44 @@ namespace ApiServer.Application.Services
         #region 私有方法
 
         /// <summary>
-        /// 生成JWT令牌
+        /// 生成JWT令牌（包含角色与权限声明）
         /// </summary>
-        private string GenerateJwtToken(Domain.Entities.User user)
+        private async Task<string> GenerateJwtToken(Domain.Entities.User user)
         {
             var jwtSettings = _configuration.GetSection("JwtSettings");
             var key = Encoding.ASCII.GetBytes(jwtSettings["SecretKey"]);
 
-            var claims = new[]
+            var claims = new List<Claim>
             {
                 new Claim("UserId", user.Id.ToString()),
                 new Claim("Username", user.Name),
                 new Claim(ClaimTypes.Name, user.Name),
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
             };
+
+            // 角色声明
+            var userWithRoles = await _userRepository.GetUserWithRolesAsync(user.Id);
+            if (userWithRoles != null)
+            {
+                foreach (var roleName in userWithRoles.UserRoles.Select(ur => ur.Role.Name))
+                {
+                    if (!string.IsNullOrWhiteSpace(roleName))
+                    {
+                        claims.Add(new Claim(ClaimTypes.Role, roleName));
+                    }
+                }
+            }
+
+            // 权限声明（API权限 的编码，逗号分隔）
+            var permissionCodes = new List<string>();
+            var userPermissions = await _userRepository.GetUserPermissionsAsync(user.Id);
+            permissionCodes.AddRange(userPermissions.Select(a => a.Code).Where(c => !string.IsNullOrWhiteSpace(c))!);
+            var uniquePermissions = permissionCodes.Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+            if (uniquePermissions.Count != 0)
+            {
+                var permissionsValue = string.Join(',', uniquePermissions);
+                claims.Add(new Claim("permissions", permissionsValue));
+            }
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {

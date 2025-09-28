@@ -35,7 +35,7 @@ namespace ApiServer.Application.Interfaces.Repositories
         /// <summary>
         /// 获取用户的API权限
         /// </summary>
-        Task<IEnumerable<Permission>> GetUserApisAsync(long userId);
+        Task<IEnumerable<Permission>> GetUserPermissionsAsync(long userId);
 
         /// <summary>
         /// 检查用户名是否存在

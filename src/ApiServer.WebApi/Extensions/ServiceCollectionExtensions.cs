@@ -12,6 +12,8 @@ using System.Reflection;
 using System.Text;
 using ApiServer.Application.Interfaces;
 using ApiServer.WebApi.Services;
+using Microsoft.AspNetCore.Authorization;
+using ApiServer.WebApi.Authorization;
 
 namespace ApiServer.WebApi.Extensions
 {
@@ -45,6 +47,22 @@ namespace ApiServer.WebApi.Extensions
             // IHttpContextAccessor & 当前用户
             services.AddHttpContextAccessor();
             services.AddScoped<ICurrentUser, CurrentUser>();
+
+            // 策略授权：注册处理器、策略提供者，并配置策略
+            services.AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();
+            services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
+            services.AddAuthorization(options =>
+            {
+                // 可添加固定策略，如需要
+                // options.AddPolicy("AdminOnly", p => p.RequireRole("super_admin"));
+
+                options.DefaultPolicy = new AuthorizationPolicyBuilder()
+                    .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
+                    .RequireAuthenticatedUser()
+                    .Build();
+
+                options.FallbackPolicy = options.DefaultPolicy;
+            });
 
             // 添加JWT认证
             services.AddJwtAuthentication(configuration);
