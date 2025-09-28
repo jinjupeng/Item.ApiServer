@@ -22,6 +22,8 @@ namespace ApiServer.Infrastructure.Data
         public DbSet<Permission> Permissions { get; set; }
         public DbSet<RolePermission> RolePermissions { get; set; }
 
+        public DbSet<SystemAuditLog> SystemAuditLogs { get; set; }
+
         #endregion
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -52,6 +54,7 @@ namespace ApiServer.Infrastructure.Data
             modelBuilder.Entity<Organization>().ToTable("sys_org");
             modelBuilder.Entity<Permission>().ToTable("sys_permission");
             modelBuilder.Entity<RolePermission>().ToTable("sys_role_permission");
+            modelBuilder.Entity<SystemAuditLog>().ToTable("sys_audit_log");
         }
 
         /// <summary>
@@ -139,6 +142,7 @@ namespace ApiServer.Infrastructure.Data
                 .HasIndex(ra => new { ra.RoleId, ra.PermissionId })
                 .IsUnique()
                 .HasDatabaseName("IX_RoleApi_RoleId_PermissionId");
+
 
         }
 

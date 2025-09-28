@@ -12,13 +12,13 @@ namespace ApiServer.Application.DTOs.Users
         /// </summary>
         [Required(ErrorMessage = "用户名不能为空")]
         [StringLength(20, ErrorMessage = "用户名长度不能超过20个字符")]
-        public string Username { get; set; } = string.Empty;
+        public string UserName { get; set; } = string.Empty;
 
         /// <summary>
         /// 昵称
         /// </summary>
         [StringLength(20, ErrorMessage = "昵称长度不能超过20个字符")]
-        public string? Nickname { get; set; }
+        public string? NickName { get; set; }
 
         /// <summary>
         /// 电话
