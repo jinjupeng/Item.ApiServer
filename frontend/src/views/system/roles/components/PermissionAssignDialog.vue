@@ -7,12 +7,12 @@
   >
     <div class="permission-assign">
       <div class="role-info">
-        <el-descriptions :column="2" border>
+        <el-descriptions :column="2">
           <el-descriptions-item label="角色名称">
-            {{ role?.menuName }}
+            {{ role?.name }}
           </el-descriptions-item>
           <el-descriptions-item label="角色编码">
-            {{ role?.menuCode }}
+            {{ role?.code }}
           </el-descriptions-item>
         </el-descriptions>
       </div>
@@ -111,7 +111,7 @@ const expandedKeys = ref<number[]>([])
 const treeProps = {
   children: 'children',
   label: 'name',
-  disabled: (data: Menu) => !data.isActive
+  disabled: (data: any) => !data.status
 }
 
 // 监听 modelValue 变化

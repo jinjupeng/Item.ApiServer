@@ -6,7 +6,7 @@ namespace ApiServer.Application.DTOs.Menu
     /// <summary>
     /// 菜单DTO
     /// </summary>
-    public class MenuDto : AuditableDto
+    public class MenuDto : BaseDto
     {
         /// <summary>
         /// 菜单编码
@@ -22,11 +22,6 @@ namespace ApiServer.Application.DTOs.Menu
         /// 父菜单ID
         /// </summary>
         public long? MenuPid { get; set; }
-
-        /// <summary>
-        /// 父菜单名称
-        /// </summary>
-        public string? ParentMenuName { get; set; }
 
         /// <summary>
         /// 所有父节点ID

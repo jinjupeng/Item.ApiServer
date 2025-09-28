@@ -100,6 +100,17 @@ namespace ApiServer.Application
                   .Map(dest => dest.CreateTime, src => src.CreateTime)
                   .Map(dest => dest.Sort, src => src.Sort);
 
+
+            // 配置Permission实体与MenuDto之间的映射
+            config.NewConfig<Domain.Entities.Permission, DTOs.Menu.MenuDto>()
+                  .Map(dest => dest.Id, src => src.Id)
+                  .Map(dest => dest.MenuName, src => src.Name)
+                  .Map(dest => dest.MenuCode, src => src.Code)
+                  .Map(dest => dest.MenuPid, src => src.ParentId)
+                  .Map(dest => dest.MenuPids, src => src.ParentIds)
+                  .Map(dest => dest.Status, src => src.Status)
+                  .Map(dest => dest.CreateTime, src => src.CreateTime);
+
             // 示例：配置User实体与DTO之间的映射
             // config.NewConfig<User, UserDto>()
             //       .Map(dest => dest.OrgName, src => src.Organization.OrgName)

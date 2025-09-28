@@ -112,7 +112,7 @@ const rules: FormRules = {
     { required: true, message: '请输入角色编码', trigger: 'blur' },
     { min: 2, max: 50, message: '角色编码长度在 2 到 50 个字符', trigger: 'blur' },
     { pattern: /^[a-zA-Z0-9_]+$/, message: '角色编码只能包含字母、数字和下划线', trigger: 'blur' },
-    { validator: validateCode, trigger: 'blur' }
+    { asyncValidator: validateCode, trigger: 'blur' }
   ]
 }
 

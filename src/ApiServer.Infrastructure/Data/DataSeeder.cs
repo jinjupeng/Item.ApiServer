@@ -46,10 +46,7 @@ namespace ApiServer.Infrastructure.Data
                 // 初始化用户角色关联
                 await SeedUserRolesAsync();
 
-                // 初始化角色菜单关联（包含按钮级权限）
-                await SeedRoleMenusAsync();
-
-                // 初始化角色权限关联（API/按钮权限码）
+                // 初始化角色权限关联
                 await SeedRolePermissionsAsync();
 
                 await _context.SaveChangesAsync();
@@ -224,18 +221,18 @@ namespace ApiServer.Infrastructure.Data
         }
 
         /// <summary>
-        /// 初始化菜单数据（包含按钮权限点）
+        /// 初始化权限数据（包含按钮权限点）
         /// </summary>
         private async Task SeedPermissionsAsync()
         {
             if (await _context.Permissions.AnyAsync())
             {
-                _logger.LogInformation("菜单数据已存在，跳过初始化");
+                _logger.LogInformation("权限数据已存在，跳过初始化");
                 return;
             }
 
             var now = DateTime.Now;
-            var menus = new List<Permission>
+            var permissions = new List<Permission>
             {
                 // 根目录：系统管理
                 new Permission { Id = 1, Code = "SYSTEM", Name = "系统管理", Type = PermissionType.Directory, Sort = 1, Status = true, Icon = "system", Url = "/system", CreateTime = now },
@@ -271,8 +268,8 @@ namespace ApiServer.Infrastructure.Data
                 new Permission { Id = 21, Code = "system:org:delete",  Name = "组织删除", Type = PermissionType.Button, ParentId = 4, ParentIds = "0,1,4", Sort = 4, Status = true, CreateTime = now }
             };
 
-            await _context.Permissions.AddRangeAsync(menus);
-            _logger.LogInformation("已添加 {Count} 个菜单", menus.Count);
+            await _context.Permissions.AddRangeAsync(permissions);
+            _logger.LogInformation("已添加 {Count} 个权限", permissions.Count);
         }
 
         /// <summary>
@@ -298,18 +295,18 @@ namespace ApiServer.Infrastructure.Data
         }
 
         /// <summary>
-        /// 初始化角色菜单关联（包含按钮）
+        /// 初始化角色权限关联
         /// </summary>
-        private async Task SeedRoleMenusAsync()
+        private async Task SeedRolePermissionsAsync()
         {
             if (await _context.RolePermissions.AnyAsync())
             {
-                _logger.LogInformation("角色菜单关联数据已存在，跳过初始化");
+                _logger.LogInformation("角色权限关联数据已存在，跳过初始化");
                 return;
             }
 
             var now = DateTime.Now;
-            var roleMenus = new List<RolePermission>
+            var rolePermissions = new List<RolePermission>
             {
                 // 超级管理员拥有所有（目录/菜单/按钮）
                 new RolePermission { Id = 1,  RoleId = 1, PermissionId = 1,  CreateTime = now },
@@ -356,45 +353,6 @@ namespace ApiServer.Infrastructure.Data
                 new RolePermission { Id = 206, RoleId = 3, PermissionId = 10, CreateTime = now }, // role:list
                 new RolePermission { Id = 207, RoleId = 3, PermissionId = 14, CreateTime = now }  // menu:list
             };
-
-            await _context.RolePermissions.AddRangeAsync(roleMenus);
-            _logger.LogInformation("已添加 {Count} 个角色菜单关联", roleMenus.Count);
-        }
-
-        /// <summary>
-        /// 初始化角色权限关联（API权限）
-        /// </summary>
-        private async Task SeedRolePermissionsAsync()
-        {
-            if (await _context.RolePermissions.AnyAsync())
-            {
-                _logger.LogInformation("角色权限关联数据已存在，跳过初始化");
-                return;
-            }
-
-            var now = DateTime.Now;
-            var rolePermissions = new List<RolePermission>();
-
-            // 超级管理员：所有权限
-            for (int pid = 1; pid <= 16; pid++)
-            {
-                rolePermissions.Add(new RolePermission { Id = pid, RoleId = 1, PermissionId = pid, CreateTime = now });
-            }
-
-            // 管理员：查询+修改
-            var adminPermIds = new[] { 1, 3, 5, 7, 9, 13 }; // user:list, user:update, role:list, role:update, menu:list, org:list
-            int rid = 1000;
-            foreach (var pid in adminPermIds)
-            {
-                rolePermissions.Add(new RolePermission { Id = rid++, RoleId = 2, PermissionId = pid, CreateTime = now });
-            }
-
-            // 普通用户：只读
-            var userPermIds = new[] { 1, 5, 9, 13 };
-            foreach (var pid in userPermIds)
-            {
-                rolePermissions.Add(new RolePermission { Id = rid++, RoleId = 3, PermissionId = pid, CreateTime = now });
-            }
 
             await _context.RolePermissions.AddRangeAsync(rolePermissions);
             _logger.LogInformation("已添加 {Count} 个角色权限关联", rolePermissions.Count);

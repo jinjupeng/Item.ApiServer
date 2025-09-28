@@ -49,7 +49,7 @@ namespace ApiServer.WebApi.Extensions
             services.AddScoped<ICurrentUser, CurrentUser>();
 
             // 策略授权：注册处理器、策略提供者，并配置策略
-            services.AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();
+            services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
             services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
             services.AddAuthorization(options =>
             {

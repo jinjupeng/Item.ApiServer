@@ -217,7 +217,7 @@ const rules: FormRules = {
     { required: true, message: '请输入菜单编码', trigger: 'blur' },
     { min: 2, max: 50, message: '菜单编码长度在 2 到 50 个字符', trigger: 'blur' },
     { pattern: /^[a-zA-Z0-9_:]+$/, message: '菜单编码只能包含字母、数字、下划线和冒号', trigger: 'blur' },
-    { validator: validateCode, trigger: 'blur' }
+    { asyncValidator: validateCode, trigger: 'blur' }
   ],
   menuType: [
     { required: true, message: '请选择菜单类型', trigger: 'change' }

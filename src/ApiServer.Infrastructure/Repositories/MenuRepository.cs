@@ -149,14 +149,16 @@ namespace ApiServer.Infrastructure.Repositories
         }
 
         /// <summary>
-        /// 获取父菜单列表（作为可选父节点，排除按钮类型）
+        /// 获取父菜单列表（作为可选父节点，排除按钮类型），返回树形结构
         /// </summary>
         public async Task<IEnumerable<Permission>> GetParentMenusAsync()
         {
-            return await _dbSet
+            var allMenus = await _dbSet
                 .Where(m => !m.IsDeleted && m.Type != PermissionType.Button)
                 .OrderBy(m => m.Sort)
                 .ToListAsync();
+
+            return BuildMenuTree(allMenus, null);
         }
 
         /// <summary>
