@@ -41,27 +41,27 @@ namespace ApiServer.WebApi.Middlewares
             {
                 case ArgumentException:
                     context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                    response = ApiResult.FailResult("请求参数错误");
+                    response = ApiResult.Failed("请求参数错误");
                     break;
                 
                 case UnauthorizedAccessException:
                     context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
-                    response = ApiResult.FailResult("未授权访问");
+                    response = ApiResult.Failed("未授权访问");
                     break;
                 
                 case KeyNotFoundException:
                     context.Response.StatusCode = (int)HttpStatusCode.NotFound;
-                    response = ApiResult.FailResult("资源未找到");
+                    response = ApiResult.Failed("资源未找到");
                     break;
                 
                 case TimeoutException:
                     context.Response.StatusCode = (int)HttpStatusCode.RequestTimeout;
-                    response = ApiResult.FailResult("请求超时");
+                    response = ApiResult.Failed("请求超时");
                     break;
                 
                 default:
                     context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                    response = ApiResult.FailResult("服务器内部错误");
+                    response = ApiResult.Failed("服务器内部错误");
                     break;
             }
 

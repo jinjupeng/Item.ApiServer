@@ -3,7 +3,8 @@ namespace ApiServer.Shared.Common
     /// <summary>
     /// API统一返回结果
     /// </summary>
-    public class ApiResult
+    /// <typeparam name="T">数据类型</typeparam>
+    public class ApiResult<T>
     {
         /// <summary>
         /// 是否成功
@@ -21,52 +22,19 @@ namespace ApiServer.Shared.Common
         public string Message { get; set; } = string.Empty;
 
         /// <summary>
-        /// 时间戳
-        /// </summary>
-        public long Timestamp { get; set; } = DateTimeOffset.Now.ToUnixTimeSeconds();
-
-        /// <summary>
-        /// 成功结果
-        /// </summary>
-        public static ApiResult SuccessResult(string message = "操作成功")
-        {
-            return new ApiResult
-            {
-                Success = true,
-                Code = 200,
-                Message = message
-            };
-        }
-
-        /// <summary>
-        /// 失败结果
-        /// </summary>
-        public static ApiResult FailResult(string message = "操作失败", int code = 400)
-        {
-            return new ApiResult
-            {
-                Success = false,
-                Code = code,
-                Message = message
-            };
-        }
-    }
-
-    /// <summary>
-    /// 带数据的API统一返回结果
-    /// </summary>
-    /// <typeparam name="T">数据类型</typeparam>
-    public class ApiResult<T> : ApiResult
-    {
-        /// <summary>
         /// 数据
         /// </summary>
         public T? Data { get; set; }
 
         /// <summary>
-        /// 成功结果
+        /// 时间戳
         /// </summary>
-        public static new ApiResult<T> SuccessResult(T data, string message = "操作成功")
+        public long Timestamp { get; set; } = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+
+        /// <summary>
+        /// 创建成功结果
+        /// </summary>
+        public static ApiResult<T> Succeed(T? data = default, string message = "操作成功")
         {
             return new ApiResult<T>
             {
@@ -78,16 +46,48 @@ namespace ApiServer.Shared.Common
         }
 
         /// <summary>
-        /// 失败结果
+        /// 创建失败结果
         /// </summary>
-        public static new ApiResult<T> FailResult(string message = "操作失败", int code = 400)
+        public static ApiResult<T> Failed(string message = "操作失败", int code = 400)
         {
             return new ApiResult<T>
             {
                 Success = false,
                 Code = code,
+                Message = message
+            };
+        }
+    }
+
+    /// <summary>
+    /// API统一返回结果（无泛型）
+    /// </summary>
+    public class ApiResult : ApiResult<object>
+    {
+        /// <summary>
+        /// 创建成功结果
+        /// </summary>
+        public static new ApiResult Succeed(object? data = null, string message = "操作成功")
+        {
+            return new ApiResult
+            {
+                Success = true,
+                Code = 200,
                 Message = message,
-                Data = default(T)
+                Data = data
+            };
+        }
+
+        /// <summary>
+        /// 创建失败结果
+        /// </summary>
+        public static new ApiResult Failed(string message = "操作失败", int code = 400)
+        {
+            return new ApiResult
+            {
+                Success = false,
+                Code = code,
+                Message = message
             };
         }
     }

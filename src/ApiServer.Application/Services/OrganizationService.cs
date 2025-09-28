@@ -37,7 +37,7 @@ namespace ApiServer.Application.Services
                     var codeExists = await _organizationRepository.IsOrgCodeExistsAsync(dto.OrgCode);
                     if (codeExists)
                     {
-                        return ApiResult<long>.FailResult("组织编码已存在");
+                        return ApiResult<long>.Failed("组织编码已存在");
                     }
                 }
 
@@ -47,7 +47,7 @@ namespace ApiServer.Application.Services
                     var parent = await _organizationRepository.GetByIdAsync(dto.OrgPid.Value);
                     if (parent == null)
                     {
-                        return ApiResult<long>.FailResult("父组织不存在");
+                        return ApiResult<long>.Failed("父组织不存在");
                     }
                 }
 
@@ -59,11 +59,11 @@ namespace ApiServer.Application.Services
                 var result = await _organizationRepository.AddAsync(organization);
                 await _unitOfWork.SaveChangesAsync();
 
-                return ApiResult<long>.SuccessResult(result.Id, "组织创建成功");
+                return ApiResult<long>.Succeed(result.Id, "组织创建成功");
             }
             catch (Exception ex)
             {
-                return ApiResult<long>.FailResult($"创建组织失败: {ex.Message}");
+                return ApiResult<long>.Failed($"创建组织失败: {ex.Message}");
             }
         }
 
@@ -77,7 +77,7 @@ namespace ApiServer.Application.Services
                 var organization = await _organizationRepository.GetByIdAsync(id);
                 if (organization == null)
                 {
-                    return ApiResult.FailResult("组织不存在");
+                    return ApiResult.Failed("组织不存在");
                 }
 
                 // 检查组织编码是否已存在
@@ -86,7 +86,7 @@ namespace ApiServer.Application.Services
                     var codeExists = await _organizationRepository.IsOrgCodeExistsAsync(dto.OrgCode, id);
                     if (codeExists)
                     {
-                        return ApiResult.FailResult("组织编码已存在");
+                        return ApiResult.Failed("组织编码已存在");
                     }
                 }
 
@@ -96,13 +96,13 @@ namespace ApiServer.Application.Services
                     var parent = await _organizationRepository.GetByIdAsync(dto.OrgPid.Value);
                     if (parent == null)
                     {
-                        return ApiResult.FailResult("父组织不存在");
+                        return ApiResult.Failed("父组织不存在");
                     }
 
                     // 不能将自己设为父组织
                     if (dto.OrgPid.Value == id)
                     {
-                        return ApiResult.FailResult("不能将自己设为父组织");
+                        return ApiResult.Failed("不能将自己设为父组织");
                     }
                 }
 
@@ -114,11 +114,11 @@ namespace ApiServer.Application.Services
                 await _organizationRepository.UpdateAsync(organization);
                 await _unitOfWork.SaveChangesAsync();
 
-                return ApiResult.SuccessResult("组织更新成功");
+                return ApiResult.Succeed("组织更新成功");
             }
             catch (Exception ex)
             {
-                return ApiResult.FailResult($"更新组织失败: {ex.Message}");
+                return ApiResult.Failed($"更新组织失败: {ex.Message}");
             }
         }
 
@@ -132,24 +132,24 @@ namespace ApiServer.Application.Services
                 var organization = await _organizationRepository.GetByIdAsync(id);
                 if (organization == null)
                 {
-                    return ApiResult.FailResult("组织不存在");
+                    return ApiResult.Failed("组织不存在");
                 }
 
                 // 检查是否有子组织
                 var children = await _organizationRepository.GetChildOrganizationsAsync(id);
                 if (children.Any())
                 {
-                    return ApiResult.FailResult("存在子组织，无法删除");
+                    return ApiResult.Failed("存在子组织，无法删除");
                 }
 
                 await _organizationRepository.DeleteAsync(id);
                 await _unitOfWork.SaveChangesAsync();
 
-                return ApiResult.SuccessResult("组织删除成功");
+                return ApiResult.Succeed("组织删除成功");
             }
             catch (Exception ex)
             {
-                return ApiResult.FailResult($"删除组织失败: {ex.Message}");
+                return ApiResult.Failed($"删除组织失败: {ex.Message}");
             }
         }
 
@@ -163,15 +163,15 @@ namespace ApiServer.Application.Services
                 var organization = await _organizationRepository.GetByIdAsync(id);
                 if (organization == null)
                 {
-                    return ApiResult<OrganizationDto>.FailResult("组织不存在");
+                    return ApiResult<OrganizationDto>.Failed("组织不存在");
                 }
 
                 var dto = organization.Adapt<OrganizationDto>();
-                return ApiResult<OrganizationDto>.SuccessResult(dto);
+                return ApiResult<OrganizationDto>.Succeed(dto);
             }
             catch (Exception ex)
             {
-                return ApiResult<OrganizationDto>.FailResult($"获取组织详情失败: {ex.Message}");
+                return ApiResult<OrganizationDto>.Failed($"获取组织详情失败: {ex.Message}");
             }
         }
 
@@ -185,11 +185,11 @@ namespace ApiServer.Application.Services
                 var organizations = await _organizationRepository.GetOrganizationTreeAsync();
                 var treeDtos = organizations.Adapt<List<OrganizationTreeDto>>();
                 
-                return ApiResult<List<OrganizationTreeDto>>.SuccessResult(treeDtos);
+                return ApiResult<List<OrganizationTreeDto>>.Succeed(treeDtos);
             }
             catch (Exception ex)
             {
-                return ApiResult<List<OrganizationTreeDto>>.FailResult($"获取组织树失败: {ex.Message}");
+                return ApiResult<List<OrganizationTreeDto>>.Failed($"获取组织树失败: {ex.Message}");
             }
         }
 
@@ -203,11 +203,11 @@ namespace ApiServer.Application.Services
                 var organizations = await _organizationRepository.GetChildOrganizationsAsync(parentId);
                 var dtos = organizations.Adapt<List<OrganizationDto>>();
                 
-                return ApiResult<List<OrganizationDto>>.SuccessResult(dtos);
+                return ApiResult<List<OrganizationDto>>.Succeed(dtos);
             }
             catch (Exception ex)
             {
-                return ApiResult<List<OrganizationDto>>.FailResult($"获取子组织失败: {ex.Message}");
+                return ApiResult<List<OrganizationDto>>.Failed($"获取子组织失败: {ex.Message}");
             }
         }
 
@@ -219,11 +219,11 @@ namespace ApiServer.Application.Services
             try
             {
                 var exists = await _organizationRepository.IsOrgCodeExistsAsync(orgCode, excludeId);
-                return ApiResult<bool>.SuccessResult(exists);
+                return ApiResult<bool>.Succeed(exists);
             }
             catch (Exception ex)
             {
-                return ApiResult<bool>.FailResult($"检查组织编码失败: {ex.Message}");
+                return ApiResult<bool>.Failed($"检查组织编码失败: {ex.Message}");
             }
         }
 
@@ -237,11 +237,11 @@ namespace ApiServer.Application.Services
                 var organizations = await _organizationRepository.GetParentOrganizationsAsync();
                 var dtos = organizations.Adapt<List<OrganizationDto>>();
                 
-                return ApiResult<List<OrganizationDto>>.SuccessResult(dtos);
+                return ApiResult<List<OrganizationDto>>.Succeed(dtos);
             }
             catch (Exception ex)
             {
-                return ApiResult<List<OrganizationDto>>.FailResult($"获取父组织列表失败: {ex.Message}");
+                return ApiResult<List<OrganizationDto>>.Failed($"获取父组织列表失败: {ex.Message}");
             }
         }
 
@@ -255,18 +255,18 @@ namespace ApiServer.Application.Services
                 var organization = await _organizationRepository.GetByIdAsync(orgId);
                 if (organization == null)
                 {
-                    return ApiResult.FailResult("组织不存在");
+                    return ApiResult.Failed("组织不存在");
                 }
 
                 organization.Sort = sort;
                 await _organizationRepository.UpdateAsync(organization);
                 await _unitOfWork.SaveChangesAsync();
 
-                return ApiResult.SuccessResult("排序更新成功");
+                return ApiResult.Succeed("排序更新成功");
             }
             catch (Exception ex)
             {
-                return ApiResult.FailResult($"更新排序失败: {ex.Message}");
+                return ApiResult.Failed($"更新排序失败: {ex.Message}");
             }
         }
 
@@ -279,11 +279,11 @@ namespace ApiServer.Application.Services
             {
                 // 这里需要注入用户仓储来查询用户数量
                 // 暂时返回0
-                return ApiResult<int>.SuccessResult(0);
+                return ApiResult<int>.Succeed(0);
             }
             catch (Exception ex)
             {
-                return ApiResult<int>.FailResult($"获取用户数量失败: {ex.Message}");
+                return ApiResult<int>.Failed($"获取用户数量失败: {ex.Message}");
             }
         }
 
@@ -297,18 +297,18 @@ namespace ApiServer.Application.Services
                 var organization = await _organizationRepository.GetByIdAsync(id);
                 if (organization == null)
                 {
-                    return ApiResult.FailResult("组织不存在");
+                    return ApiResult.Failed("组织不存在");
                 }
 
                 organization.Status = status;
                 await _organizationRepository.UpdateAsync(organization);
                 await _unitOfWork.SaveChangesAsync();
 
-                return ApiResult.SuccessResult("状态更新成功");
+                return ApiResult.Succeed("状态更新成功");
             }
             catch (Exception ex)
             {
-                return ApiResult.FailResult($"更新状态失败: {ex.Message}");
+                return ApiResult.Failed($"更新状态失败: {ex.Message}");
             }
         }
 
@@ -322,11 +322,11 @@ namespace ApiServer.Application.Services
                 var organizations = await _organizationRepository.GetAllAsync();
                 var dtos = organizations.Adapt<List<OrganizationDto>>();
                 
-                return ApiResult<List<OrganizationDto>>.SuccessResult(dtos);
+                return ApiResult<List<OrganizationDto>>.Succeed(dtos);
             }
             catch (Exception ex)
             {
-                return ApiResult<List<OrganizationDto>>.FailResult($"获取组织列表失败: {ex.Message}");
+                return ApiResult<List<OrganizationDto>>.Failed($"获取组织列表失败: {ex.Message}");
             }
         }
 
@@ -340,7 +340,7 @@ namespace ApiServer.Application.Services
                 var organization = await _organizationRepository.GetByIdAsync(orgId);
                 if (organization == null)
                 {
-                    return ApiResult.FailResult("组织不存在");
+                    return ApiResult.Failed("组织不存在");
                 }
 
                 if (newParentId.HasValue)
@@ -348,12 +348,12 @@ namespace ApiServer.Application.Services
                     var newParent = await _organizationRepository.GetByIdAsync(newParentId.Value);
                     if (newParent == null)
                     {
-                        return ApiResult.FailResult("新父组织不存在");
+                        return ApiResult.Failed("新父组织不存在");
                     }
 
                     if (newParentId.Value == orgId)
                     {
-                        return ApiResult.FailResult("不能将组织移动到自己下面");
+                        return ApiResult.Failed("不能将组织移动到自己下面");
                     }
                 }
 
@@ -363,11 +363,11 @@ namespace ApiServer.Application.Services
                 await _organizationRepository.UpdateAsync(organization);
                 await _unitOfWork.SaveChangesAsync();
 
-                return ApiResult.SuccessResult("组织移动成功");
+                return ApiResult.Succeed("组织移动成功");
             }
             catch (Exception ex)
             {
-                return ApiResult.FailResult($"移动组织失败: {ex.Message}");
+                return ApiResult.Failed($"移动组织失败: {ex.Message}");
             }
         }
 
@@ -382,15 +382,15 @@ namespace ApiServer.Application.Services
                 var children = await _organizationRepository.GetChildOrganizationsAsync(orgId);
                 if (children.Any())
                 {
-                    return ApiResult<bool>.SuccessResult(false);
+                    return ApiResult<bool>.Succeed(false);
                 }
 
                 // 这里需要检查是否有用户，暂时返回true
-                return ApiResult<bool>.SuccessResult(true);
+                return ApiResult<bool>.Succeed(true);
             }
             catch (Exception ex)
             {
-                return ApiResult<bool>.FailResult($"检查删除权限失败: {ex.Message}");
+                return ApiResult<bool>.Failed($"检查删除权限失败: {ex.Message}");
             }
         }
 
@@ -404,11 +404,11 @@ namespace ApiServer.Application.Services
                 // 这里需要实现分页查询逻辑
                 // 暂时返回空结果
                 var pagedResult = PagedResult<OrganizationDto>.Empty(query.PageIndex, query.PageSize);
-                return ApiResult<PagedResult<OrganizationDto>>.SuccessResult(pagedResult);
+                return ApiResult<PagedResult<OrganizationDto>>.Succeed(pagedResult);
             }
             catch (Exception ex)
             {
-                return ApiResult<PagedResult<OrganizationDto>>.FailResult($"查询组织失败: {ex.Message}");
+                return ApiResult<PagedResult<OrganizationDto>>.Failed($"查询组织失败: {ex.Message}");
             }
         }
 

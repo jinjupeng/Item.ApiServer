@@ -37,7 +37,7 @@ namespace ApiServer.Application.Services
                 // 检查角色名称是否已存在
                 if (await _roleRepository.IsRoleNameExistsAsync(dto.RoleName))
                 {
-                    return ApiResult<long>.FailResult("角色名称已存在");
+                    return ApiResult<long>.Failed("角色名称已存在");
                 }
 
                 var role = dto.Adapt<Role>();
@@ -57,11 +57,11 @@ namespace ApiServer.Application.Services
 
                 await _unitOfWork.SaveChangesAsync();
 
-                return ApiResult<long>.SuccessResult(role.Id, "角色创建成功");
+                return ApiResult<long>.Succeed(role.Id, "角色创建成功");
             }
             catch (Exception ex)
             {
-                return ApiResult<long>.FailResult($"创建角色失败：{ex.Message}");
+                return ApiResult<long>.Failed($"创建角色失败：{ex.Message}");
             }
         }
 
@@ -75,13 +75,13 @@ namespace ApiServer.Application.Services
                 var role = await _roleRepository.GetByIdAsync(id);
                 if (role == null)
                 {
-                    return ApiResult.FailResult("角色不存在");
+                    return ApiResult.Failed("角色不存在");
                 }
 
                 // 检查角色名称是否已存在（排除当前角色）
                 if (await _roleRepository.IsRoleNameExistsAsync(dto.RoleName, id))
                 {
-                    return ApiResult.FailResult("角色名称已存在");
+                    return ApiResult.Failed("角色名称已存在");
                 }
 
                 // 更新角色信息
@@ -104,11 +104,11 @@ namespace ApiServer.Application.Services
 
                 await _unitOfWork.SaveChangesAsync();
 
-                return ApiResult.SuccessResult("角色更新成功");
+                return ApiResult.Succeed("角色更新成功");
             }
             catch (Exception ex)
             {
-                return ApiResult.FailResult($"更新角色失败：{ex.Message}");
+                return ApiResult.Failed($"更新角色失败：{ex.Message}");
             }
         }
 
@@ -122,24 +122,24 @@ namespace ApiServer.Application.Services
                 var role = await _roleRepository.GetByIdAsync(id);
                 if (role == null)
                 {
-                    return ApiResult.FailResult("角色不存在");
+                    return ApiResult.Failed("角色不存在");
                 }
 
                 // 检查是否有用户使用该角色
                 var userCount = await _roleRepository.GetUserCountByRoleIdAsync(id);
                 if (userCount > 0)
                 {
-                    return ApiResult.FailResult($"该角色下还有 {userCount} 个用户，无法删除");
+                    return ApiResult.Failed($"该角色下还有 {userCount} 个用户，无法删除");
                 }
 
                 await _roleRepository.SoftDeleteAsync(id);
                 await _unitOfWork.SaveChangesAsync();
 
-                return ApiResult.SuccessResult("角色删除成功");
+                return ApiResult.Succeed("角色删除成功");
             }
             catch (Exception ex)
             {
-                return ApiResult.FailResult($"删除角色失败：{ex.Message}");
+                return ApiResult.Failed($"删除角色失败：{ex.Message}");
             }
         }
 
@@ -153,7 +153,7 @@ namespace ApiServer.Application.Services
                 var role = await _roleRepository.GetByIdAsync(id);
                 if (role == null)
                 {
-                    return ApiResult<RoleDto>.FailResult("角色不存在");
+                    return ApiResult<RoleDto>.Failed("角色不存在");
                 }
 
                 var roleDto = role.Adapt<RoleDto>();
@@ -165,11 +165,11 @@ namespace ApiServer.Application.Services
                 roleDto.MenuIds = menus.Select(m => m.Id).ToList();
                 roleDto.PermissionIds = apis.Select(a => a.Id).ToList();
 
-                return ApiResult<RoleDto>.SuccessResult(roleDto);
+                return ApiResult<RoleDto>.Succeed(roleDto);
             }
             catch (Exception ex)
             {
-                return ApiResult<RoleDto>.FailResult($"获取角色失败：{ex.Message}");
+                return ApiResult<RoleDto>.Failed($"获取角色失败：{ex.Message}");
             }
         }
 
@@ -199,11 +199,11 @@ namespace ApiServer.Application.Services
                     query.PageIndex,
                     query.PageSize);
 
-                return ApiResult<PagedResult<RoleDto>>.SuccessResult(pagedResult);
+                return ApiResult<PagedResult<RoleDto>>.Succeed(pagedResult);
             }
             catch (Exception ex)
             {
-                return ApiResult<PagedResult<RoleDto>>.FailResult($"查询角色失败：{ex.Message}");
+                return ApiResult<PagedResult<RoleDto>>.Failed($"查询角色失败：{ex.Message}");
             }
         }
 
@@ -217,11 +217,11 @@ namespace ApiServer.Application.Services
                 var roles = await _roleRepository.GetAllAsync();
                 var roleDtos = roles.Adapt<List<RoleDto>>();
 
-                return ApiResult<List<RoleDto>>.SuccessResult(roleDtos);
+                return ApiResult<List<RoleDto>>.Succeed(roleDtos);
             }
             catch (Exception ex)
             {
-                return ApiResult<List<RoleDto>>.FailResult($"获取角色列表失败：{ex.Message}");
+                return ApiResult<List<RoleDto>>.Failed($"获取角色列表失败：{ex.Message}");
             }
         }
 
@@ -235,11 +235,11 @@ namespace ApiServer.Application.Services
                 var roles = await _roleRepository.GetRolesByUserIdAsync(userId);
                 var roleDtos = roles.Adapt<List<RoleDto>>();
 
-                return ApiResult<List<RoleDto>>.SuccessResult(roleDtos);
+                return ApiResult<List<RoleDto>>.Succeed(roleDtos);
             }
             catch (Exception ex)
             {
-                return ApiResult<List<RoleDto>>.FailResult($"获取用户角色失败：{ex.Message}");
+                return ApiResult<List<RoleDto>>.Failed($"获取用户角色失败：{ex.Message}");
             }
         }
 
@@ -253,7 +253,7 @@ namespace ApiServer.Application.Services
                 var user = await _userRepository.GetByIdAsync(dto.UserId);
                 if (user == null)
                 {
-                    return ApiResult.FailResult("用户不存在");
+                    return ApiResult.Failed("用户不存在");
                 }
 
                 // 删除用户现有角色
@@ -276,11 +276,11 @@ namespace ApiServer.Application.Services
                 await userRoleRepository.AddRangeAsync(userRoles);
                 await _unitOfWork.SaveChangesAsync();
 
-                return ApiResult.SuccessResult("角色分配成功");
+                return ApiResult.Succeed("角色分配成功");
             }
             catch (Exception ex)
             {
-                return ApiResult.FailResult($"分配角色失败：{ex.Message}");
+                return ApiResult.Failed($"分配角色失败：{ex.Message}");
             }
         }
 
@@ -300,11 +300,11 @@ namespace ApiServer.Application.Services
                     await _unitOfWork.SaveChangesAsync();
                 }
 
-                return ApiResult.SuccessResult("角色移除成功");
+                return ApiResult.Succeed("角色移除成功");
             }
             catch (Exception ex)
             {
-                return ApiResult.FailResult($"移除角色失败：{ex.Message}");
+                return ApiResult.Failed($"移除角色失败：{ex.Message}");
             }
         }
 
@@ -316,11 +316,11 @@ namespace ApiServer.Application.Services
             try
             {
                 var exists = await _roleRepository.IsRoleNameExistsAsync(roleName, excludeId);
-                return ApiResult<bool>.SuccessResult(exists);
+                return ApiResult<bool>.Succeed(exists);
             }
             catch (Exception ex)
             {
-                return ApiResult<bool>.FailResult($"检查角色名称失败：{ex.Message}");
+                return ApiResult<bool>.Failed($"检查角色名称失败：{ex.Message}");
             }
         }
 
@@ -334,7 +334,7 @@ namespace ApiServer.Application.Services
                 var role = await _roleRepository.GetByIdAsync(dto.RoleId);
                 if (role == null)
                 {
-                    return ApiResult.FailResult("角色不存在");
+                    return ApiResult.Failed("角色不存在");
                 }
 
                 // 重新分配权限
@@ -353,11 +353,11 @@ namespace ApiServer.Application.Services
 
                 await _unitOfWork.SaveChangesAsync();
 
-                return ApiResult.SuccessResult("权限分配成功");
+                return ApiResult.Succeed("权限分配成功");
             }
             catch (Exception ex)
             {
-                return ApiResult.FailResult($"分配权限失败：{ex.Message}");
+                return ApiResult.Failed($"分配权限失败：{ex.Message}");
             }
         }
 
@@ -371,7 +371,7 @@ namespace ApiServer.Application.Services
                 var role = await _roleRepository.GetByIdAsync(roleId);
                 if (role == null)
                 {
-                    return ApiResult<RolePermissionDto>.FailResult("角色不存在");
+                    return ApiResult<RolePermissionDto>.Failed("角色不存在");
                 }
 
                 var menus = await _roleRepository.GetRoleMenusAsync(roleId);
@@ -384,11 +384,11 @@ namespace ApiServer.Application.Services
                     ApiIds = apis.Select(a => a.Id).ToList()
                 };
 
-                return ApiResult<RolePermissionDto>.SuccessResult(permissionDto);
+                return ApiResult<RolePermissionDto>.Succeed(permissionDto);
             }
             catch (Exception ex)
             {
-                return ApiResult<RolePermissionDto>.FailResult($"获取角色权限失败：{ex.Message}");
+                return ApiResult<RolePermissionDto>.Failed($"获取角色权限失败：{ex.Message}");
             }
         }
 
@@ -402,18 +402,18 @@ namespace ApiServer.Application.Services
                 var role = await _roleRepository.GetByIdAsync(id);
                 if (role == null)
                 {
-                    return ApiResult.FailResult("角色不存在");
+                    return ApiResult.Failed("角色不存在");
                 }
 
                 role.Status = status;
                 await _roleRepository.UpdateAsync(role);
                 await _unitOfWork.SaveChangesAsync();
 
-                return ApiResult.SuccessResult("角色状态更新成功");
+                return ApiResult.Succeed("角色状态更新成功");
             }
             catch (Exception ex)
             {
-                return ApiResult.FailResult($"更新角色状态失败：{ex.Message}");
+                return ApiResult.Failed($"更新角色状态失败：{ex.Message}");
             }
         }
 
@@ -435,11 +435,11 @@ namespace ApiServer.Application.Services
                     return roleDto;
                 }).ToList();
 
-                return ApiResult<List<RoleDto>>.SuccessResult(roleDtos);
+                return ApiResult<List<RoleDto>>.Succeed(roleDtos);
             }
             catch (Exception ex)
             {
-                return ApiResult<List<RoleDto>>.FailResult($"获取角色选择列表失败：{ex.Message}");
+                return ApiResult<List<RoleDto>>.Failed($"获取角色选择列表失败：{ex.Message}");
             }
         }
     }

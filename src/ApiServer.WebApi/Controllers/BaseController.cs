@@ -18,7 +18,7 @@ namespace ApiServer.WebApi.Controllers
         /// <returns>API结果</returns>
         protected IActionResult Success(string message = "操作成功")
         {
-            return Ok(ApiResult.SuccessResult(message));
+            return Ok(ApiResult.Succeed(message));
         }
 
         /// <summary>
@@ -30,7 +30,7 @@ namespace ApiServer.WebApi.Controllers
         /// <returns>API结果</returns>
         protected IActionResult Success<T>(T data, string message = "操作成功")
         {
-            return Ok(ApiResult<T>.SuccessResult(data, message));
+            return Ok(ApiResult<T>.Succeed(data, message));
         }
 
         /// <summary>
@@ -40,7 +40,7 @@ namespace ApiServer.WebApi.Controllers
         /// <returns>API结果</returns>
         protected IActionResult Fail(string message)
         {
-            return BadRequest(ApiResult.FailResult(message));
+            return BadRequest(ApiResult.Failed(message));
         }
 
         /// <summary>
@@ -51,7 +51,7 @@ namespace ApiServer.WebApi.Controllers
         /// <returns>API结果</returns>
         protected IActionResult Fail<T>(string message)
         {
-            return BadRequest(ApiResult<T>.FailResult(message));
+            return BadRequest(ApiResult<T>.Failed(message));
         }
 
         /// <summary>

@@ -48,7 +48,7 @@ namespace ApiServer.Application.Services
                 var user = await _userRepository.GetByUsernameAsync(dto.Username);
                 if (user == null)
                 {
-                    return ApiResult<LoginResponseDto>.FailResult("用户名或密码错误");
+                    return ApiResult<LoginResponseDto>.Failed("用户名或密码错误");
                 }
 
                 //if (!BCrypt.Net.BCrypt.Verify(dto.Password, user.Password))
@@ -58,7 +58,7 @@ namespace ApiServer.Application.Services
 
                 if (user.Status != UserStatus.Enabled)
                 {
-                    return ApiResult<LoginResponseDto>.FailResult("用户账号已被禁用");
+                    return ApiResult<LoginResponseDto>.Failed("用户账号已被禁用");
                 }
 
                 // 生成JWT令牌
@@ -93,11 +93,11 @@ namespace ApiServer.Application.Services
                     UserInfo = userInfo
                 };
 
-                return ApiResult<LoginResponseDto>.SuccessResult(response, "登录成功");
+                return ApiResult<LoginResponseDto>.Succeed(response, "登录成功");
             }
             catch (Exception ex)
             {
-                return ApiResult<LoginResponseDto>.FailResult($"登录失败：{ex.Message}");
+                return ApiResult<LoginResponseDto>.Failed($"登录失败：{ex.Message}");
             }
         }
 
@@ -118,13 +118,13 @@ namespace ApiServer.Application.Services
                 
                 if (userIdClaim == null || !long.TryParse(userIdClaim.Value, out var userId))
                 {
-                    return ApiResult<LoginResponseDto>.FailResult("无效的刷新令牌");
+                    return ApiResult<LoginResponseDto>.Failed("无效的刷新令牌");
                 }
 
                 var user = await _userRepository.GetByIdAsync(userId);
                 if (user == null)
                 {
-                    return ApiResult<LoginResponseDto>.FailResult("用户不存在");
+                    return ApiResult<LoginResponseDto>.Failed("用户不存在");
                 }
 
                 // 生成新的令牌
@@ -138,11 +138,11 @@ namespace ApiServer.Application.Services
                     ExpiresIn = 3600
                 };
 
-                return ApiResult<LoginResponseDto>.SuccessResult(response, "令牌刷新成功");
+                return ApiResult<LoginResponseDto>.Succeed(response, "令牌刷新成功");
             }
             catch (Exception ex)
             {
-                return ApiResult<LoginResponseDto>.FailResult($"刷新令牌失败：{ex.Message}");
+                return ApiResult<LoginResponseDto>.Failed($"刷新令牌失败：{ex.Message}");
             }
         }
 
@@ -154,11 +154,11 @@ namespace ApiServer.Application.Services
             try
             {
                 // 这里可以实现令牌黑名单等逻辑
-                return ApiResult.SuccessResult("登出成功");
+                return ApiResult.Succeed("登出成功");
             }
             catch (Exception ex)
             {
-                return ApiResult.FailResult($"登出失败：{ex.Message}");
+                return ApiResult.Failed($"登出失败：{ex.Message}");
             }
         }
 
@@ -171,29 +171,29 @@ namespace ApiServer.Application.Services
             {
                 if (dto.NewPassword != dto.ConfirmPassword)
                 {
-                    return ApiResult.FailResult("新密码和确认密码不一致");
+                    return ApiResult.Failed("新密码和确认密码不一致");
                 }
 
                 var user = await _userRepository.GetByIdAsync(userId);
                 if (user == null)
                 {
-                    return ApiResult.FailResult("用户不存在");
+                    return ApiResult.Failed("用户不存在");
                 }
 
                 if (!BCrypt.Net.BCrypt.Verify(dto.OldPassword, user.Password))
                 {
-                    return ApiResult.FailResult("原密码错误");
+                    return ApiResult.Failed("原密码错误");
                 }
 
                 user.Password = BCrypt.Net.BCrypt.HashPassword(dto.NewPassword);
                 await _userRepository.UpdateAsync(user);
                 await _unitOfWork.SaveChangesAsync();
 
-                return ApiResult.SuccessResult("密码修改成功");
+                return ApiResult.Succeed("密码修改成功");
             }
             catch (Exception ex)
             {
-                return ApiResult.FailResult($"修改密码失败：{ex.Message}");
+                return ApiResult.Failed($"修改密码失败：{ex.Message}");
             }
         }
 
@@ -215,18 +215,18 @@ namespace ApiServer.Application.Services
 
                 if (user == null)
                 {
-                    return ApiResult.FailResult("用户不存在");
+                    return ApiResult.Failed("用户不存在");
                 }
 
                 user.Password = BCrypt.Net.BCrypt.HashPassword(dto.NewPassword);
                 await _userRepository.UpdateAsync(user);
                 await _unitOfWork.SaveChangesAsync();
 
-                return ApiResult.SuccessResult("密码重置成功");
+                return ApiResult.Succeed("密码重置成功");
             }
             catch (Exception ex)
             {
-                return ApiResult.FailResult($"重置密码失败：{ex.Message}");
+                return ApiResult.Failed($"重置密码失败：{ex.Message}");
             }
         }
 
@@ -240,7 +240,7 @@ namespace ApiServer.Application.Services
                 var user = await _userRepository.GetUserWithRolesAsync(userId);
                 if (user == null)
                 {
-                    return ApiResult<UserInfoDto>.FailResult("用户不存在");
+                    return ApiResult<UserInfoDto>.Failed("用户不存在");
                 }
 
                 var userInfo = new UserInfoDto
@@ -256,11 +256,11 @@ namespace ApiServer.Application.Services
                     Roles = user.UserRoles.Select(ur => ur.Role.Name).ToList()
                 };
 
-                return ApiResult<UserInfoDto>.SuccessResult(userInfo);
+                return ApiResult<UserInfoDto>.Succeed(userInfo);
             }
             catch (Exception ex)
             {
-                return ApiResult<UserInfoDto>.FailResult($"获取用户信息失败：{ex.Message}");
+                return ApiResult<UserInfoDto>.Failed($"获取用户信息失败：{ex.Message}");
             }
         }
 
@@ -292,11 +292,11 @@ namespace ApiServer.Application.Services
                     Apis = apis.Select(a => a.Url ?? "").Where(url => !string.IsNullOrEmpty(url)).ToList()
                 };
 
-                return ApiResult<UserPermissionDto>.SuccessResult(permission);
+                return ApiResult<UserPermissionDto>.Succeed(permission);
             }
             catch (Exception ex)
             {
-                return ApiResult<UserPermissionDto>.FailResult($"获取用户权限失败：{ex.Message}");
+                return ApiResult<UserPermissionDto>.Failed($"获取用户权限失败：{ex.Message}");
             }
         }
 
@@ -310,7 +310,7 @@ namespace ApiServer.Application.Services
                 var user = await _userRepository.GetUserWithRolesAsync(userId);
                 if (user == null)
                 {
-                    return ApiResult<List<string>>.FailResult("用户不存在");
+                    return ApiResult<List<string>>.Failed("用户不存在");
                 }
 
                 var permissionCodes = new List<string>();
@@ -341,11 +341,11 @@ namespace ApiServer.Application.Services
                 // 去重
                 var uniquePermissions = permissionCodes.Distinct().ToList();
                 
-                return ApiResult<List<string>>.SuccessResult(uniquePermissions);
+                return ApiResult<List<string>>.Succeed(uniquePermissions);
             }
             catch (Exception ex)
             {
-                return ApiResult<List<string>>.FailResult($"获取用户权限列表失败：{ex.Message}");
+                return ApiResult<List<string>>.Failed($"获取用户权限列表失败：{ex.Message}");
             }
         }
 
@@ -360,11 +360,11 @@ namespace ApiServer.Application.Services
                 var validationParameters = GetTokenValidationParameters();
 
                 tokenHandler.ValidateToken(token, validationParameters, out SecurityToken validatedToken);
-                return ApiResult<bool>.SuccessResult(true);
+                return ApiResult<bool>.Succeed(true);
             }
             catch
             {
-                return ApiResult<bool>.SuccessResult(false);
+                return ApiResult<bool>.Succeed(false);
             }
         }
 
@@ -382,11 +382,11 @@ namespace ApiServer.Application.Services
                     Image = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg=="
                 };
 
-                return ApiResult<CaptchaDto>.SuccessResult(captcha);
+                return ApiResult<CaptchaDto>.Succeed(captcha);
             }
             catch (Exception ex)
             {
-                return ApiResult<CaptchaDto>.FailResult($"生成验证码失败：{ex.Message}");
+                return ApiResult<CaptchaDto>.Failed($"生成验证码失败：{ex.Message}");
             }
         }
 
@@ -398,11 +398,11 @@ namespace ApiServer.Application.Services
             try
             {
                 // 简化实现，实际项目中应该验证真实的验证码
-                return ApiResult<bool>.SuccessResult(true);
+                return ApiResult<bool>.Succeed(true);
             }
             catch (Exception ex)
             {
-                return ApiResult<bool>.FailResult($"验证验证码失败：{ex.Message}");
+                return ApiResult<bool>.Failed($"验证验证码失败：{ex.Message}");
             }
         }
 
@@ -414,11 +414,11 @@ namespace ApiServer.Application.Services
             try
             {
                 // 简化实现，实际项目中应该发送真实的验证码
-                return ApiResult.SuccessResult("验证码发送成功");
+                return ApiResult.Succeed("验证码发送成功");
             }
             catch (Exception ex)
             {
-                return ApiResult.FailResult($"发送验证码失败：{ex.Message}");
+                return ApiResult.Failed($"发送验证码失败：{ex.Message}");
             }
         }
 

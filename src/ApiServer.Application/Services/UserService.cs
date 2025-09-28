@@ -35,13 +35,13 @@ namespace ApiServer.Application.Services
                 // 检查用户名是否已存在
                 if (await _userRepository.IsUsernameExistsAsync(dto.Username))
                 {
-                    return ApiResult<long>.FailResult("用户名已存在");
+                    return ApiResult<long>.Failed("用户名已存在");
                 }
 
                 // 检查邮箱是否已存在
                 if (!string.IsNullOrEmpty(dto.Email) && await _userRepository.IsEmailExistsAsync(dto.Email))
                 {
-                    return ApiResult<long>.FailResult("邮箱已存在");
+                    return ApiResult<long>.Failed("邮箱已存在");
                 }
 
                 var user = dto.Adapt<User>();
@@ -51,11 +51,11 @@ namespace ApiServer.Application.Services
                 await _userRepository.AddAsync(user);
                 await _unitOfWork.SaveChangesAsync();
 
-                return ApiResult<long>.SuccessResult(user.Id, "用户创建成功");
+                return ApiResult<long>.Succeed(user.Id, "用户创建成功");
             }
             catch (Exception ex)
             {
-                return ApiResult<long>.FailResult($"创建用户失败：{ex.Message}");
+                return ApiResult<long>.Failed($"创建用户失败：{ex.Message}");
             }
         }
 
@@ -69,19 +69,19 @@ namespace ApiServer.Application.Services
                 var user = await _userRepository.GetByIdAsync(id);
                 if (user == null)
                 {
-                    return ApiResult.FailResult("用户不存在");
+                    return ApiResult.Failed("用户不存在");
                 }
 
                 // 检查用户名是否已存在（排除当前用户）
                 if (await _userRepository.IsUsernameExistsAsync(dto.Username, id))
                 {
-                    return ApiResult.FailResult("用户名已存在");
+                    return ApiResult.Failed("用户名已存在");
                 }
 
                 // 检查邮箱是否已存在（排除当前用户）
                 if (!string.IsNullOrEmpty(dto.Email) && await _userRepository.IsEmailExistsAsync(dto.Email, id))
                 {
-                    return ApiResult.FailResult("邮箱已存在");
+                    return ApiResult.Failed("邮箱已存在");
                 }
 
                 // 更新用户信息
@@ -90,11 +90,11 @@ namespace ApiServer.Application.Services
                 await _userRepository.UpdateAsync(user);
                 await _unitOfWork.SaveChangesAsync();
 
-                return ApiResult.SuccessResult("用户更新成功");
+                return ApiResult.Succeed("用户更新成功");
             }
             catch (Exception ex)
             {
-                return ApiResult.FailResult($"更新用户失败：{ex.Message}");
+                return ApiResult.Failed($"更新用户失败：{ex.Message}");
             }
         }
 
@@ -108,17 +108,17 @@ namespace ApiServer.Application.Services
                 var user = await _userRepository.GetByIdAsync(id);
                 if (user == null)
                 {
-                    return ApiResult.FailResult("用户不存在");
+                    return ApiResult.Failed("用户不存在");
                 }
 
                 await _userRepository.SoftDeleteAsync(id);
                 await _unitOfWork.SaveChangesAsync();
 
-                return ApiResult.SuccessResult("用户删除成功");
+                return ApiResult.Succeed("用户删除成功");
             }
             catch (Exception ex)
             {
-                return ApiResult.FailResult($"删除用户失败：{ex.Message}");
+                return ApiResult.Failed($"删除用户失败：{ex.Message}");
             }
         }
 
@@ -132,15 +132,15 @@ namespace ApiServer.Application.Services
                 var user = await _userRepository.GetUserWithRolesAsync(id);
                 if (user == null)
                 {
-                    return ApiResult<UserDto>.FailResult("用户不存在");
+                    return ApiResult<UserDto>.Failed("用户不存在");
                 }
 
                 var userDto = user.Adapt<UserDto>();
-                return ApiResult<UserDto>.SuccessResult(userDto);
+                return ApiResult<UserDto>.Succeed(userDto);
             }
             catch (Exception ex)
             {
-                return ApiResult<UserDto>.FailResult($"获取用户失败：{ex.Message}");
+                return ApiResult<UserDto>.Failed($"获取用户失败：{ex.Message}");
             }
         }
 
@@ -154,15 +154,15 @@ namespace ApiServer.Application.Services
                 var user = await _userRepository.GetByUsernameAsync(username);
                 if (user == null)
                 {
-                    return ApiResult<UserDto>.FailResult("用户不存在");
+                    return ApiResult<UserDto>.Failed("用户不存在");
                 }
 
                 var userDto = user.Adapt<UserDto>();
-                return ApiResult<UserDto>.SuccessResult(userDto);
+                return ApiResult<UserDto>.Succeed(userDto);
             }
             catch (Exception ex)
             {
-                return ApiResult<UserDto>.FailResult($"获取用户失败：{ex.Message}");
+                return ApiResult<UserDto>.Failed($"获取用户失败：{ex.Message}");
             }
         }
 
@@ -188,11 +188,11 @@ namespace ApiServer.Application.Services
                     query.PageIndex,
                     query.PageSize);
 
-                return ApiResult<PagedResult<UserDto>>.SuccessResult(pagedResult);
+                return ApiResult<PagedResult<UserDto>>.Succeed(pagedResult);
             }
             catch (Exception ex)
             {
-                return ApiResult<PagedResult<UserDto>>.FailResult($"查询用户失败：{ex.Message}");
+                return ApiResult<PagedResult<UserDto>>.Failed($"查询用户失败：{ex.Message}");
             }
         }
 
@@ -206,15 +206,15 @@ namespace ApiServer.Application.Services
                 var user = await _userRepository.GetByUsernameAsync(username);
                 if (user == null)
                 {
-                    return ApiResult<bool>.SuccessResult(false, "用户不存在");
+                    return ApiResult<bool>.Succeed(false, "用户不存在");
                 }
 
                 var isValid = BCrypt.Net.BCrypt.Verify(password, user.Password);
-                return ApiResult<bool>.SuccessResult(isValid);
+                return ApiResult<bool>.Succeed(isValid);
             }
             catch (Exception ex)
             {
-                return ApiResult<bool>.FailResult($"验证密码失败：{ex.Message}");
+                return ApiResult<bool>.Failed($"验证密码失败：{ex.Message}");
             }
         }
 
@@ -228,18 +228,18 @@ namespace ApiServer.Application.Services
                 var user = await _userRepository.GetByIdAsync(id);
                 if (user == null)
                 {
-                    return ApiResult.FailResult("用户不存在");
+                    return ApiResult.Failed("用户不存在");
                 }
 
                 user.Status = status;
                 await _userRepository.UpdateAsync(user);
                 await _unitOfWork.SaveChangesAsync();
 
-                return ApiResult.SuccessResult("用户状态更新成功");
+                return ApiResult.Succeed("用户状态更新成功");
             }
             catch (Exception ex)
             {
-                return ApiResult.FailResult($"更新用户状态失败：{ex.Message}");
+                return ApiResult.Failed($"更新用户状态失败：{ex.Message}");
             }
         }
 
@@ -253,18 +253,18 @@ namespace ApiServer.Application.Services
                 var user = await _userRepository.GetByIdAsync(id);
                 if (user == null)
                 {
-                    return ApiResult.FailResult("用户不存在");
+                    return ApiResult.Failed("用户不存在");
                 }
 
                 user.Password = BCrypt.Net.BCrypt.HashPassword(newPassword);
                 await _userRepository.UpdateAsync(user);
                 await _unitOfWork.SaveChangesAsync();
 
-                return ApiResult.SuccessResult("密码重置成功");
+                return ApiResult.Succeed("密码重置成功");
             }
             catch (Exception ex)
             {
-                return ApiResult.FailResult($"重置密码失败：{ex.Message}");
+                return ApiResult.Failed($"重置密码失败：{ex.Message}");
             }
         }
 

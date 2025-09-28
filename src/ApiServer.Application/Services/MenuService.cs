@@ -37,7 +37,7 @@ namespace ApiServer.Application.Services
                 // 检查菜单编码是否已存在
                 if (!string.IsNullOrEmpty(dto.MenuCode) && await _menuRepository.IsMenuCodeExistsAsync(dto.MenuCode))
                 {
-                    return ApiResult<long>.FailResult("菜单编码已存在");
+                    return ApiResult<long>.Failed("菜单编码已存在");
                 }
 
                 var menu = dto.Adapt<Menu>();
@@ -48,11 +48,11 @@ namespace ApiServer.Application.Services
                 await _menuRepository.AddAsync(menu);
                 await _unitOfWork.SaveChangesAsync();
 
-                return ApiResult<long>.SuccessResult(menu.Id, "菜单创建成功");
+                return ApiResult<long>.Succeed(menu.Id, "菜单创建成功");
             }
             catch (Exception ex)
             {
-                return ApiResult<long>.FailResult($"创建菜单失败：{ex.Message}");
+                return ApiResult<long>.Failed($"创建菜单失败：{ex.Message}");
             }
         }
 
@@ -66,13 +66,13 @@ namespace ApiServer.Application.Services
                 var menu = await _menuRepository.GetByIdAsync(id);
                 if (menu == null)
                 {
-                    return ApiResult.FailResult("菜单不存在");
+                    return ApiResult.Failed("菜单不存在");
                 }
 
                 // 检查菜单编码是否已存在（排除当前菜单）
                 if (!string.IsNullOrEmpty(dto.MenuCode) && await _menuRepository.IsMenuCodeExistsAsync(dto.MenuCode, id))
                 {
-                    return ApiResult.FailResult("菜单编码已存在");
+                    return ApiResult.Failed("菜单编码已存在");
                 }
 
                 // 更新菜单信息
@@ -84,11 +84,11 @@ namespace ApiServer.Application.Services
                 await _menuRepository.UpdateAsync(menu);
                 await _unitOfWork.SaveChangesAsync();
 
-                return ApiResult.SuccessResult("菜单更新成功");
+                return ApiResult.Succeed("菜单更新成功");
             }
             catch (Exception ex)
             {
-                return ApiResult.FailResult($"更新菜单失败：{ex.Message}");
+                return ApiResult.Failed($"更新菜单失败：{ex.Message}");
             }
         }
 
@@ -102,23 +102,23 @@ namespace ApiServer.Application.Services
                 var menu = await _menuRepository.GetByIdAsync(id);
                 if (menu == null)
                 {
-                    return ApiResult.FailResult("菜单不存在");
+                    return ApiResult.Failed("菜单不存在");
                 }
 
                 // 检查是否有子菜单
                 if (await _menuRepository.HasChildMenusAsync(id))
                 {
-                    return ApiResult.FailResult("该菜单下还有子菜单，无法删除");
+                    return ApiResult.Failed("该菜单下还有子菜单，无法删除");
                 }
 
                 await _menuRepository.SoftDeleteAsync(id);
                 await _unitOfWork.SaveChangesAsync();
 
-                return ApiResult.SuccessResult("菜单删除成功");
+                return ApiResult.Succeed("菜单删除成功");
             }
             catch (Exception ex)
             {
-                return ApiResult.FailResult($"删除菜单失败：{ex.Message}");
+                return ApiResult.Failed($"删除菜单失败：{ex.Message}");
             }
         }
 
@@ -132,15 +132,15 @@ namespace ApiServer.Application.Services
                 var menu = await _menuRepository.GetByIdAsync(id);
                 if (menu == null)
                 {
-                    return ApiResult<MenuDto>.FailResult("菜单不存在");
+                    return ApiResult<MenuDto>.Failed("菜单不存在");
                 }
 
                 var menuDto = menu.Adapt<MenuDto>();
-                return ApiResult<MenuDto>.SuccessResult(menuDto);
+                return ApiResult<MenuDto>.Succeed(menuDto);
             }
             catch (Exception ex)
             {
-                return ApiResult<MenuDto>.FailResult($"获取菜单失败：{ex.Message}");
+                return ApiResult<MenuDto>.Failed($"获取菜单失败：{ex.Message}");
             }
         }
 
@@ -156,11 +156,11 @@ namespace ApiServer.Application.Services
                     query?.Status);
 
                 var menuTree = BuildMenuTree(menus);
-                return ApiResult<List<MenuTreeDto>>.SuccessResult(menuTree);
+                return ApiResult<List<MenuTreeDto>>.Succeed(menuTree);
             }
             catch (Exception ex)
             {
-                return ApiResult<List<MenuTreeDto>>.FailResult($"获取菜单树失败：{ex.Message}");
+                return ApiResult<List<MenuTreeDto>>.Failed($"获取菜单树失败：{ex.Message}");
             }
         }
 
@@ -173,11 +173,11 @@ namespace ApiServer.Application.Services
             {
                 var menus = await _menuRepository.GetMenusByUserIdAsync(userId);
                 var menuTree = BuildMenuTree(menus);
-                return ApiResult<List<MenuTreeDto>>.SuccessResult(menuTree);
+                return ApiResult<List<MenuTreeDto>>.Succeed(menuTree);
             }
             catch (Exception ex)
             {
-                return ApiResult<List<MenuTreeDto>>.FailResult($"获取用户菜单失败：{ex.Message}");
+                return ApiResult<List<MenuTreeDto>>.Failed($"获取用户菜单失败：{ex.Message}");
             }
         }
 
@@ -191,14 +191,14 @@ namespace ApiServer.Application.Services
                 var user = await _userRepository.GetByUsernameAsync(username);
                 if (user == null)
                 {
-                    return ApiResult<List<MenuTreeDto>>.FailResult("用户不存在");
+                    return ApiResult<List<MenuTreeDto>>.Failed("用户不存在");
                 }
 
                 return await GetUserMenuTreeAsync(user.Id);
             }
             catch (Exception ex)
             {
-                return ApiResult<List<MenuTreeDto>>.FailResult($"获取用户菜单失败：{ex.Message}");
+                return ApiResult<List<MenuTreeDto>>.Failed($"获取用户菜单失败：{ex.Message}");
             }
         }
 
@@ -211,11 +211,11 @@ namespace ApiServer.Application.Services
             {
                 var menus = await _menuRepository.GetMenusByRoleIdAsync(roleId);
                 var menuDtos = menus.Adapt<List<MenuDto>>();
-                return ApiResult<List<MenuDto>>.SuccessResult(menuDtos);
+                return ApiResult<List<MenuDto>>.Succeed(menuDtos);
             }
             catch (Exception ex)
             {
-                return ApiResult<List<MenuDto>>.FailResult($"获取角色菜单失败：{ex.Message}");
+                return ApiResult<List<MenuDto>>.Failed($"获取角色菜单失败：{ex.Message}");
             }
         }
 
@@ -227,11 +227,11 @@ namespace ApiServer.Application.Services
             try
             {
                 var exists = await _menuRepository.IsMenuCodeExistsAsync(menuCode, excludeId);
-                return ApiResult<bool>.SuccessResult(exists);
+                return ApiResult<bool>.Succeed(exists);
             }
             catch (Exception ex)
             {
-                return ApiResult<bool>.FailResult($"检查菜单编码失败：{ex.Message}");
+                return ApiResult<bool>.Failed($"检查菜单编码失败：{ex.Message}");
             }
         }
 
@@ -244,11 +244,11 @@ namespace ApiServer.Application.Services
             {
                 var menus = await _menuRepository.GetParentMenusAsync();
                 var menuDtos = menus.Adapt<List<MenuDto>>();
-                return ApiResult<List<MenuDto>>.SuccessResult(menuDtos);
+                return ApiResult<List<MenuDto>>.Succeed(menuDtos);
             }
             catch (Exception ex)
             {
-                return ApiResult<List<MenuDto>>.FailResult($"获取父菜单失败：{ex.Message}");
+                return ApiResult<List<MenuDto>>.Failed($"获取父菜单失败：{ex.Message}");
             }
         }
 
@@ -261,11 +261,11 @@ namespace ApiServer.Application.Services
             {
                 var menus = await _menuRepository.GetChildMenusAsync(parentId);
                 var menuDtos = menus.Adapt<List<MenuDto>>();
-                return ApiResult<List<MenuDto>>.SuccessResult(menuDtos);
+                return ApiResult<List<MenuDto>>.Succeed(menuDtos);
             }
             catch (Exception ex)
             {
-                return ApiResult<List<MenuDto>>.FailResult($"获取子菜单失败：{ex.Message}");
+                return ApiResult<List<MenuDto>>.Failed($"获取子菜单失败：{ex.Message}");
             }
         }
 
@@ -278,11 +278,11 @@ namespace ApiServer.Application.Services
             {
                 await _menuRepository.UpdateMenuSortAsync(menuId, sort);
                 await _unitOfWork.SaveChangesAsync();
-                return ApiResult.SuccessResult("菜单排序更新成功");
+                return ApiResult.Succeed("菜单排序更新成功");
             }
             catch (Exception ex)
             {
-                return ApiResult.FailResult($"更新菜单排序失败：{ex.Message}");
+                return ApiResult.Failed($"更新菜单排序失败：{ex.Message}");
             }
         }
 
@@ -296,18 +296,18 @@ namespace ApiServer.Application.Services
                 var menu = await _menuRepository.GetByIdAsync(id);
                 if (menu == null)
                 {
-                    return ApiResult.FailResult("菜单不存在");
+                    return ApiResult.Failed("菜单不存在");
                 }
 
                 menu.Status = status;
                 await _menuRepository.UpdateAsync(menu);
                 await _unitOfWork.SaveChangesAsync();
 
-                return ApiResult.SuccessResult("菜单状态更新成功");
+                return ApiResult.Succeed("菜单状态更新成功");
             }
             catch (Exception ex)
             {
-                return ApiResult.FailResult($"更新菜单状态失败：{ex.Message}");
+                return ApiResult.Failed($"更新菜单状态失败：{ex.Message}");
             }
         }
 
@@ -329,11 +329,11 @@ namespace ApiServer.Application.Services
                     MarkCheckedMenus(menuTree, roleMenuIds);
                 }
 
-                return ApiResult<List<MenuTreeDto>>.SuccessResult(menuTree);
+                return ApiResult<List<MenuTreeDto>>.Succeed(menuTree);
             }
             catch (Exception ex)
             {
-                return ApiResult<List<MenuTreeDto>>.FailResult($"获取菜单选择树失败：{ex.Message}");
+                return ApiResult<List<MenuTreeDto>>.Failed($"获取菜单选择树失败：{ex.Message}");
             }
         }
 
@@ -364,11 +364,11 @@ namespace ApiServer.Application.Services
                 await roleMenuRepository.AddRangeAsync(roleMenus);
                 await _unitOfWork.SaveChangesAsync();
 
-                return ApiResult.SuccessResult("角色菜单权限保存成功");
+                return ApiResult.Succeed("角色菜单权限保存成功");
             }
             catch (Exception ex)
             {
-                return ApiResult.FailResult($"保存角色菜单权限失败：{ex.Message}");
+                return ApiResult.Failed($"保存角色菜单权限失败：{ex.Message}");
             }
         }
 
@@ -381,11 +381,11 @@ namespace ApiServer.Application.Services
             {
                 var parentMenus = await _menuRepository.GetAllParentMenusAsync();
                 var expandedKeys = parentMenus.Select(m => m.Id.ToString()).ToList();
-                return ApiResult<List<string>>.SuccessResult(expandedKeys);
+                return ApiResult<List<string>>.Succeed(expandedKeys);
             }
             catch (Exception ex)
             {
-                return ApiResult<List<string>>.FailResult($"获取展开菜单失败：{ex.Message}");
+                return ApiResult<List<string>>.Failed($"获取展开菜单失败：{ex.Message}");
             }
         }
 
@@ -398,11 +398,11 @@ namespace ApiServer.Application.Services
             {
                 var roleMenus = await _menuRepository.GetMenusByRoleIdAsync(roleId);
                 var checkedKeys = roleMenus.Select(m => m.Id.ToString()).ToList();
-                return ApiResult<List<string>>.SuccessResult(checkedKeys);
+                return ApiResult<List<string>>.Succeed(checkedKeys);
             }
             catch (Exception ex)
             {
-                return ApiResult<List<string>>.FailResult($"获取角色菜单失败：{ex.Message}");
+                return ApiResult<List<string>>.Failed($"获取角色菜单失败：{ex.Message}");
             }
         }
 
