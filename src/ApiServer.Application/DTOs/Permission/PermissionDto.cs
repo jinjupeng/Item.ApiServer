@@ -1,4 +1,5 @@
 using ApiServer.Application.DTOs.Common;
+using ApiServer.Domain.Enums;
 
 namespace ApiServer.Application.DTOs.Permission
 {
@@ -41,26 +42,5 @@ namespace ApiServer.Application.DTOs.Permission
         /// 创建时间
         /// </summary>
         public DateTime CreatedAt { get; set; }
-    }
-
-    /// <summary>
-    /// 权限类型枚举
-    /// </summary>
-    public enum PermissionType
-    {
-        /// <summary>
-        /// 菜单权限
-        /// </summary>
-        Menu = 0,
-
-        /// <summary>
-        /// 按钮权限
-        /// </summary>
-        Button = 1,
-
-        /// <summary>
-        /// API权限
-        /// </summary>
-        Api = 2
     }
 }

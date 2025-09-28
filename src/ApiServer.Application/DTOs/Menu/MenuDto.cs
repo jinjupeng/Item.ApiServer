@@ -56,7 +56,7 @@ namespace ApiServer.Application.DTOs.Menu
         /// <summary>
         /// 菜单类型
         /// </summary>
-        public MenuType MenuType { get; set; }
+        public PermissionType MenuType { get; set; }
 
         /// <summary>
         /// 子菜单列表
@@ -112,7 +112,7 @@ namespace ApiServer.Application.DTOs.Menu
         /// <summary>
         /// 菜单类型
         /// </summary>
-        public MenuType MenuType { get; set; }
+        public PermissionType MenuType { get; set; }
 
         /// <summary>
         /// 是否展开
@@ -168,7 +168,7 @@ namespace ApiServer.Application.DTOs.Menu
         /// <summary>
         /// 菜单类型
         /// </summary>
-        public MenuType MenuType { get; set; }
+        public PermissionType MenuType { get; set; }
     }
 
     /// <summary>
@@ -209,7 +209,7 @@ namespace ApiServer.Application.DTOs.Menu
         /// <summary>
         /// 菜单类型
         /// </summary>
-        public MenuType MenuType { get; set; }
+        public PermissionType MenuType { get; set; }
     }
 
     /// <summary>
@@ -230,6 +230,6 @@ namespace ApiServer.Application.DTOs.Menu
         /// <summary>
         /// 菜单类型
         /// </summary>
-        public MenuType? MenuType { get; set; }
+        public PermissionType? MenuType { get; set; }
     }
 }

@@ -40,10 +40,7 @@ namespace ApiServer.Infrastructure.Data
                 // 初始化用户数据
                 await SeedUsersAsync();
 
-                // 初始化菜单数据（包含目录/菜单/按钮）
-                await SeedMenusAsync();
-
-                // 初始化权限数据（与按钮权限点对应）
+                // 初始化权限数据（包含目录/菜单/按钮权限）
                 await SeedPermissionsAsync();
 
                 // 初始化用户角色关联
@@ -229,96 +226,53 @@ namespace ApiServer.Infrastructure.Data
         /// <summary>
         /// 初始化菜单数据（包含按钮权限点）
         /// </summary>
-        private async Task SeedMenusAsync()
+        private async Task SeedPermissionsAsync()
         {
-            if (await _context.Menus.AnyAsync())
+            if (await _context.Permissions.AnyAsync())
             {
                 _logger.LogInformation("菜单数据已存在，跳过初始化");
                 return;
             }
 
             var now = DateTime.Now;
-            var menus = new List<Menu>
+            var menus = new List<Permission>
             {
                 // 根目录：系统管理
-                new Menu { Id = 1, Code = "SYSTEM", Name = "系统管理", Type = MenuType.Directory, Sort = 1, Status = true, Icon = "system", Url = "/system", CreateTime = now },
+                new Permission { Id = 1, Code = "SYSTEM", Name = "系统管理", Type = PermissionType.Directory, Sort = 1, Status = true, Icon = "system", Url = "/system", CreateTime = now },
 
                 // 一级菜单
-                new Menu { Id = 2, Code = "USER_MANAGE", Name = "用户管理", Type = MenuType.Menu, ParentId = 1, ParentIds = "0,1", Sort = 1, Status = true, Icon = "user", Url = "/system/users", CreateTime = now },
-                new Menu { Id = 3, Code = "ROLE_MANAGE", Name = "角色管理", Type = MenuType.Menu, ParentId = 1, ParentIds = "0,1", Sort = 2, Status = true, Icon = "role", Url = "/system/roles", CreateTime = now },
-                new Menu { Id = 4, Code = "ORG_MANAGE",  Name = "组织管理", Type = MenuType.Menu, ParentId = 1, ParentIds = "0,1", Sort = 3, Status = true, Icon = "org",  Url = "/system/org",   CreateTime = now },
-                new Menu { Id = 5, Code = "MENU_MANAGE", Name = "菜单管理", Type = MenuType.Menu, ParentId = 1, ParentIds = "0,1", Sort = 4, Status = true, Icon = "menu", Url = "/system/menus", CreateTime = now },
+                new Permission { Id = 2, Code = "USER_MANAGE", Name = "用户管理", Type = PermissionType.Menu, ParentId = 1, ParentIds = "0,1", Sort = 1, Status = true, Icon = "user", Url = "/system/users", CreateTime = now },
+                new Permission { Id = 3, Code = "ROLE_MANAGE", Name = "角色管理", Type = PermissionType.Menu, ParentId = 1, ParentIds = "0,1", Sort = 2, Status = true, Icon = "role", Url = "/system/roles", CreateTime = now },
+                new Permission { Id = 4, Code = "ORG_MANAGE",  Name = "组织管理", Type = PermissionType.Menu, ParentId = 1, ParentIds = "0,1", Sort = 3, Status = true, Icon = "org",  Url = "/system/org",   CreateTime = now },
+                new Permission { Id = 5, Code = "MENU_MANAGE", Name = "菜单管理", Type = PermissionType.Menu, ParentId = 1, ParentIds = "0,1", Sort = 4, Status = true, Icon = "menu", Url = "/system/menus", CreateTime = now },
 
                 // 用户管理-按钮
-                new Menu { Id = 6,  Code = "system:user:list",   Name = "用户查询", Type = MenuType.Button, ParentId = 2, ParentIds = "0,1,2", Sort = 1, Status = true, CreateTime = now },
-                new Menu { Id = 7,  Code = "system:user:create", Name = "用户新增", Type = MenuType.Button, ParentId = 2, ParentIds = "0,1,2", Sort = 2, Status = true, CreateTime = now },
-                new Menu { Id = 8,  Code = "system:user:update", Name = "用户修改", Type = MenuType.Button, ParentId = 2, ParentIds = "0,1,2", Sort = 3, Status = true, CreateTime = now },
-                new Menu { Id = 9,  Code = "system:user:delete", Name = "用户删除", Type = MenuType.Button, ParentId = 2, ParentIds = "0,1,2", Sort = 4, Status = true, CreateTime = now },
+                new Permission { Id = 6,  Code = "system:user:list",   Name = "用户查询", Type = PermissionType.Button, ParentId = 2, ParentIds = "0,1,2", Sort = 1, Status = true, CreateTime = now },
+                new Permission { Id = 7,  Code = "system:user:create", Name = "用户新增", Type = PermissionType.Button, ParentId = 2, ParentIds = "0,1,2", Sort = 2, Status = true, CreateTime = now },
+                new Permission { Id = 8,  Code = "system:user:update", Name = "用户修改", Type = PermissionType.Button, ParentId = 2, ParentIds = "0,1,2", Sort = 3, Status = true, CreateTime = now },
+                new Permission { Id = 9,  Code = "system:user:delete", Name = "用户删除", Type = PermissionType.Button, ParentId = 2, ParentIds = "0,1,2", Sort = 4, Status = true, CreateTime = now },
 
                 // 角色管理-按钮
-                new Menu { Id = 10, Code = "system:role:list",   Name = "角色查询", Type = MenuType.Button, ParentId = 3, ParentIds = "0,1,3", Sort = 1, Status = true, CreateTime = now },
-                new Menu { Id = 11, Code = "system:role:create", Name = "角色新增", Type = MenuType.Button, ParentId = 3, ParentIds = "0,1,3", Sort = 2, Status = true, CreateTime = now },
-                new Menu { Id = 12, Code = "system:role:update", Name = "角色修改", Type = MenuType.Button, ParentId = 3, ParentIds = "0,1,3", Sort = 3, Status = true, CreateTime = now },
-                new Menu { Id = 13, Code = "system:role:delete", Name = "角色删除", Type = MenuType.Button, ParentId = 3, ParentIds = "0,1,3", Sort = 4, Status = true, CreateTime = now },
+                new Permission { Id = 10, Code = "system:role:list",   Name = "角色查询", Type = PermissionType.Button, ParentId = 3, ParentIds = "0,1,3", Sort = 1, Status = true, CreateTime = now },
+                new Permission { Id = 11, Code = "system:role:create", Name = "角色新增", Type = PermissionType.Button, ParentId = 3, ParentIds = "0,1,3", Sort = 2, Status = true, CreateTime = now },
+                new Permission { Id = 12, Code = "system:role:update", Name = "角色修改", Type = PermissionType.Button, ParentId = 3, ParentIds = "0,1,3", Sort = 3, Status = true, CreateTime = now },
+                new Permission { Id = 13, Code = "system:role:delete", Name = "角色删除", Type = PermissionType.Button, ParentId = 3, ParentIds = "0,1,3", Sort = 4, Status = true, CreateTime = now },
 
                 // 菜单管理-按钮
-                new Menu { Id = 14, Code = "system:menu:list",   Name = "菜单查询", Type = MenuType.Button, ParentId = 5, ParentIds = "0,1,5", Sort = 1, Status = true, CreateTime = now },
-                new Menu { Id = 15, Code = "system:menu:create", Name = "菜单新增", Type = MenuType.Button, ParentId = 5, ParentIds = "0,1,5", Sort = 2, Status = true, CreateTime = now },
-                new Menu { Id = 16, Code = "system:menu:update", Name = "菜单修改", Type = MenuType.Button, ParentId = 5, ParentIds = "0,1,5", Sort = 3, Status = true, CreateTime = now },
-                new Menu { Id = 17, Code = "system:menu:delete", Name = "菜单删除", Type = MenuType.Button, ParentId = 5, ParentIds = "0,1,5", Sort = 4, Status = true, CreateTime = now },
+                new Permission { Id = 14, Code = "system:menu:list",   Name = "菜单查询", Type = PermissionType.Button, ParentId = 5, ParentIds = "0,1,5", Sort = 1, Status = true, CreateTime = now },
+                new Permission { Id = 15, Code = "system:menu:create", Name = "菜单新增", Type = PermissionType.Button, ParentId = 5, ParentIds = "0,1,5", Sort = 2, Status = true, CreateTime = now },
+                new Permission { Id = 16, Code = "system:menu:update", Name = "菜单修改", Type = PermissionType.Button, ParentId = 5, ParentIds = "0,1,5", Sort = 3, Status = true, CreateTime = now },
+                new Permission { Id = 17, Code = "system:menu:delete", Name = "菜单删除", Type = PermissionType.Button, ParentId = 5, ParentIds = "0,1,5", Sort = 4, Status = true, CreateTime = now },
 
                 // 组织管理-按钮
-                new Menu { Id = 18, Code = "system:org:list",    Name = "组织查询", Type = MenuType.Button, ParentId = 4, ParentIds = "0,1,4", Sort = 1, Status = true, CreateTime = now },
-                new Menu { Id = 19, Code = "system:org:create",  Name = "组织新增", Type = MenuType.Button, ParentId = 4, ParentIds = "0,1,4", Sort = 2, Status = true, CreateTime = now },
-                new Menu { Id = 20, Code = "system:org:update",  Name = "组织修改", Type = MenuType.Button, ParentId = 4, ParentIds = "0,1,4", Sort = 3, Status = true, CreateTime = now },
-                new Menu { Id = 21, Code = "system:org:delete",  Name = "组织删除", Type = MenuType.Button, ParentId = 4, ParentIds = "0,1,4", Sort = 4, Status = true, CreateTime = now }
+                new Permission { Id = 18, Code = "system:org:list",    Name = "组织查询", Type = PermissionType.Button, ParentId = 4, ParentIds = "0,1,4", Sort = 1, Status = true, CreateTime = now },
+                new Permission { Id = 19, Code = "system:org:create",  Name = "组织新增", Type = PermissionType.Button, ParentId = 4, ParentIds = "0,1,4", Sort = 2, Status = true, CreateTime = now },
+                new Permission { Id = 20, Code = "system:org:update",  Name = "组织修改", Type = PermissionType.Button, ParentId = 4, ParentIds = "0,1,4", Sort = 3, Status = true, CreateTime = now },
+                new Permission { Id = 21, Code = "system:org:delete",  Name = "组织删除", Type = PermissionType.Button, ParentId = 4, ParentIds = "0,1,4", Sort = 4, Status = true, CreateTime = now }
             };
 
-            await _context.Menus.AddRangeAsync(menus);
+            await _context.Permissions.AddRangeAsync(menus);
             _logger.LogInformation("已添加 {Count} 个菜单", menus.Count);
-        }
-
-        /// <summary>
-        /// 初始化权限数据（与按钮权限点对应）
-        /// </summary>
-        private async Task SeedPermissionsAsync()
-        {
-            if (await _context.Permissions.AnyAsync())
-            {
-                _logger.LogInformation("权限数据已存在，跳过初始化");
-                return;
-            }
-
-            var now = DateTime.Now;
-            var permissions = new List<Permission>
-            {
-                // 用户管理权限
-                new Permission { Id = 1,  Code = "system:user:list",   Name = "用户查询", Sort = 1,  Status = true, Url = "/api/user/query",  CreateTime = now },
-                new Permission { Id = 2,  Code = "system:user:create", Name = "用户新增", Sort = 2,  Status = true, Url = "/api/user/create", CreateTime = now },
-                new Permission { Id = 3,  Code = "system:user:update", Name = "用户修改", Sort = 3,  Status = true, Url = "/api/user/update", CreateTime = now },
-                new Permission { Id = 4,  Code = "system:user:delete", Name = "用户删除", Sort = 4,  Status = true, Url = "/api/user/delete", CreateTime = now },
-
-                // 角色管理权限
-                new Permission { Id = 5,  Code = "system:role:list",   Name = "角色查询", Sort = 5,  Status = true, Url = "/api/role/query",  CreateTime = now },
-                new Permission { Id = 6,  Code = "system:role:create", Name = "角色新增", Sort = 6,  Status = true, Url = "/api/role/create", CreateTime = now },
-                new Permission { Id = 7,  Code = "system:role:update", Name = "角色修改", Sort = 7,  Status = true, Url = "/api/role/update", CreateTime = now },
-                new Permission { Id = 8,  Code = "system:role:delete", Name = "角色删除", Sort = 8,  Status = true, Url = "/api/role/delete", CreateTime = now },
-
-                // 菜单管理权限
-                new Permission { Id = 9,  Code = "system:menu:list",   Name = "菜单查询", Sort = 9,  Status = true, Url = "/api/menu/query",  CreateTime = now },
-                new Permission { Id = 10, Code = "system:menu:create", Name = "菜单新增", Sort = 10, Status = true, Url = "/api/menu/create", CreateTime = now },
-                new Permission { Id = 11, Code = "system:menu:update", Name = "菜单修改", Sort = 11, Status = true, Url = "/api/menu/update", CreateTime = now },
-                new Permission { Id = 12, Code = "system:menu:delete", Name = "菜单删除", Sort = 12, Status = true, Url = "/api/menu/delete", CreateTime = now },
-
-                // 组织管理权限
-                new Permission { Id = 13, Code = "system:org:list",    Name = "组织查询", Sort = 13, Status = true, Url = "/api/org/query",   CreateTime = now },
-                new Permission { Id = 14, Code = "system:org:create",  Name = "组织新增", Sort = 14, Status = true, Url = "/api/org/create",  CreateTime = now },
-                new Permission { Id = 15, Code = "system:org:update",  Name = "组织修改", Sort = 15, Status = true, Url = "/api/org/update",  CreateTime = now },
-                new Permission { Id = 16, Code = "system:org:delete",  Name = "组织删除", Sort = 16, Status = true, Url = "/api/org/delete",  CreateTime = now }
-            };
-
-            await _context.Permissions.AddRangeAsync(permissions);
-            _logger.LogInformation("已添加 {Count} 个权限", permissions.Count);
         }
 
         /// <summary>
@@ -348,62 +302,62 @@ namespace ApiServer.Infrastructure.Data
         /// </summary>
         private async Task SeedRoleMenusAsync()
         {
-            if (await _context.RoleMenus.AnyAsync())
+            if (await _context.RolePermissions.AnyAsync())
             {
                 _logger.LogInformation("角色菜单关联数据已存在，跳过初始化");
                 return;
             }
 
             var now = DateTime.Now;
-            var roleMenus = new List<RoleMenu>
+            var roleMenus = new List<RolePermission>
             {
                 // 超级管理员拥有所有（目录/菜单/按钮）
-                new RoleMenu { Id = 1,  RoleId = 1, MenuId = 1,  CreateTime = now },
-                new RoleMenu { Id = 2,  RoleId = 1, MenuId = 2,  CreateTime = now },
-                new RoleMenu { Id = 3,  RoleId = 1, MenuId = 3,  CreateTime = now },
-                new RoleMenu { Id = 4,  RoleId = 1, MenuId = 4,  CreateTime = now },
-                new RoleMenu { Id = 5,  RoleId = 1, MenuId = 5,  CreateTime = now },
-                new RoleMenu { Id = 6,  RoleId = 1, MenuId = 6,  CreateTime = now },
-                new RoleMenu { Id = 7,  RoleId = 1, MenuId = 7,  CreateTime = now },
-                new RoleMenu { Id = 8,  RoleId = 1, MenuId = 8,  CreateTime = now },
-                new RoleMenu { Id = 9,  RoleId = 1, MenuId = 9,  CreateTime = now },
-                new RoleMenu { Id = 10, RoleId = 1, MenuId = 10, CreateTime = now },
-                new RoleMenu { Id = 11, RoleId = 1, MenuId = 11, CreateTime = now },
-                new RoleMenu { Id = 12, RoleId = 1, MenuId = 12, CreateTime = now },
-                new RoleMenu { Id = 13, RoleId = 1, MenuId = 13, CreateTime = now },
-                new RoleMenu { Id = 14, RoleId = 1, MenuId = 14, CreateTime = now },
-                new RoleMenu { Id = 15, RoleId = 1, MenuId = 15, CreateTime = now },
-                new RoleMenu { Id = 16, RoleId = 1, MenuId = 16, CreateTime = now },
-                new RoleMenu { Id = 17, RoleId = 1, MenuId = 17, CreateTime = now },
-                new RoleMenu { Id = 18, RoleId = 1, MenuId = 18, CreateTime = now },
-                new RoleMenu { Id = 19, RoleId = 1, MenuId = 19, CreateTime = now },
-                new RoleMenu { Id = 20, RoleId = 1, MenuId = 20, CreateTime = now },
-                new RoleMenu { Id = 21, RoleId = 1, MenuId = 21, CreateTime = now },
+                new RolePermission { Id = 1,  RoleId = 1, PermissionId = 1,  CreateTime = now },
+                new RolePermission { Id = 2,  RoleId = 1, PermissionId = 2,  CreateTime = now },
+                new RolePermission { Id = 3,  RoleId = 1, PermissionId = 3,  CreateTime = now },
+                new RolePermission { Id = 4,  RoleId = 1, PermissionId = 4,  CreateTime = now },
+                new RolePermission { Id = 5,  RoleId = 1, PermissionId = 5,  CreateTime = now },
+                new RolePermission { Id = 6,  RoleId = 1, PermissionId = 6,  CreateTime = now },
+                new RolePermission { Id = 7,  RoleId = 1, PermissionId = 7,  CreateTime = now },
+                new RolePermission { Id = 8,  RoleId = 1, PermissionId = 8,  CreateTime = now },
+                new RolePermission { Id = 9,  RoleId = 1, PermissionId = 9,  CreateTime = now },
+                new RolePermission { Id = 10, RoleId = 1, PermissionId = 10, CreateTime = now },
+                new RolePermission { Id = 11, RoleId = 1, PermissionId = 11, CreateTime = now },
+                new RolePermission { Id = 12, RoleId = 1, PermissionId = 12, CreateTime = now },
+                new RolePermission { Id = 13, RoleId = 1, PermissionId = 13, CreateTime = now },
+                new RolePermission { Id = 14, RoleId = 1, PermissionId = 14, CreateTime = now },
+                new RolePermission { Id = 15, RoleId = 1, PermissionId = 15, CreateTime = now },
+                new RolePermission { Id = 16, RoleId = 1, PermissionId = 16, CreateTime = now },
+                new RolePermission { Id = 17, RoleId = 1, PermissionId = 17, CreateTime = now },
+                new RolePermission { Id = 18, RoleId = 1, PermissionId = 18, CreateTime = now },
+                new RolePermission { Id = 19, RoleId = 1, PermissionId = 19, CreateTime = now },
+                new RolePermission { Id = 20, RoleId = 1, PermissionId = 20, CreateTime = now },
+                new RolePermission { Id = 21, RoleId = 1, PermissionId = 21, CreateTime = now },
 
                 // 管理员：目录/菜单 + 常用按钮（查询/修改）
-                new RoleMenu { Id = 101, RoleId = 2, MenuId = 1,  CreateTime = now },
-                new RoleMenu { Id = 102, RoleId = 2, MenuId = 2,  CreateTime = now },
-                new RoleMenu { Id = 103, RoleId = 2, MenuId = 3,  CreateTime = now },
-                new RoleMenu { Id = 104, RoleId = 2, MenuId = 4,  CreateTime = now },
-                new RoleMenu { Id = 105, RoleId = 2, MenuId = 5,  CreateTime = now },
-                new RoleMenu { Id = 106, RoleId = 2, MenuId = 6,  CreateTime = now }, // user:list
-                new RoleMenu { Id = 107, RoleId = 2, MenuId = 8,  CreateTime = now }, // user:update
-                new RoleMenu { Id = 108, RoleId = 2, MenuId = 10, CreateTime = now }, // role:list
-                new RoleMenu { Id = 109, RoleId = 2, MenuId = 12, CreateTime = now }, // role:update
-                new RoleMenu { Id = 110, RoleId = 2, MenuId = 14, CreateTime = now }, // menu:list
-                new RoleMenu { Id = 111, RoleId = 2, MenuId = 18, CreateTime = now }, // org:list
+                new RolePermission { Id = 101, RoleId = 2, PermissionId = 1,  CreateTime = now },
+                new RolePermission { Id = 102, RoleId = 2, PermissionId = 2,  CreateTime = now },
+                new RolePermission { Id = 103, RoleId = 2, PermissionId = 3,  CreateTime = now },
+                new RolePermission { Id = 104, RoleId = 2, PermissionId = 4,  CreateTime = now },
+                new RolePermission { Id = 105, RoleId = 2, PermissionId = 5,  CreateTime = now },
+                new RolePermission { Id = 106, RoleId = 2, PermissionId = 6,  CreateTime = now }, // user:list
+                new RolePermission { Id = 107, RoleId = 2, PermissionId = 8,  CreateTime = now }, // user:update
+                new RolePermission { Id = 108, RoleId = 2, PermissionId = 10, CreateTime = now }, // role:list
+                new RolePermission { Id = 109, RoleId = 2, PermissionId = 12, CreateTime = now }, // role:update
+                new RolePermission { Id = 110, RoleId = 2, PermissionId = 14, CreateTime = now }, // menu:list
+                new RolePermission { Id = 111, RoleId = 2, PermissionId = 18, CreateTime = now }, // org:list
 
                 // 普通用户：目录/菜单 + 只读按钮（查询）
-                new RoleMenu { Id = 201, RoleId = 3, MenuId = 1,  CreateTime = now },
-                new RoleMenu { Id = 202, RoleId = 3, MenuId = 2,  CreateTime = now },
-                new RoleMenu { Id = 203, RoleId = 3, MenuId = 3,  CreateTime = now },
-                new RoleMenu { Id = 204, RoleId = 3, MenuId = 5,  CreateTime = now },
-                new RoleMenu { Id = 205, RoleId = 3, MenuId = 6,  CreateTime = now }, // user:list
-                new RoleMenu { Id = 206, RoleId = 3, MenuId = 10, CreateTime = now }, // role:list
-                new RoleMenu { Id = 207, RoleId = 3, MenuId = 14, CreateTime = now }  // menu:list
+                new RolePermission { Id = 201, RoleId = 3, PermissionId = 1,  CreateTime = now },
+                new RolePermission { Id = 202, RoleId = 3, PermissionId = 2,  CreateTime = now },
+                new RolePermission { Id = 203, RoleId = 3, PermissionId = 3,  CreateTime = now },
+                new RolePermission { Id = 204, RoleId = 3, PermissionId = 5,  CreateTime = now },
+                new RolePermission { Id = 205, RoleId = 3, PermissionId = 6,  CreateTime = now }, // user:list
+                new RolePermission { Id = 206, RoleId = 3, PermissionId = 10, CreateTime = now }, // role:list
+                new RolePermission { Id = 207, RoleId = 3, PermissionId = 14, CreateTime = now }  // menu:list
             };
 
-            await _context.RoleMenus.AddRangeAsync(roleMenus);
+            await _context.RolePermissions.AddRangeAsync(roleMenus);
             _logger.LogInformation("已添加 {Count} 个角色菜单关联", roleMenus.Count);
         }
 

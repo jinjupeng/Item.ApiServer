@@ -2,9 +2,8 @@
 
 namespace ApiServer.Domain.Entities
 {
-
     /// <summary>
-    /// 角色和接口api关联实体
+    /// 角色和菜单关联实体
     /// </summary>
     public class RolePermission : BaseEntity
     {
@@ -14,7 +13,7 @@ namespace ApiServer.Domain.Entities
         public long RoleId { get; set; }
 
         /// <summary>
-        /// Permission ID
+        /// 菜单ID
         /// </summary>
         public long PermissionId { get; set; }
 
@@ -25,7 +24,7 @@ namespace ApiServer.Domain.Entities
         public virtual Role Role { get; set; } = null!;
 
         /// <summary>
-        /// API
+        /// 菜单
         /// </summary>
         public virtual Permission Permission { get; set; } = null!;
     }

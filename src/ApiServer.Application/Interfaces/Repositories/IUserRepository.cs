@@ -30,10 +30,10 @@ namespace ApiServer.Application.Interfaces.Repositories
         /// <summary>
         /// 获取用户的菜单权限
         /// </summary>
-        Task<IEnumerable<Menu>> GetUserMenusAsync(long userId);
+        Task<IEnumerable<Permission>> GetUserMenusAsync(long userId);
 
         /// <summary>
-        /// 获取用户的API权限
+        /// 获取用户的API权限（只包含按钮/api）
         /// </summary>
         Task<IEnumerable<Permission>> GetUserPermissionsAsync(long userId);
 

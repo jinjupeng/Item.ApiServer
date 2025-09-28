@@ -19,8 +19,6 @@ namespace ApiServer.Infrastructure.Data
         public DbSet<Role> Roles { get; set; }
         public DbSet<UserRole> UserRoles { get; set; }
         public DbSet<Organization> Organizations { get; set; }
-        public DbSet<Menu> Menus { get; set; }
-        public DbSet<RoleMenu> RoleMenus { get; set; }
         public DbSet<Permission> Permissions { get; set; }
         public DbSet<RolePermission> RolePermissions { get; set; }
 
@@ -52,8 +50,6 @@ namespace ApiServer.Infrastructure.Data
             modelBuilder.Entity<Role>().ToTable("sys_role");
             modelBuilder.Entity<UserRole>().ToTable("sys_user_role");
             modelBuilder.Entity<Organization>().ToTable("sys_org");
-            modelBuilder.Entity<Menu>().ToTable("sys_menu");
-            modelBuilder.Entity<RoleMenu>().ToTable("sys_role_menu");
             modelBuilder.Entity<Permission>().ToTable("sys_permission");
             modelBuilder.Entity<RolePermission>().ToTable("sys_role_permission");
         }
@@ -83,20 +79,14 @@ namespace ApiServer.Infrastructure.Data
                 .HasForeignKey(ur => ur.RoleId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // 角色菜单多对多关系
-            modelBuilder.Entity<RoleMenu>()
-                .HasOne(rm => rm.Role)
-                .WithMany(r => r.RoleMenus)
-                .HasForeignKey(rm => rm.RoleId)
-                .OnDelete(DeleteBehavior.Cascade);
+            // 权限树形结构
+            modelBuilder.Entity<Permission>()
+                .HasOne(m => m.Parent)
+                .WithMany(m => m.Children)
+                .HasForeignKey(m => m.ParentId)
+                .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<RoleMenu>()
-                .HasOne(rm => rm.Menu)
-                .WithMany(m => m.RoleMenus)
-                .HasForeignKey(rm => rm.MenuId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            // 角色API多对多关系
+            // 角色权限多对多关系
             modelBuilder.Entity<RolePermission>()
                 .HasOne(ra => ra.Role)
                 .WithMany(r => r.RolePermissions)
@@ -114,20 +104,6 @@ namespace ApiServer.Infrastructure.Data
                 .HasOne(o => o.Parent)
                 .WithMany(o => o.Children)
                 .HasForeignKey(o => o.ParentId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            // 菜单树形结构
-            modelBuilder.Entity<Menu>()
-                .HasOne(m => m.Parent)
-                .WithMany(m => m.Children)
-                .HasForeignKey(m => m.ParentId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            // 权限树形结构
-            modelBuilder.Entity<Permission>()
-                .HasOne(a => a.Parent)
-                .WithMany(a => a.Children)
-                .HasForeignKey(a => a.ParentId)
                 .OnDelete(DeleteBehavior.Restrict);
         }
 
@@ -153,8 +129,8 @@ namespace ApiServer.Infrastructure.Data
                 .HasDatabaseName("IX_UserRole_UserId_RoleId");
 
             // 角色菜单复合索引
-            modelBuilder.Entity<RoleMenu>()
-                .HasIndex(rm => new { rm.RoleId, rm.MenuId })
+            modelBuilder.Entity<RolePermission>()
+                .HasIndex(rm => new { rm.RoleId, rm.PermissionId })
                 .IsUnique()
                 .HasDatabaseName("IX_RoleMenu_RoleId_MenuId");
 

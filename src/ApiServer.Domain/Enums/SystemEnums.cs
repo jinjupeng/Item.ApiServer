@@ -34,7 +34,7 @@ namespace ApiServer.Domain.Enums
     /// <summary>
     /// 菜单类型枚举
     /// </summary>
-    public enum MenuType
+    public enum PermissionType
     {
         /// <summary>
         /// 目录
@@ -47,7 +47,7 @@ namespace ApiServer.Domain.Enums
         Menu = 1,
         
         /// <summary>
-        /// 按钮
+        /// 按钮/Api
         /// </summary>
         Button = 2
     }

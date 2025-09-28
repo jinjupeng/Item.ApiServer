@@ -34,7 +34,7 @@ namespace ApiServer.Application.Interfaces.Repositories
         /// <summary>
         /// 获取角色的菜单权限
         /// </summary>
-        Task<IEnumerable<Menu>> GetRoleMenusAsync(long roleId);
+        Task<IEnumerable<Permission>> GetRoleMenusAsync(long roleId);
 
         /// <summary>
         /// 获取角色的API权限

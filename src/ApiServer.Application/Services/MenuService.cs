@@ -40,7 +40,7 @@ namespace ApiServer.Application.Services
                     return ApiResult<long>.Failed("菜单编码已存在");
                 }
 
-                var menu = dto.Adapt<Menu>();
+                var menu = dto.Adapt<Permission>();
                 
                 // 设置菜单层级和路径信息
                 await SetMenuHierarchyInfo(menu);
@@ -345,7 +345,7 @@ namespace ApiServer.Application.Services
             try
             {
                 // 删除现有权限
-                var roleMenuRepository = _unitOfWork.GetBaseRepository<RoleMenu>();
+                var roleMenuRepository = _unitOfWork.GetBaseRepository<RolePermission>();
                 var existingRoleMenus = await roleMenuRepository.FindAsync(rm => rm.RoleId == roleId);
 
                 if (existingRoleMenus.Any())
@@ -354,10 +354,10 @@ namespace ApiServer.Application.Services
                 }
 
                 // 添加新权限
-                var roleMenus = menuIds.Select(menuId => new RoleMenu
+                var roleMenus = menuIds.Select(menuId => new RolePermission
                 {
                     RoleId = roleId,
-                    MenuId = menuId,
+                    PermissionId = menuId,
                     CreateTime = DateTime.Now
                 }).ToList();
 
@@ -411,7 +411,7 @@ namespace ApiServer.Application.Services
         /// <summary>
         /// 设置菜单层级和路径信息
         /// </summary>
-        private async Task SetMenuHierarchyInfo(Menu menu)
+        private async Task SetMenuHierarchyInfo(Permission menu)
         {
             if (menu.ParentId.HasValue)
             {
@@ -435,7 +435,7 @@ namespace ApiServer.Application.Services
         /// <summary>
         /// 构建菜单树
         /// </summary>
-        private List<MenuTreeDto> BuildMenuTree(IEnumerable<Menu> menus)
+        private List<MenuTreeDto> BuildMenuTree(IEnumerable<Permission> menus)
         {
             var menuList = menus.ToList();
             var menuDict = menuList.ToDictionary(m => m.Id, m => m.Adapt<MenuTreeDto>());

@@ -9,7 +9,7 @@ namespace ApiServer.Infrastructure.Repositories
     /// <summary>
     /// 菜单仓储实现
     /// </summary>
-    public class MenuRepository : BaseRepository<Menu>, IMenuRepository
+    public class MenuRepository : BaseRepository<Permission>, IMenuRepository
     {
         public MenuRepository(ApplicationDbContext context) : base(context)
         {
@@ -18,9 +18,9 @@ namespace ApiServer.Infrastructure.Repositories
         /// <summary>
         /// 根据父菜单ID获取子菜单列表（不包含按钮类型）
         /// </summary>
-        public async Task<IEnumerable<Menu>> GetByParentIdAsync(long? parentId)
+        public async Task<IEnumerable<Permission>> GetByParentIdAsync(long? parentId)
         {
-            var query = _dbSet.AsQueryable();
+            var query = _dbSet.AsQueryable().Where(m => m.Type != PermissionType.Menu);
             
             if (parentId.HasValue)
             {
@@ -40,7 +40,7 @@ namespace ApiServer.Infrastructure.Repositories
         /// <summary>
         /// 获取菜单树（包含所有类型，供管理端使用）
         /// </summary>
-        public async Task<IEnumerable<Menu>> GetMenuTreeAsync()
+        public async Task<IEnumerable<Permission>> GetMenuTreeAsync()
         {
             var allMenus = await _dbSet
                 .Where(m => !m.IsDeleted && m.Status)
@@ -53,11 +53,11 @@ namespace ApiServer.Infrastructure.Repositories
         /// <summary>
         /// 根据角色ID获取菜单列表
         /// </summary>
-        public async Task<IEnumerable<Menu>> GetByRoleIdAsync(long roleId)
+        public async Task<IEnumerable<Permission>> GetByRoleIdAsync(long roleId)
         {
-            return await _context.RoleMenus
+            return await _context.RolePermissions
                 .Where(rm => rm.RoleId == roleId)
-                .Select(rm => rm.Menu)
+                .Select(rm => rm.Permission)
                 .Where(m => !m.IsDeleted && m.Status)
                 .OrderBy(m => m.Sort)
                 .ToListAsync();
@@ -66,13 +66,13 @@ namespace ApiServer.Infrastructure.Repositories
         /// <summary>
         /// 根据用户ID获取菜单列表（用于导航，排除按钮类型）
         /// </summary>
-        public async Task<IEnumerable<Menu>> GetByUserIdAsync(long userId)
+        public async Task<IEnumerable<Permission>> GetByUserIdAsync(long userId)
         {
             return await _context.UserRoles
                 .Where(ur => ur.UserId == userId)
-                .Join(_context.RoleMenus, ur => ur.RoleId, rm => rm.RoleId, (ur, rm) => rm)
-                .Select(rm => rm.Menu)
-                .Where(m => !m.IsDeleted && m.Status && m.Type != MenuType.Button)
+                .Join(_context.RolePermissions, ur => ur.RoleId, rm => rm.RoleId, (ur, rm) => rm)
+                .Select(rm => rm.Permission)
+                .Where(m => !m.IsDeleted && m.Status && m.Type != PermissionType.Button)
                 .Distinct()
                 .OrderBy(m => m.Sort)
                 .ToListAsync();
@@ -96,7 +96,7 @@ namespace ApiServer.Infrastructure.Repositories
         /// <summary>
         /// 根据菜单编码获取菜单
         /// </summary>
-        public async Task<Menu?> GetByMenuCodeAsync(string menuCode)
+        public async Task<Permission?> GetByMenuCodeAsync(string menuCode)
         {
             return await _dbSet
                 .Where(m => m.Code == menuCode && !m.IsDeleted)
@@ -106,7 +106,7 @@ namespace ApiServer.Infrastructure.Repositories
         /// <summary>
         /// 根据用户ID获取菜单列表（重命名方法）
         /// </summary>
-        public async Task<IEnumerable<Menu>> GetMenusByUserIdAsync(long userId)
+        public async Task<IEnumerable<Permission>> GetMenusByUserIdAsync(long userId)
         {
             return await GetByUserIdAsync(userId);
         }
@@ -114,7 +114,7 @@ namespace ApiServer.Infrastructure.Repositories
         /// <summary>
         /// 根据角色ID获取菜单列表（重命名方法）
         /// </summary>
-        public async Task<IEnumerable<Menu>> GetMenusByRoleIdAsync(long roleId)
+        public async Task<IEnumerable<Permission>> GetMenusByRoleIdAsync(long roleId)
         {
             return await GetByRoleIdAsync(roleId);
         }
@@ -122,7 +122,7 @@ namespace ApiServer.Infrastructure.Repositories
         /// <summary>
         /// 获取菜单树（带过滤条件）
         /// </summary>
-        public async Task<IEnumerable<Menu>> GetMenuTreeAsync(string? menuName = null, bool? status = null)
+        public async Task<IEnumerable<Permission>> GetMenuTreeAsync(string? menuName = null, bool? status = null)
         {
             var query = _dbSet.Where(m => !m.IsDeleted);
             
@@ -143,7 +143,7 @@ namespace ApiServer.Infrastructure.Repositories
         /// <summary>
         /// 根据父ID获取子菜单
         /// </summary>
-        public async Task<IEnumerable<Menu>> GetChildMenusAsync(long parentId)
+        public async Task<IEnumerable<Permission>> GetChildMenusAsync(long parentId)
         {
             return await GetByParentIdAsync(parentId);
         }
@@ -151,10 +151,10 @@ namespace ApiServer.Infrastructure.Repositories
         /// <summary>
         /// 获取父菜单列表（作为可选父节点，排除按钮类型）
         /// </summary>
-        public async Task<IEnumerable<Menu>> GetParentMenusAsync()
+        public async Task<IEnumerable<Permission>> GetParentMenusAsync()
         {
             return await _dbSet
-                .Where(m => !m.IsDeleted && m.Type != MenuType.Button)
+                .Where(m => !m.IsDeleted && m.Type != PermissionType.Button)
                 .OrderBy(m => m.Sort)
                 .ToListAsync();
         }
@@ -202,10 +202,10 @@ namespace ApiServer.Infrastructure.Repositories
         /// <summary>
         /// 获取所有父菜单（存在子节点的非按钮类型）
         /// </summary>
-        public async Task<IEnumerable<Menu>> GetAllParentMenusAsync()
+        public async Task<IEnumerable<Permission>> GetAllParentMenusAsync()
         {
             return await _dbSet
-                .Where(m => !m.IsDeleted && m.Type != MenuType.Button)
+                .Where(m => !m.IsDeleted && m.Type != PermissionType.Button)
                 .Where(m => _dbSet.Any(c => !c.IsDeleted && c.ParentId == m.Id))
                 .OrderBy(m => m.Sort)
                 .ToListAsync();
@@ -214,7 +214,7 @@ namespace ApiServer.Infrastructure.Repositories
         /// <summary>
         /// 根据URL获取菜单
         /// </summary>
-        public async Task<Menu?> GetByUrlAsync(string url)
+        public async Task<Permission?> GetByUrlAsync(string url)
         {
             return await _dbSet
                 .Where(m => m.Url == url && !m.IsDeleted)
@@ -241,7 +241,7 @@ namespace ApiServer.Infrastructure.Repositories
         /// <summary>
         /// 构建菜单树
         /// </summary>
-        private IEnumerable<Menu> BuildMenuTree(IEnumerable<Menu> allMenus, long? parentId)
+        private IEnumerable<Permission> BuildMenuTree(IEnumerable<Permission> allMenus, long? parentId)
         {
             return allMenus
                 .Where(m => m.ParentId == parentId)

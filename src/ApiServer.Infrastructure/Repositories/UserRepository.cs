@@ -1,5 +1,6 @@
 using ApiServer.Application.Interfaces.Repositories;
 using ApiServer.Domain.Entities;
+using ApiServer.Domain.Enums;
 using ApiServer.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
@@ -67,23 +68,23 @@ namespace ApiServer.Infrastructure.Repositories
         /// <summary>
         /// 获取用户的菜单权限
         /// </summary>
-        public async Task<IEnumerable<Menu>> GetUserMenusAsync(long userId)
+        public async Task<IEnumerable<Permission>> GetUserMenusAsync(long userId)
         {
-            return await _context.Menus
-                .Where(m => !m.IsDeleted)
-                .Where(m => m.RoleMenus.Any(rm => 
+            return await _context.Permissions
+                .Where(m => !m.IsDeleted && (m.Type == PermissionType.Directory || m.Type == PermissionType.Menu))
+                .Where(m => m.RolePermissions.Any(rm => 
                     rm.Role.UserRoles.Any(ur => ur.UserId == userId)))
                 .OrderBy(m => m.Sort)
                 .ToListAsync();
         }
 
         /// <summary>
-        /// 获取用户的API权限
+        /// 获取用户的API权限（只包含按钮/api）
         /// </summary>
         public async Task<IEnumerable<Permission>> GetUserPermissionsAsync(long userId)
         {
             return await _context.Permissions
-                .Where(a => !a.IsDeleted)
+                .Where(a => !a.IsDeleted && a.Type == PermissionType.Button)
                 .Where(a => a.RolePermissions.Any(ra => 
                     ra.Role.UserRoles.Any(ur => ur.UserId == userId)))
                 .ToListAsync();

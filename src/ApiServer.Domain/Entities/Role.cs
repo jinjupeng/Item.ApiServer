@@ -43,12 +43,7 @@ namespace ApiServer.Domain.Entities
         public virtual ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
 
         /// <summary>
-        /// 角色菜单关联
-        /// </summary>
-        public virtual ICollection<RoleMenu> RoleMenus { get; set; } = new List<RoleMenu>();
-
-        /// <summary>
-        /// 角色API关联
+        /// 角色权限关联
         /// </summary>
         public virtual ICollection<RolePermission> RolePermissions { get; set; } = new List<RolePermission>();
     }

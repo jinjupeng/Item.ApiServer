@@ -86,11 +86,11 @@ namespace ApiServer.Infrastructure.Repositories
         /// <summary>
         /// 获取角色的菜单权限
         /// </summary>
-        public async Task<IEnumerable<Menu>> GetRoleMenusAsync(long roleId)
+        public async Task<IEnumerable<Permission>> GetRoleMenusAsync(long roleId)
         {
-            return await _context.Menus
+            return await _context.Permissions
                 .Where(m => !((SoftDeleteEntity)(object)m).IsDeleted)
-                .Where(m => m.RoleMenus.Any(rm => rm.RoleId == roleId))
+                .Where(m => m.RolePermissions.Any(rm => rm.RoleId == roleId))
                 .OrderBy(m => m.Sort)
                 .ToListAsync();
         }
@@ -111,14 +111,14 @@ namespace ApiServer.Infrastructure.Repositories
         /// </summary>
         public async Task AssignMenusToRoleAsync(long roleId, IEnumerable<long> menuIds)
         {
-            var roleMenus = menuIds.Select(menuId => new RoleMenu
+            var roleMenus = menuIds.Select(menuId => new RolePermission
             {
                 RoleId = roleId,
-                MenuId = menuId,
+                PermissionId = menuId,
                 CreateTime = DateTime.Now
             });
 
-            await _context.RoleMenus.AddRangeAsync(roleMenus);
+            await _context.RolePermissions.AddRangeAsync(roleMenus);
         }
 
         /// <summary>
@@ -141,11 +141,11 @@ namespace ApiServer.Infrastructure.Repositories
         /// </summary>
         public async Task RemoveRoleMenusAsync(long roleId)
         {
-            var roleMenus = await _context.RoleMenus
+            var roleMenus = await _context.RolePermissions
                 .Where(rm => rm.RoleId == roleId)
                 .ToListAsync();
 
-            _context.RoleMenus.RemoveRange(roleMenus);
+            _context.RolePermissions.RemoveRange(roleMenus);
         }
 
         /// <summary>

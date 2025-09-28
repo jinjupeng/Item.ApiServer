@@ -1,7 +1,8 @@
-// using ApiServer.Application.Interfaces.Services;
 using Mapster;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
+using ApiServer.Application.Interfaces.Services;
+using ApiServer.Application.Services;
 
 namespace ApiServer.Application
 {
@@ -35,8 +36,12 @@ namespace ApiServer.Application
         /// <param name="services">服务集合</param>
         private static void RegisterApplicationServices(IServiceCollection services)
         {
-            // 注册应用服务接口及其实现
-            // 注意：实现类在Infrastructure层，服务注册在Infrastructure的DependencyInjection中完成
+            // 应用服务接口与实现注册（作用域生命周期）
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IRoleService, RoleService>();
+            services.AddScoped<IMenuService, MenuService>();
+            services.AddScoped<IOrganizationService, OrganizationService>();
+            services.AddScoped<IAuthService, AuthService>();
         }
 
         /// <summary>
@@ -72,7 +77,7 @@ namespace ApiServer.Application
                   .Map(dest => dest.CreatedAt, src => src.CreateTime);
 
             // 配置Menu实体与MenuTreeDto之间的映射
-            config.NewConfig<Domain.Entities.Menu, DTOs.Menu.MenuTreeDto>()
+            config.NewConfig<Domain.Entities.Permission, DTOs.Menu.MenuTreeDto>()
                   .Map(dest => dest.MenuName, src => src.Name)
                   .Map(dest => dest.MenuCode, src => src.Code)
                   .Map(dest => dest.Url, src => src.Url)

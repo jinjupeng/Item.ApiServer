@@ -453,7 +453,7 @@ namespace ApiServer.Application.Services
                 }
             }
 
-            // 权限声明（API权限 的编码，逗号分隔）
+            // 权限声明（API/按钮权限 的编码，逗号分隔）
             var permissionCodes = new List<string>();
             var userPermissions = await _userRepository.GetUserPermissionsAsync(user.Id);
             permissionCodes.AddRange(userPermissions.Select(a => a.Code).Where(c => !string.IsNullOrWhiteSpace(c))!);
