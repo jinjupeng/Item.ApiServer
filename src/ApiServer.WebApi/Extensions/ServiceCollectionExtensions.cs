@@ -10,6 +10,8 @@ using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Reflection;
 using System.Text;
+using ApiServer.Application.Interfaces;
+using ApiServer.WebApi.Services;
 
 namespace ApiServer.WebApi.Extensions
 {
@@ -39,6 +41,10 @@ namespace ApiServer.WebApi.Extensions
                 options.GroupNameFormat = "'v'VVV";
                 options.SubstituteApiVersionInUrl = true;
             });
+
+            // IHttpContextAccessor & 当前用户
+            services.AddHttpContextAccessor();
+            services.AddScoped<ICurrentUser, CurrentUser>();
 
             // 添加JWT认证
             services.AddJwtAuthentication(configuration);
