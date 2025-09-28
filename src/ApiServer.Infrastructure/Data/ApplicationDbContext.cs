@@ -105,7 +105,7 @@ namespace ApiServer.Infrastructure.Data
 
             modelBuilder.Entity<RolePermission>()
                 .HasOne(ra => ra.Permission)
-                .WithMany(a => a.RoleApis)
+                .WithMany(a => a.RolePermissions)
                 .HasForeignKey(ra => ra.PermissionId)
                 .OnDelete(DeleteBehavior.Cascade);
 
@@ -123,7 +123,7 @@ namespace ApiServer.Infrastructure.Data
                 .HasForeignKey(m => m.ParentId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // API树形结构
+            // 权限树形结构
             modelBuilder.Entity<Permission>()
                 .HasOne(a => a.Parent)
                 .WithMany(a => a.Children)

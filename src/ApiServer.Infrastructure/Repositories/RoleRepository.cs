@@ -102,7 +102,7 @@ namespace ApiServer.Infrastructure.Repositories
         {
             return await _context.Permissions
                 .Where(a => !((SoftDeleteEntity)(object)a).IsDeleted)
-                .Where(a => a.RoleApis.Any(ra => ra.RoleId == roleId))
+                .Where(a => a.RolePermissions.Any(ra => ra.RoleId == roleId))
                 .ToListAsync();
         }
 

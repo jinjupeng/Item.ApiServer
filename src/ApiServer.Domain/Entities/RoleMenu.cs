@@ -1,14 +1,9 @@
 ﻿using ApiServer.Domain.Common;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ApiServer.Domain.Entities
 {
     /// <summary>
-    /// 角色菜单关联实体
+    /// 角色和菜单关联实体
     /// </summary>
     public class RoleMenu : BaseEntity
     {

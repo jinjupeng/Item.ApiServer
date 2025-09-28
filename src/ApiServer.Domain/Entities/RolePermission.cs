@@ -1,15 +1,10 @@
 ﻿using ApiServer.Domain.Common;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ApiServer.Domain.Entities
 {
 
     /// <summary>
-    /// 角色API关联实体
+    /// 角色和接口api关联实体
     /// </summary>
     public class RolePermission : BaseEntity
     {
@@ -19,7 +14,7 @@ namespace ApiServer.Domain.Entities
         public long RoleId { get; set; }
 
         /// <summary>
-        /// API ID
+        /// Permission ID
         /// </summary>
         public long PermissionId { get; set; }
 

@@ -33,19 +33,9 @@ namespace ApiServer.Application.DTOs.Organization
         public string OrgPids { get; set; } = string.Empty;
 
         /// <summary>
-        /// 是否叶子节点
-        /// </summary>
-        public bool IsLeaf { get; set; }
-
-        /// <summary>
         /// 排序
         /// </summary>
         public int Sort { get; set; }
-
-        /// <summary>
-        /// 层级
-        /// </summary>
-        public int Level { get; set; }
 
         /// <summary>
         /// 状态

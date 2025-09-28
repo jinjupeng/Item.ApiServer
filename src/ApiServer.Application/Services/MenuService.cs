@@ -419,25 +419,16 @@ namespace ApiServer.Application.Services
                 if (parentMenu != null)
                 {
                     menu.ParentIds = $"{parentMenu.ParentIds},[{menu.ParentId}]";
-                    menu.Level = parentMenu.Level + 1;
-                    menu.IsLeaf = true;
-
-                    // 更新父菜单的叶子节点状态
-                    parentMenu.IsLeaf = false;
                     await _menuRepository.UpdateAsync(parentMenu);
                 }
                 else
                 {
                     menu.ParentIds = $"[{menu.ParentId}]";
-                    menu.Level = 1;
-                    menu.IsLeaf = true;
                 }
             }
             else
             {
                 menu.ParentIds = "[0]";
-                menu.Level = 0;
-                menu.IsLeaf = true;
             }
         }
 

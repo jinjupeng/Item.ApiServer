@@ -53,7 +53,7 @@ namespace ApiServer.Application.Services
 
                 var organization = dto.Adapt<Organization>();
                 
-                // 设置组织路径和层级
+                // 设置组织路径
                 await SetOrganizationHierarchyAsync(organization);
 
                 var result = await _organizationRepository.AddAsync(organization);
@@ -108,7 +108,7 @@ namespace ApiServer.Application.Services
 
                 dto.Adapt(organization);
                 
-                // 重新设置组织路径和层级
+                // 重新设置组织路径
                 await SetOrganizationHierarchyAsync(organization);
 
                 await _organizationRepository.UpdateAsync(organization);
@@ -413,7 +413,7 @@ namespace ApiServer.Application.Services
         }
 
         /// <summary>
-        /// 设置组织层级信息
+        /// 设置组织路径信息
         /// </summary>
         private async Task SetOrganizationHierarchyAsync(Organization organization)
         {
@@ -422,13 +422,13 @@ namespace ApiServer.Application.Services
                 var parent = await _organizationRepository.GetByIdAsync(organization.ParentId.Value);
                 if (parent != null)
                 {
-                    organization.Level = parent.Level + 1;
-                    organization.ParentIds = $"{parent.ParentIds},{parent.Id}";
+                    organization.ParentIds = string.IsNullOrWhiteSpace(parent.ParentIds)
+                        ? parent.Id.ToString()
+                        : $"{parent.ParentIds},{parent.Id}";
                 }
             }
             else
             {
-                organization.Level = 1;
                 organization.ParentIds = "0";
             }
         }

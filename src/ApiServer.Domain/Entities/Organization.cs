@@ -34,19 +34,9 @@ namespace ApiServer.Domain.Entities
         public string ParentIds { get; set; } = string.Empty;
         
         /// <summary>
-        /// 是否叶子节点
-        /// </summary>
-        public bool IsLeaf { get; set; } = true;
-        
-        /// <summary>
         /// 排序
         /// </summary>
         public int Sort { get; set; } = 0;
-        
-        /// <summary>
-        /// 层级
-        /// </summary>
-        public int Level { get; set; } = 1;
         
         /// <summary>
         /// 状态（是否启用）

@@ -154,12 +154,13 @@ namespace ApiServer.Infrastructure.Repositories
         }
 
         /// <summary>
-        /// 获取所有父组织（非叶子节点）
+        /// 获取所有父组织（存在子节点的组织）
         /// </summary>
         public async Task<IEnumerable<Organization>> GetAllParentOrganizationsAsync()
         {
             return await _dbSet
-                .Where(o => !o.IsDeleted && !o.IsLeaf)
+                .Where(o => !o.IsDeleted)
+                .Where(o => _dbSet.Any(c => !c.IsDeleted && c.ParentId == o.Id))
                 .OrderBy(o => o.Sort)
                 .ToListAsync();
         }
@@ -208,7 +209,6 @@ namespace ApiServer.Infrastructure.Repositories
             if (organization != null)
             {
                 organization.ParentId = newParentId;
-                // 这里应该重新计算层级和路径
                 await UpdateAsync(organization);
             }
         }
@@ -216,14 +216,12 @@ namespace ApiServer.Infrastructure.Repositories
         /// <summary>
         /// 更新组织路径信息
         /// </summary>
-        public async Task UpdateOrganizationPathAsync(long orgId, string orgPids, int level, bool isLeaf)
+        public async Task UpdateOrganizationPathAsync(long orgId, string orgPids)
         {
             var organization = await GetByIdAsync(orgId);
             if (organization != null)
             {
                 organization.ParentIds = orgPids;
-                organization.Level = level;
-                organization.IsLeaf = isLeaf;
                 await UpdateAsync(organization);
             }
         }

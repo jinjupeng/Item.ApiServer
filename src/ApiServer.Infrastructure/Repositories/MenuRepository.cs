@@ -1,5 +1,6 @@
 using ApiServer.Application.Interfaces.Repositories;
 using ApiServer.Domain.Entities;
+using ApiServer.Domain.Enums;
 using ApiServer.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,7 +16,7 @@ namespace ApiServer.Infrastructure.Repositories
         }
 
         /// <summary>
-        /// 根据父菜单ID获取子菜单列表
+        /// 根据父菜单ID获取子菜单列表（不包含按钮类型）
         /// </summary>
         public async Task<IEnumerable<Menu>> GetByParentIdAsync(long? parentId)
         {
@@ -37,7 +38,7 @@ namespace ApiServer.Infrastructure.Repositories
         }
 
         /// <summary>
-        /// 获取菜单树
+        /// 获取菜单树（包含所有类型，供管理端使用）
         /// </summary>
         public async Task<IEnumerable<Menu>> GetMenuTreeAsync()
         {
@@ -63,7 +64,7 @@ namespace ApiServer.Infrastructure.Repositories
         }
 
         /// <summary>
-        /// 根据用户ID获取菜单列表
+        /// 根据用户ID获取菜单列表（用于导航，排除按钮类型）
         /// </summary>
         public async Task<IEnumerable<Menu>> GetByUserIdAsync(long userId)
         {
@@ -71,7 +72,7 @@ namespace ApiServer.Infrastructure.Repositories
                 .Where(ur => ur.UserId == userId)
                 .Join(_context.RoleMenus, ur => ur.RoleId, rm => rm.RoleId, (ur, rm) => rm)
                 .Select(rm => rm.Menu)
-                .Where(m => !m.IsDeleted && m.Status)
+                .Where(m => !m.IsDeleted && m.Status && m.Type != MenuType.Button)
                 .Distinct()
                 .OrderBy(m => m.Sort)
                 .ToListAsync();
@@ -148,11 +149,14 @@ namespace ApiServer.Infrastructure.Repositories
         }
 
         /// <summary>
-        /// 获取父菜单列表
+        /// 获取父菜单列表（作为可选父节点，排除按钮类型）
         /// </summary>
         public async Task<IEnumerable<Menu>> GetParentMenusAsync()
         {
-            return await GetByParentIdAsync(null);
+            return await _dbSet
+                .Where(m => !m.IsDeleted && m.Type != MenuType.Button)
+                .OrderBy(m => m.Sort)
+                .ToListAsync();
         }
 
         /// <summary>
@@ -196,12 +200,13 @@ namespace ApiServer.Infrastructure.Repositories
         }
 
         /// <summary>
-        /// 获取所有父菜单（非叶子节点）
+        /// 获取所有父菜单（存在子节点的非按钮类型）
         /// </summary>
         public async Task<IEnumerable<Menu>> GetAllParentMenusAsync()
         {
             return await _dbSet
-                .Where(m => !m.IsDeleted && !m.IsLeaf)
+                .Where(m => !m.IsDeleted && m.Type != MenuType.Button)
+                .Where(m => _dbSet.Any(c => !c.IsDeleted && c.ParentId == m.Id))
                 .OrderBy(m => m.Sort)
                 .ToListAsync();
         }

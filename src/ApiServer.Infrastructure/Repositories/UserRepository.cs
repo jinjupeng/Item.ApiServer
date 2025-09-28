@@ -84,7 +84,7 @@ namespace ApiServer.Infrastructure.Repositories
         {
             return await _context.Permissions
                 .Where(a => !a.IsDeleted)
-                .Where(a => a.RoleApis.Any(ra => 
+                .Where(a => a.RolePermissions.Any(ra => 
                     ra.Role.UserRoles.Any(ur => ur.UserId == userId)))
                 .ToListAsync();
         }

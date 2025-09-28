@@ -1,15 +1,10 @@
 ﻿using ApiServer.Domain.Common;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ApiServer.Domain.Entities
 {
     /// <summary>
-    /// API接口实体
+    /// 接口权限
     /// </summary>
     public class Permission : SoftDeleteEntity
     {
@@ -40,16 +35,6 @@ namespace ApiServer.Domain.Entities
         public string ParentIds { get; set; } = string.Empty;
 
         /// <summary>
-        /// 是否叶子节点
-        /// </summary>
-        public bool IsLeaf { get; set; }
-
-        /// <summary>
-        /// 层级
-        /// </summary>
-        public int Level { get; set; }
-
-        /// <summary>
         /// 排序
         /// </summary>
         public int Sort { get; set; }
@@ -60,7 +45,7 @@ namespace ApiServer.Domain.Entities
         public bool Status { get; set; } = true;
 
         /// <summary>
-        /// 跳转URL
+        /// 请求地址，如 /api/users
         /// </summary>
         [StringLength(64)]
         public string? Url { get; set; }
@@ -79,6 +64,6 @@ namespace ApiServer.Domain.Entities
         /// <summary>
         /// 角色API关联
         /// </summary>
-        public virtual ICollection<RolePermission> RoleApis { get; set; } = new List<RolePermission>();
+        public virtual ICollection<RolePermission> RolePermissions { get; set; } = new List<RolePermission>();
     }
 }

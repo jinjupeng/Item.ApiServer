@@ -75,6 +75,6 @@ namespace ApiServer.Application.Interfaces.Repositories
         /// <summary>
         /// 更新组织路径信息
         /// </summary>
-        Task UpdateOrganizationPathAsync(long orgId, string orgPids, int level, bool isLeaf);
+        Task UpdateOrganizationPathAsync(long orgId, string orgPids);
     }
 }
