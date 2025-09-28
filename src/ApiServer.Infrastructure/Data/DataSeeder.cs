@@ -240,7 +240,7 @@ namespace ApiServer.Infrastructure.Data
                 // 一级菜单
                 new Permission { Id = 2, Code = "USER_MANAGE", Name = "用户管理", Type = PermissionType.Menu, ParentId = 1, ParentIds = "0,1", Sort = 1, Status = true, Icon = "user", Url = "/system/users", CreateTime = now },
                 new Permission { Id = 3, Code = "ROLE_MANAGE", Name = "角色管理", Type = PermissionType.Menu, ParentId = 1, ParentIds = "0,1", Sort = 2, Status = true, Icon = "role", Url = "/system/roles", CreateTime = now },
-                new Permission { Id = 4, Code = "ORG_MANAGE",  Name = "组织管理", Type = PermissionType.Menu, ParentId = 1, ParentIds = "0,1", Sort = 3, Status = true, Icon = "org",  Url = "/system/org",   CreateTime = now },
+                new Permission { Id = 4, Code = "ORG_MANAGE",  Name = "组织管理", Type = PermissionType.Menu, ParentId = 1, ParentIds = "0,1", Sort = 3, Status = true, Icon = "org",  Url = "/system/orgs",   CreateTime = now },
                 new Permission { Id = 5, Code = "MENU_MANAGE", Name = "菜单管理", Type = PermissionType.Menu, ParentId = 1, ParentIds = "0,1", Sort = 4, Status = true, Icon = "menu", Url = "/system/menus", CreateTime = now },
 
                 // 用户管理-按钮

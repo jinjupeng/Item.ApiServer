@@ -22,8 +22,20 @@ export const useAuthStore = defineStore('auth', () => {
   const userRoles = computed(() => userInfo.value?.roles || [])
   const permissionCodes = computed(() => permissions.value.map(p => p.code))
 
-  // 初始化用户信息
-  const initUserInfo = () => {
+  // 获取用户菜单
+  const fetchUserMenus = async () => {
+    if (!isLoggedIn.value) return
+    try {
+      const response = await menusApi.getCurrentUserMenuTree()
+      userMenus.value = response.data || []
+    } catch (error) {
+      console.error('获取用户菜单失败:', error)
+      userMenus.value = []
+    }
+  }
+
+  // 初始化
+  const init = async () => {
     const savedUserInfo = localStorage.getItem(USER_INFO_KEY)
     if (savedUserInfo) {
       try {
@@ -33,7 +45,15 @@ export const useAuthStore = defineStore('auth', () => {
         localStorage.removeItem(USER_INFO_KEY)
       }
     }
+
+    if (isLoggedIn.value) {
+      await Promise.all([
+        getUserPermissions(),
+        fetchUserMenus()
+      ])
+    }
   }
+  // init()
 
   // 登录
   const login = async (loginData: LoginDto): Promise<LoginResponse> => {
@@ -62,7 +82,7 @@ export const useAuthStore = defineStore('auth', () => {
       // 获取用户权限和菜单
       await Promise.all([
         getUserPermissions(),
-        getUserMenus()
+        fetchUserMenus()
       ])
 
       return loginResult
@@ -184,9 +204,6 @@ export const useAuthStore = defineStore('auth', () => {
   // 检查是否为超级管理员
   const isSuperAdmin = computed(() => hasRole('super_admin'))
 
-  // 初始化
-  initUserInfo()
-
   return {
     // 状态
     token,
@@ -202,6 +219,7 @@ export const useAuthStore = defineStore('auth', () => {
     isSuperAdmin,
     
     // 方法
+    init,
     login,
     logout,
     refreshAccessToken,

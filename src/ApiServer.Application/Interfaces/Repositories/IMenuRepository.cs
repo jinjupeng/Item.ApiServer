@@ -13,7 +13,7 @@ namespace ApiServer.Application.Interfaces.Repositories
         Task<Permission?> GetByMenuCodeAsync(string menuCode);
 
         /// <summary>
-        /// 根据用户ID获取菜单列表
+        /// 根据用户ID获取菜单列表（用于导航，排除按钮类型）
         /// </summary>
         Task<IEnumerable<Permission>> GetMenusByUserIdAsync(long userId);
 

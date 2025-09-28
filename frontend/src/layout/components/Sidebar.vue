@@ -41,52 +41,22 @@ const activeMenu = computed(() => {
 
 // 菜单路由（基于用户权限过滤）
 const menuRoutes = computed(() => {
-  // 这里可以根据用户菜单权限动态生成菜单
-  // 暂时使用静态路由配置
-  return [
-    {
-      path: '/dashboard',
-      name: 'Dashboard',
+  // 根据用户菜单权限动态生成菜单路由
+  const transformMenu = (menu: any) => {
+    const route: any = {
+      path: menu.url || `/m-${menu.id}`,
+      name: menu.menuCode,
       meta: {
-        title: '仪表盘',
-        icon: 'Dashboard'
+        title: menu.menuName,
+        icon: menu.icon
       }
-    },
-    {
-      path: '/system',
-      name: 'System',
-      meta: {
-        title: '系统管理',
-        icon: 'Setting'
-      },
-      children: [
-        {
-          path: '/system/users',
-          name: 'SystemUsers',
-          meta: {
-            title: '用户管理',
-            icon: 'User'
-          }
-        },
-        {
-          path: '/system/roles',
-          name: 'SystemRoles',
-          meta: {
-            title: '角色管理',
-            icon: 'UserFilled'
-          }
-        },
-        {
-          path: '/system/menus',
-          name: 'SystemMenus',
-          meta: {
-            title: '菜单管理',
-            icon: 'Menu'
-          }
-        }
-      ]
     }
-  ]
+    if (menu.children && menu.children.length > 0) {
+      route.children = menu.children.map(transformMenu)
+    }
+    return route
+  }
+  return authStore.userMenus.map(transformMenu)
 })
 </script>
 

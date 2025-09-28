@@ -1,4 +1,5 @@
 using ApiServer.Application.DTOs.Menu;
+using ApiServer.Application.Interfaces;
 using ApiServer.Application.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,10 +13,12 @@ namespace ApiServer.WebApi.Controllers
     public class MenusController : BaseController
     {
         private readonly IMenuService _menuService;
+        private readonly ICurrentUser _currentUser;
 
-        public MenusController(IMenuService menuService)
+        public MenusController(IMenuService menuService, ICurrentUser currentUser)
         {
             _menuService = menuService;
+            _currentUser = currentUser;
         }
 
         /// <summary>
@@ -222,6 +225,17 @@ namespace ApiServer.WebApi.Controllers
         public async Task<IActionResult> GetCheckedKeysByRoleId(long roleId)
         {
             var result = await _menuService.GetCheckedKeysByRoleIdAsync(roleId);
+            return HandleResult(result);
+        }
+
+        /// <summary>
+        /// 获取当前用户菜单树
+        /// </summary>
+        /// <returns>用户菜单树</returns>
+        [HttpGet("my-tree")]
+        public async Task<IActionResult> GetCurrentUserMenuTree()
+        {
+            var result = await _menuService.GetCurrentUserMenuTreeAsync();
             return HandleResult(result);
         }
     }

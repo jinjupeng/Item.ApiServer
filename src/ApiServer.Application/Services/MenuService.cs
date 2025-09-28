@@ -16,15 +16,18 @@ namespace ApiServer.Application.Services
         private readonly IMenuRepository _menuRepository;
         private readonly IUserRepository _userRepository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ICurrentUser _currentUser;
 
         public MenuService(
             IMenuRepository menuRepository,
             IUserRepository userRepository,
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork,
+            ICurrentUser currentUser)
         {
             _menuRepository = menuRepository;
             _userRepository = userRepository;
             _unitOfWork = unitOfWork;
+            _currentUser = currentUser;
         }
 
         /// <summary>
@@ -172,6 +175,15 @@ namespace ApiServer.Application.Services
             try
             {
                 var menus = await _menuRepository.GetMenusByUserIdAsync(userId);
+
+                // 去重并过滤：仅保留启用的目录/菜单（排除按钮权限），防止多角色造成的重复菜单
+                menus = menus
+                    .Where(m => m.Status)
+                    .Where(m => m.Type != Domain.Enums.PermissionType.Button)
+                    .GroupBy(m => m.Id)
+                    .Select(g => g.First())
+                    .ToList();
+
                 var menuTree = BuildMenuTree(menus);
                 return ApiResult<List<MenuTreeDto>>.Succeed(menuTree);
             }
@@ -406,6 +418,18 @@ namespace ApiServer.Application.Services
             }
         }
 
+        /// <summary>
+        /// 获取当前用户菜单树
+        /// </summary>
+        public async Task<ApiResult<List<MenuTreeDto>>> GetCurrentUserMenuTreeAsync()
+        {
+            if (_currentUser.UserId == null)
+            {
+                return ApiResult<List<MenuTreeDto>>.Failed("无法获取当前用户信息");
+            }
+            return await GetUserMenuTreeAsync(_currentUser.UserId.Value);
+        }
+
         #region 私有方法
 
         /// <summary>
@@ -437,16 +461,24 @@ namespace ApiServer.Application.Services
         /// </summary>
         private List<MenuTreeDto> BuildMenuTree(IEnumerable<Permission> menus)
         {
-            var menuList = menus.ToList();
-            var menuDict = menuList.ToDictionary(m => m.Id, m => m.Adapt<MenuTreeDto>());
-
+            var menuDtos = menus.Adapt<List<MenuTreeDto>>();
+            // 清空由映射产生的子节点，统一由本方法重建树，避免重复
+            foreach (var m in menuDtos)
+            {
+                m.Children = new List<MenuTreeDto>();
+            }
+            var menuMap = menuDtos.ToDictionary(m => m.Id);
             var rootMenus = new List<MenuTreeDto>();
 
-            foreach (var menu in menuDict.Values)
+            foreach (var menu in menuDtos)
             {
-                if (menu.ParentId.HasValue && menuDict.ContainsKey(menu.ParentId.Value))
+                if (menu.ParentId.HasValue && menuMap.TryGetValue(menu.ParentId.Value, out var parent))
                 {
-                    menuDict[menu.ParentId.Value].Children.Add(menu);
+                    // 避免重复添加相同子节点
+                    if (!parent.Children.Any(c => c.Id == menu.Id))
+                    {
+                        parent.Children.Add(menu);
+                    }
                 }
                 else
                 {

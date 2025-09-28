@@ -92,5 +92,10 @@ namespace ApiServer.Application.Interfaces.Services
         /// 获取角色已选中的菜单Keys
         /// </summary>
         Task<ApiResult<List<string>>> GetCheckedKeysByRoleIdAsync(long roleId);
+
+        /// <summary>
+        /// 获取当前用户菜单树
+        /// </summary>
+        Task<ApiResult<List<MenuTreeDto>>> GetCurrentUserMenuTreeAsync();
     }
 }

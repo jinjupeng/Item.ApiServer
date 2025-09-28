@@ -20,7 +20,7 @@ namespace ApiServer.Infrastructure.Repositories
         /// </summary>
         public async Task<IEnumerable<Permission>> GetByParentIdAsync(long? parentId)
         {
-            var query = _dbSet.AsQueryable().Where(m => m.Type != PermissionType.Menu);
+            var query = _dbSet.AsQueryable().Where(m => m.Type != PermissionType.Button);
             
             if (parentId.HasValue)
             {
@@ -51,34 +51,6 @@ namespace ApiServer.Infrastructure.Repositories
         }
 
         /// <summary>
-        /// 根据角色ID获取菜单列表
-        /// </summary>
-        public async Task<IEnumerable<Permission>> GetByRoleIdAsync(long roleId)
-        {
-            return await _context.RolePermissions
-                .Where(rm => rm.RoleId == roleId)
-                .Select(rm => rm.Permission)
-                .Where(m => !m.IsDeleted && m.Status)
-                .OrderBy(m => m.Sort)
-                .ToListAsync();
-        }
-
-        /// <summary>
-        /// 根据用户ID获取菜单列表（用于导航，排除按钮类型）
-        /// </summary>
-        public async Task<IEnumerable<Permission>> GetByUserIdAsync(long userId)
-        {
-            return await _context.UserRoles
-                .Where(ur => ur.UserId == userId)
-                .Join(_context.RolePermissions, ur => ur.RoleId, rm => rm.RoleId, (ur, rm) => rm)
-                .Select(rm => rm.Permission)
-                .Where(m => !m.IsDeleted && m.Status && m.Type != PermissionType.Button)
-                .Distinct()
-                .OrderBy(m => m.Sort)
-                .ToListAsync();
-        }
-
-        /// <summary>
         /// 检查菜单编码是否存在
         /// </summary>
         public async Task<bool> IsMenuCodeExistsAsync(string menuCode, long? excludeId = null)
@@ -104,19 +76,35 @@ namespace ApiServer.Infrastructure.Repositories
         }
 
         /// <summary>
-        /// 根据用户ID获取菜单列表（重命名方法）
+        /// 根据用户ID获取菜单列表（用于导航，排除按钮类型）
         /// </summary>
         public async Task<IEnumerable<Permission>> GetMenusByUserIdAsync(long userId)
         {
-            return await GetByUserIdAsync(userId);
+            // 查询用户所有角色关联的所有权限ID
+            var permissionIds = await _context.UserRoles
+                .Where(ur => ur.UserId == userId)
+                .Join(_context.RolePermissions, ur => ur.RoleId, rp => rp.RoleId, (ur, rp) => rp.PermissionId)
+                .Distinct()
+                .ToListAsync();
+
+            // 根据权限ID查询权限实体，并排除按钮类型
+            return await _dbSet
+                .Where(p => permissionIds.Contains(p.Id) && !p.IsDeleted && p.Status && p.Type != PermissionType.Button)
+                .OrderBy(p => p.Sort)
+                .ToListAsync();
         }
 
         /// <summary>
-        /// 根据角色ID获取菜单列表（重命名方法）
+        /// 根据角色ID获取菜单列表
         /// </summary>
         public async Task<IEnumerable<Permission>> GetMenusByRoleIdAsync(long roleId)
         {
-            return await GetByRoleIdAsync(roleId);
+            return await _context.RolePermissions
+                .Where(rm => rm.RoleId == roleId)
+                .Select(rm => rm.Permission)
+                .Where(m => !m.IsDeleted && m.Status)
+                .OrderBy(m => m.Sort)
+                .ToListAsync();
         }
 
         /// <summary>

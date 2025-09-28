@@ -94,5 +94,10 @@ export const menusApi = {
   // 获取角色已选中的菜单Keys
   getCheckedKeysByRoleId(roleId: number): Promise<ApiResponse<string[]>> {
     return request.get(`/menus/role/${roleId}/checked-keys`)
+  },
+
+  // 获取当前用户菜单树
+  getCurrentUserMenuTree(): Promise<ApiResponse<Menu[]>> {
+    return request.get('/menus/my-tree')
   }
 }
