@@ -32,7 +32,7 @@ namespace ApiServer.WebApi.Services
             }
         }
 
-        public string? Username => GetClaim("Username") ?? GetClaim(ClaimTypes.Name);
+        public string? UserName => GetClaim("Username") ?? GetClaim(ClaimTypes.Name);
 
         public IEnumerable<string> Roles => Claims
             .Where(c => c.Type == ClaimTypes.Role || c.Type == "role")

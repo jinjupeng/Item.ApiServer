@@ -1,6 +1,7 @@
 using ApiServer.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 namespace ApiServer.Infrastructure.Extensions
@@ -13,7 +14,7 @@ namespace ApiServer.Infrastructure.Extensions
         /// <summary>
         /// 自动执行数据库迁移和初始化
         /// </summary>
-        /// <param name="serviceProvider">服务提供者</param>
+        /// <param name="serviceProvider"></param>
         /// <returns></returns>
         public static async Task AutoMigrateAndInitializeAsync(this IServiceProvider serviceProvider)
         {
@@ -69,16 +70,6 @@ namespace ApiServer.Infrastructure.Extensions
                 logger.LogError(ex, "数据库迁移或初始化失败");
                 throw;
             }
-        }
-
-        /// <summary>
-        /// 确保数据库已创建并初始化种子数据（兼容性方法）
-        /// </summary>
-        /// <param name="serviceProvider">服务提供者</param>
-        /// <returns></returns>
-        public static async Task EnsureDatabaseCreatedAsync(this IServiceProvider serviceProvider)
-        {
-            await AutoMigrateAndInitializeAsync(serviceProvider);
         }
 
         /// <summary>

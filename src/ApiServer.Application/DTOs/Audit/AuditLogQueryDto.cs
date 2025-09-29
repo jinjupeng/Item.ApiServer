@@ -10,7 +10,7 @@ namespace ApiServer.Application.DTOs.Audit
     /// <summary>
     /// 系统审计日志查询参数
     /// </summary>
-    public class SystemAuditLogQueryDto : BaseQueryDto
+    public class AuditLogQueryDto : BaseQueryDto
     {
         /// <summary>
         /// 操作类型
@@ -25,7 +25,7 @@ namespace ApiServer.Application.DTOs.Audit
         /// <summary>
         /// 操作用户ID
         /// </summary>
-        public string? UserId { get; set; }
+        public long? UserId { get; set; }
 
         /// <summary>
         /// 操作结果

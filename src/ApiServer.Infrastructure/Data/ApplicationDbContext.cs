@@ -1,3 +1,4 @@
+using ApiServer.Application.Interfaces;
 using ApiServer.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
@@ -9,8 +10,10 @@ namespace ApiServer.Infrastructure.Data
     /// </summary>
     public class ApplicationDbContext : DbContext
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
+        private readonly ICurrentUser _currentUser;
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, ICurrentUser currentUser) : base(options)
         {
+            _currentUser = currentUser;
         }
 
         #region DbSets
@@ -22,7 +25,7 @@ namespace ApiServer.Infrastructure.Data
         public DbSet<Permission> Permissions { get; set; }
         public DbSet<RolePermission> RolePermissions { get; set; }
 
-        public DbSet<SystemAuditLog> SystemAuditLogs { get; set; }
+        public DbSet<AuditLog> AuditLogs { get; set; }
 
         #endregion
 
@@ -54,7 +57,7 @@ namespace ApiServer.Infrastructure.Data
             modelBuilder.Entity<Organization>().ToTable("sys_org");
             modelBuilder.Entity<Permission>().ToTable("sys_permission");
             modelBuilder.Entity<RolePermission>().ToTable("sys_role_permission");
-            modelBuilder.Entity<SystemAuditLog>().ToTable("sys_audit_log");
+            modelBuilder.Entity<AuditLog>().ToTable("sys_audit_log");
         }
 
         /// <summary>
@@ -143,7 +146,28 @@ namespace ApiServer.Infrastructure.Data
                 .IsUnique()
                 .HasDatabaseName("IX_RoleApi_RoleId_PermissionId");
 
-
+            // 审计日志索引
+            modelBuilder.Entity<AuditLog>()
+                .HasIndex(al => al.UserId)
+                .HasDatabaseName("IX_AuditLog_UserId");
+            modelBuilder.Entity<AuditLog>()
+                .HasIndex(al => al.Action)
+                .HasDatabaseName("IX_AuditLog_Action");
+            modelBuilder.Entity<AuditLog>()
+                .HasIndex(al => al.Module)
+                .HasDatabaseName("IX_AuditLog_Module");
+            modelBuilder.Entity<AuditLog>()
+                .HasIndex(al => al.Result)
+                .HasDatabaseName("IX_AuditLog_Result");
+            modelBuilder.Entity<AuditLog>()
+                .HasIndex(al => al.EntityType)
+                .HasDatabaseName("IX_AuditLog_EntityType");
+            modelBuilder.Entity<AuditLog>()
+                .HasIndex(al => al.IpAddress)
+                .HasDatabaseName("IX_AuditLog_IpAddress");
+            modelBuilder.Entity<AuditLog>()
+                .HasIndex(al => al.CreateTime)
+                .HasDatabaseName("IX_AuditLog_CreateTime");
         }
 
         /// <summary>
@@ -181,8 +205,8 @@ namespace ApiServer.Infrastructure.Data
                     if (entry.Entity is Domain.Common.AuditableEntity auditableEntity)
                     {
                         auditableEntity.LastModifiedTime = DateTime.Now;
-                        // TODO: 从当前用户上下文获取用户ID
-                        // auditableEntity.LastModifiedBy = _currentUserService.UserId;
+                        // 从当前用户上下文获取用户ID
+                        auditableEntity.LastModifiedBy = _currentUser.UserId;
                     }
                 }
             }

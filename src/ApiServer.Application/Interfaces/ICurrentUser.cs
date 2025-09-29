@@ -3,47 +3,47 @@ using System.Security.Claims;
 namespace ApiServer.Application.Interfaces
 {
     /// <summary>
-    /// µ±Ç°ÓÃ»§ÉÏÏÂÎÄ½Ó¿Ú
+    /// å½“å‰ç”¨æˆ·ä¸Šä¸‹æ–‡æ¥å£
     /// </summary>
     public interface ICurrentUser
     {
         /// <summary>
-        /// ÊÇ·ñÒÑÈÏÖ¤
+        /// æ˜¯å¦å·²è®¤è¯
         /// </summary>
         bool IsAuthenticated { get; }
 
         /// <summary>
-        /// ÓÃ»§ID£¨À´×ÔÁîÅÆÉùÃ÷£©
+        /// ç”¨æˆ·IDï¼ˆæ¥è‡ªä»¤ç‰Œå£°æ˜ï¼‰
         /// </summary>
         long? UserId { get; }
 
         /// <summary>
-        /// ÓÃ»§Ãû£¨À´×ÔÁîÅÆÉùÃ÷£©
+        /// ç”¨æˆ·åï¼ˆæ¥è‡ªä»¤ç‰Œå£°æ˜ï¼‰
         /// </summary>
-        string? Username { get; }
+        string? UserName { get; }
 
         /// <summary>
-        /// ½ÇÉ«ÁĞ±í
+        /// è§’è‰²åˆ—è¡¨
         /// </summary>
         IEnumerable<string> Roles { get; }
 
         /// <summary>
-        /// Ô­Ê¼·ÃÎÊÁîÅÆ£¨Bearer Token£©
+        /// åŸå§‹è®¿é—®ä»¤ç‰Œï¼ˆBearer Tokenï¼‰
         /// </summary>
         string? Token { get; }
 
         /// <summary>
-        /// È«²¿ÉùÃ÷
+        /// å…¨éƒ¨å£°æ˜
         /// </summary>
         IEnumerable<Claim> Claims { get; }
 
         /// <summary>
-        /// »ñÈ¡Ö¸¶¨ÀàĞÍµÄÉùÃ÷Öµ
+        /// è·å–æŒ‡å®šç±»å‹çš„å£°æ˜å€¼
         /// </summary>
         string? GetClaim(string type);
 
         /// <summary>
-        /// ÊÇ·ñÓµÓĞÖ¸¶¨½ÇÉ«
+        /// æ˜¯å¦æ‹¥æœ‰æŒ‡å®šè§’è‰²
         /// </summary>
         bool HasRole(string role);
     }

@@ -10,7 +10,7 @@ namespace ApiServer.Application.DTOs.Audit
     /// <summary>
     /// 系统审计日志DTO
     /// </summary>
-    public class SystemAuditLogDto
+    public class AuditLogDto
     {
         public string Id { get; set; } = string.Empty;
 

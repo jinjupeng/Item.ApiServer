@@ -51,6 +51,7 @@ namespace ApiServer.Infrastructure
             services.AddScoped<IRoleRepository, RoleRepository>();
             services.AddScoped<IMenuRepository, MenuRepository>();
             services.AddScoped<IOrganizationRepository, OrganizationRepository>();
+            services.AddScoped<IAuditLogRepository, AuditLogRepository>();
 
             // 注册应用服务
             services.AddScoped<Application.Interfaces.Services.IUserService, Application.Services.UserService>();
@@ -58,6 +59,7 @@ namespace ApiServer.Infrastructure
             services.AddScoped<Application.Interfaces.Services.IMenuService, Application.Services.MenuService>();
             services.AddScoped<Application.Interfaces.Services.IOrganizationService, Application.Services.OrganizationService>();
             services.AddScoped<Application.Interfaces.Services.IAuthService, Application.Services.AuthService>();
+            services.AddScoped<Application.Interfaces.Services.IAuditLogService, Application.Services.AuditLogService>();
 
             // 注册基础设施服务
             RegisterInfrastructureServices(services);

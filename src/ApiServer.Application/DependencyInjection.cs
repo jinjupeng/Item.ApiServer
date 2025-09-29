@@ -42,6 +42,7 @@ namespace ApiServer.Application
             services.AddScoped<IMenuService, MenuService>();
             services.AddScoped<IOrganizationService, OrganizationService>();
             services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<IAuditLogService, AuditLogService>();
         }
 
         /// <summary>
@@ -64,6 +65,10 @@ namespace ApiServer.Application
         /// <param name="config">配置对象</param>
         private static void ConfigureMappings(TypeAdapterConfig config)
         {
+            // 配置AuditLog实体与SystemAuditLogDto之间的映射
+            config.NewConfig<Domain.Entities.AuditLog, DTOs.Audit.AuditLogDto>()
+                .Map(dest => dest.Id, src => src.Id.ToString())
+                .Map(dest => dest.CreatedAt, src => src.CreateTime);
 
             // 配置User实体与UserDto之间的映射
             config.NewConfig<Domain.Entities.User, DTOs.User.UserDto>()

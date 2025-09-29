@@ -63,6 +63,7 @@ catch (Exception ex)
 // 配置中间件管道
 app.UseMiddleware<GlobalExceptionMiddleware>();
 app.UseMiddleware<RequestResponseLoggingMiddleware>();
+app.UseMiddleware<AuditLogMiddleware>();
 
 app.UseHttpsRedirection();
 

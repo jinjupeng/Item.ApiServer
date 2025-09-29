@@ -39,7 +39,10 @@ namespace ApiServer.Infrastructure.UnitOfWork
             object repository = repositoryType.Name switch
             {
                 nameof(IUserRepository) => new UserRepository(_context),
-                // 可以在这里添加其他特定仓储的映射
+                nameof(IMenuRepository) => new MenuRepository(_context),
+                nameof(IRoleRepository) => new RoleRepository(_context),
+                nameof(IOrganizationRepository) => new OrganizationRepository(_context),
+                nameof(IAuditLogRepository) => new AuditLogRepository(_context),
                 _ => throw new ArgumentException($"Repository type {repositoryType.Name} is not supported")
             };
 
