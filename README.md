@@ -179,8 +179,8 @@ frontend/
 ### 1. 克隆项目
 
 ```bash
-git clone https://github.com/jinjupeng/CSharpSamples.git
-cd CSharpSamples/EFCore/Item.ApiServer
+git clone https://github.com/jinjupeng/Item.ApiServer.git
+cd ./Item.ApiServer
 ```
 
 ### 2. 后端配置
@@ -225,7 +225,7 @@ npm run dev
 docker-compose up -d
 
 # 访问应用
-# 前端: http://localhost:5173
+# 前端: http://localhost:3000
 # 后端API: http://localhost:5000
 # Swagger文档: http://localhost:5000/swagger
 ```

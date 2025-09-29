@@ -1,0 +1,109 @@
+version: '3.8'
+
+services:
+  # 生产环境MySQL配置
+  mysql:
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-your_secure_password}
+      - MYSQL_DATABASE=ApiServerDb_Prod
+      - MYSQL_USER=apiserver
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD:-your_secure_password}
+    volumes:
+      - mysql_prod_data:/var/lib/mysql
+      - ./backups:/backups
+    command: >
+      --default-authentication-plugin=mysql_native_password
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_unicode_ci
+      --innodb-buffer-pool-size=1G
+      --max-connections=200
+    restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # 生产环境Redis配置
+  redis:
+    command: >
+      redis-server
+      --appendonly yes
+      --maxmemory 512mb
+      --maxmemory-policy allkeys-lru
+    restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # 生产环境API配置
+  apiserver:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:80
+      - ConnectionStrings__DefaultConnection=Server=mysql;Database=ApiServerDb_Prod;Uid=apiserver;Pwd=${MYSQL_PASSWORD:-your_secure_password};
+      - JwtSettings__SecretKey=${JWT_SECRET_KEY}
+      - JwtSettings__Issuer=ApiServer
+      - JwtSettings__Audience=ApiServerClient
+      - JwtSettings__ExpiryMinutes=30
+      - JwtSettings__RefreshTokenExpiryDays=7
+      - Redis__ConnectionString=redis:6379
+      - Serilog__MinimumLevel=Warning
+      - Serilog__WriteTo__0__Name=File
+      - Serilog__WriteTo__0__Args__path=/app/logs/app-.txt
+      - Serilog__WriteTo__0__Args__rollingInterval=Day
+    volumes:
+      - ./logs:/app/logs
+    restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+        reservations:
+          memory: 512M
+
+  # 生产环境前端配置
+  frontend:
+    environment:
+      - VITE_API_BASE_URL=${API_BASE_URL:-http://localhost:5000/api}
+      - NODE_ENV=production
+    restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # Nginx反向代理
+  nginx:
+    image: nginx:alpine
+    container_name: rbac-nginx-prod
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.prod.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+      - ./logs/nginx:/var/log/nginx
+    depends_on:
+      - apiserver
+      - frontend
+    networks:
+      - rbac-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  mysql_prod_data:
+    driver: local

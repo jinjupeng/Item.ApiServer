@@ -10,6 +10,11 @@
       <DependentUpon>docker-compose.yml</DependentUpon>
     </None>
     <None Include="docker-compose.yml" />
-    <None Include="sql-scripts\apiserver.sql" />
+    <None Include="docker-compose.prod.yml" />
+    <None Include="src\ApiServer.WebApi\Dockerfile" />
+    <None Include="frontend\Dockerfile" />
+    <None Include="frontend\nginx.conf" />
+    <None Include="sql-scripts\**\*" />
+    <None Include="nginx\**\*" />
   </ItemGroup>
 </Project>

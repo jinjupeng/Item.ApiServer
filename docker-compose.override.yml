@@ -1,13 +1,40 @@
-version: '3.4'
+version: '3.8'
 
 services:
+  # 开发环境覆盖配置
+  mysql:
+    environment:
+      - MYSQL_ROOT_PASSWORD=123456
+      - MYSQL_DATABASE=ApiServerDb_Dev
+    volumes:
+      - mysql_dev_data:/var/lib/mysql
+    ports:
+      - "3307:3306"  # 避免与本地MySQL冲突
+
+  redis:
+    ports:
+      - "6380:6379"  # 避免与本地Redis冲突
+
   apiserver:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=https://+:443;http://+:80
+      - ASPNETCORE_URLS=http://+:80
+      - ConnectionStrings__DefaultConnection=Server=mysql;Database=ApiServerDb_Dev;Uid=apiserver;Pwd=123456;
+      - JwtSettings__SecretKey=DevSecretKeyThatIsAtLeast32CharactersLong!
+      - Serilog__MinimumLevel=Debug
     ports:
-      - "80"
-      - "443"
+      - "5000:80"
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+
+  frontend:
+    environment:
+      - VITE_API_BASE_URL=http://localhost:5000/api
+      - NODE_ENV=development
+    ports:
+      - "3000:80"
+
+volumes:
+  mysql_dev_data:
+    driver: local
