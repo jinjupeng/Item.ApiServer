@@ -14,12 +14,12 @@ namespace ApiServer.Shared.Common
         /// <summary>
         /// 总记录数
         /// </summary>
-        public int Total { get; set; }
+        public int TotalCount { get; set; }
 
         /// <summary>
         /// 当前页码
         /// </summary>
-        public int Page { get; set; }
+        public int PageIndex { get; set; }
 
         /// <summary>
         /// 每页记录数
@@ -29,17 +29,17 @@ namespace ApiServer.Shared.Common
         /// <summary>
         /// 总页数
         /// </summary>
-        public int TotalPages => (int)Math.Ceiling((double)Total / PageSize);
+        public int TotalPages => (int)Math.Ceiling((double)TotalCount / PageSize);
 
         /// <summary>
         /// 是否有上一页
         /// </summary>
-        public bool HasPreviousPage => Page > 1;
+        public bool HasPreviousPage => PageIndex > 1;
 
         /// <summary>
         /// 是否有下一页
         /// </summary>
-        public bool HasNextPage => Page < TotalPages;
+        public bool HasNextPage => PageIndex < TotalPages;
 
         /// <summary>
         /// 构造函数
@@ -58,8 +58,8 @@ namespace ApiServer.Shared.Common
         public PagedResult(IEnumerable<T> items, int total, int page, int pageSize)
         {
             Items = items ?? new List<T>();
-            Total = total;
-            Page = page;
+            TotalCount = total;
+            PageIndex = page;
             PageSize = pageSize;
         }
 

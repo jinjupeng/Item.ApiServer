@@ -64,8 +64,8 @@ export interface UserQueryDto extends PagedQuery {
 }
 
 export enum UserStatus {
-  Active = 0,
-  Inactive = 1,
+  Inactive = 0,
+  Active = 1,
   Locked = 2
 }
 
@@ -225,4 +225,73 @@ export interface Organization {
   children?: Organization[]
   createdAt: string
   updatedAt: string
+}
+
+// 审计日志相关类型
+export interface AuditLog {
+  id: string
+  action: string
+  module: string
+  description: string
+  oldData?: string
+  newData?: string
+  result: string
+  errorMessage?: string
+  userId?: string
+  userName?: string
+  ipAddress?: string
+  userAgent?: string
+  requestPath?: string
+  requestMethod?: string
+  requestData?: string
+  responseStatusCode?: number
+  duration?: number
+  entityId?: string
+  entityType?: string
+  createdAt: string
+}
+
+export interface AuditLogQueryDto extends PagedQuery {
+  action?: string
+  module?: string
+  userId?: number
+  result?: string
+  dateFrom?: string
+  dateTo?: string
+  ipAddress?: string
+  entityType?: string
+}
+
+export interface AuditLogExportDto {
+  searchTerm?: string
+  action?: string
+  module?: string
+  userId?: number
+  result?: string
+  dateFrom?: string
+  dateTo?: string
+  ipAddress?: string
+  entityType?: string
+}
+
+export interface AuditLogStatistics {
+  totalOperations: number
+  successOperations: number
+  failedOperations: number
+  actionStatistics: Record<string, number>
+  moduleStatistics: Record<string, number>
+  userStatistics: Record<string, number>
+  dateStatistics: Record<string, number>
+}
+
+export interface CreateAuditLogDto {
+  action: string
+  module: string
+  description: string
+  oldData?: string
+  newData?: string
+  result: string
+  errorMessage?: string
+  entityId?: string
+  entityType?: string
 }

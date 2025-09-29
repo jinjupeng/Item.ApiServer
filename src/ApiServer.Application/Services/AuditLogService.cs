@@ -122,8 +122,8 @@ namespace ApiServer.Application.Services
             var result = new PagedResult<AuditLogDto>
             {
                 Items = dtos,
-                Total = totalCount,
-                Page = parameters.PageNumber,
+                TotalCount = totalCount,
+                PageIndex = parameters.PageNumber,
                 PageSize = parameters.PageSize
             };
 
@@ -252,6 +252,12 @@ namespace ApiServer.Application.Services
             return ApiResult<int>.Succeed(0, "没有需要清理的日志");
         }
 
+        /// <summary>
+        /// 日志统计
+        /// </summary>
+        /// <param name="startDate"></param>
+        /// <param name="endDate"></param>
+        /// <returns></returns>
         public async Task<ApiResult<AuditLogStatisticsDto>> GetAuditLogStatisticsAsync(DateTime? startDate = null, DateTime? endDate = null)
         {
             var query = _auditLogRepository.GetQueryable();
@@ -273,7 +279,10 @@ namespace ApiServer.Application.Services
                 ActionStatistics = await query.GroupBy(l => l.Action).ToDictionaryAsync(g => g.Key, g => g.Count()),
                 ModuleStatistics = await query.GroupBy(l => l.Module).ToDictionaryAsync(g => g.Key, g => g.Count()),
                 UserStatistics = await query.Where(l => l.UserName != null).GroupBy(l => l.UserName!).ToDictionaryAsync(g => g.Key, g => g.Count()),
-                DateStatistics = await query.GroupBy(l => l.CreateTime.Date.ToString("yyyy-MM-dd")).ToDictionaryAsync(g => g.Key, g => g.Count())
+                // 先按日期分组，然后在内存中格式化
+                DateStatistics = await query
+                .GroupBy(l => l.CreateTime.Date)
+                .ToDictionaryAsync(g => g.Key.ToString("yyyy-MM-dd"), g => g.Count())
             };
 
             return ApiResult<AuditLogStatisticsDto>.Succeed(stats);

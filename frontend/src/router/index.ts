@@ -1,6 +1,5 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
-import { useAppStore } from '@/stores/app'
 import NProgress from 'nprogress'
 
 // 路由配置
@@ -76,6 +75,17 @@ const routes: RouteRecordRaw[] = [
               requiresAuth: true,
               permission: 'system:menu:list'
             }
+          },
+          {
+            path: '/system/auditlogs',
+            name: 'SystemAuditLogs',
+            component: () => import('@/views/system/auditlog/index.vue'),
+            meta: {
+              title: '审计日志',
+              icon: 'Document',
+              requiresAuth: true,
+              permission: 'system:auditlog:list'
+            }
           }
         ]
       }
@@ -116,7 +126,6 @@ router.beforeEach(async (to, from, next) => {
   NProgress.start()
   
   const authStore = useAuthStore()
-  const appStore = useAppStore()
   
   // 设置页面标题
   if (to.meta.title) {

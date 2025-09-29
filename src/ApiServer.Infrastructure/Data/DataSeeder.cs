@@ -245,6 +245,8 @@ namespace ApiServer.Infrastructure.Data
                 new Permission { Id = 3, Code = "ROLE_MANAGE", Name = "角色管理", Type = PermissionType.Menu, ParentId = 1, ParentIds = "0,1", Sort = 2, Status = true, Icon = "role", Url = "/system/roles", CreateTime = now },
                 new Permission { Id = 4, Code = "ORG_MANAGE",  Name = "组织管理", Type = PermissionType.Menu, ParentId = 1, ParentIds = "0,1", Sort = 3, Status = true, Icon = "org",  Url = "/system/orgs",   CreateTime = now },
                 new Permission { Id = 5, Code = "MENU_MANAGE", Name = "菜单管理", Type = PermissionType.Menu, ParentId = 1, ParentIds = "0,1", Sort = 4, Status = true, Icon = "menu", Url = "/system/menus", CreateTime = now },
+                new Permission { Id = 100, Code = "AUDIT_LOG", Name = "审计日志", Type = PermissionType.Menu, ParentId = 1, ParentIds = "0,1", Sort = 4, Status = true, Icon = "log", Url = "/system/auditlogs", CreateTime = now },
+                
 
                 // 用户管理-按钮
                 new Permission { Id = 6,  Code = "system:user:list",   Name = "用户查询", Type = PermissionType.Button, ParentId = 2, ParentIds = "0,1,2", Sort = 1, Status = true, CreateTime = now },
@@ -268,7 +270,14 @@ namespace ApiServer.Infrastructure.Data
                 new Permission { Id = 18, Code = "system:org:list",    Name = "组织查询", Type = PermissionType.Button, ParentId = 4, ParentIds = "0,1,4", Sort = 1, Status = true, CreateTime = now },
                 new Permission { Id = 19, Code = "system:org:create",  Name = "组织新增", Type = PermissionType.Button, ParentId = 4, ParentIds = "0,1,4", Sort = 2, Status = true, CreateTime = now },
                 new Permission { Id = 20, Code = "system:org:update",  Name = "组织修改", Type = PermissionType.Button, ParentId = 4, ParentIds = "0,1,4", Sort = 3, Status = true, CreateTime = now },
-                new Permission { Id = 21, Code = "system:org:delete",  Name = "组织删除", Type = PermissionType.Button, ParentId = 4, ParentIds = "0,1,4", Sort = 4, Status = true, CreateTime = now }
+                new Permission { Id = 21, Code = "system:org:delete",  Name = "组织删除", Type = PermissionType.Button, ParentId = 4, ParentIds = "0,1,4", Sort = 4, Status = true, CreateTime = now },
+            
+                // 设计日志-按钮
+                new Permission { Id = 22, Code = "system:auditlog:list",    Name = "日志查询", Type = PermissionType.Button, ParentId = 100, ParentIds = "0,1,100", Sort = 1, Status = true, CreateTime = now },
+                new Permission { Id = 23, Code = "system:auditlog:create",  Name = "日志导出", Type = PermissionType.Button, ParentId = 100, ParentIds = "0,1,100", Sort = 2, Status = true, CreateTime = now },
+                new Permission { Id = 24, Code = "system:auditlog:update",  Name = "日志清空", Type = PermissionType.Button, ParentId = 100, ParentIds = "0,1,100", Sort = 3, Status = true, CreateTime = now },
+                new Permission { Id = 25, Code = "system:auditlog:delete",  Name = "日志删除", Type = PermissionType.Button, ParentId = 100, ParentIds = "0,1,100", Sort = 4, Status = true, CreateTime = now }
+
             };
 
             await _context.Permissions.AddRangeAsync(permissions);
@@ -333,6 +342,7 @@ namespace ApiServer.Infrastructure.Data
                 new RolePermission { Id = 19, RoleId = 1, PermissionId = 19, CreateTime = now },
                 new RolePermission { Id = 20, RoleId = 1, PermissionId = 20, CreateTime = now },
                 new RolePermission { Id = 21, RoleId = 1, PermissionId = 21, CreateTime = now },
+                new RolePermission { Id = 301, RoleId = 1, PermissionId = 100, CreateTime = now },
 
                 // 管理员：目录/菜单 + 常用按钮（查询/修改）
                 new RolePermission { Id = 101, RoleId = 2, PermissionId = 1,  CreateTime = now },
