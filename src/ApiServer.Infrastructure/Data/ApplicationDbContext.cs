@@ -10,8 +10,22 @@ namespace ApiServer.Infrastructure.Data
     /// </summary>
     public class ApplicationDbContext : DbContext
     {
-        private readonly ICurrentUser _currentUser;
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, ICurrentUser currentUser) : base(options)
+        private readonly ICurrentUser? _currentUser;
+
+        /// <summary>
+        /// 供迁移工具使用
+        /// </summary>
+        /// <param name="options"></param>
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
+        {
+        }
+
+        /// <summary>
+        /// 供运行时（ASP.NET Core）使用，注入可选依赖
+        /// </summary>
+        /// <param name="options"></param>
+        /// <param name="currentUser"></param>
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, ICurrentUser? currentUser) : base(options)
         {
             _currentUser = currentUser;
         }
@@ -176,7 +190,10 @@ namespace ApiServer.Infrastructure.Data
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
             // 在保存前处理审计字段
-            HandleAuditFields();
+            if (_currentUser != null)
+            {
+                HandleAuditFields();
+            }
 
             return await base.SaveChangesAsync(cancellationToken);
         }
@@ -206,7 +223,7 @@ namespace ApiServer.Infrastructure.Data
                     {
                         auditableEntity.LastModifiedTime = DateTime.Now;
                         // 从当前用户上下文获取用户ID
-                        auditableEntity.LastModifiedBy = _currentUser.UserId;
+                        auditableEntity.LastModifiedBy = _currentUser?.UserId;
                     }
                 }
             }

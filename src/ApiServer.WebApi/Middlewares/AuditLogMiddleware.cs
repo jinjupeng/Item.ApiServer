@@ -13,16 +13,14 @@ namespace ApiServer.WebApi.Middlewares
     {
         private readonly RequestDelegate _next;
         private readonly ILogger<AuditLogMiddleware> _logger;
-        private readonly ICurrentUser _currentUser;
 
-        public AuditLogMiddleware(RequestDelegate next, ILogger<AuditLogMiddleware> logger, ICurrentUser currentUser)
+        public AuditLogMiddleware(RequestDelegate next, ILogger<AuditLogMiddleware> logger)
         {
             _next = next;
             _logger = logger;
-            _currentUser = currentUser;
         }
 
-        public async Task InvokeAsync(HttpContext context, IAuditLogService auditLogService)
+        public async Task InvokeAsync(HttpContext context, IAuditLogService auditLogService, ICurrentUser currentUser)
         {
             var stopwatch = Stopwatch.StartNew();
             var originalBodyStream = context.Response.Body;
@@ -52,7 +50,7 @@ namespace ApiServer.WebApi.Middlewares
                 var responseInfo = await CaptureResponseInfoAsync(context, responseBodyStream);
 
                 // 记录审计日志
-                await LogAuditAsync(auditLogService, context, requestInfo, responseInfo,
+                await LogAuditAsync(auditLogService, currentUser, context, requestInfo, responseInfo,
                     stopwatch.ElapsedMilliseconds, exception);
 
                 // 恢复原始响应流
@@ -107,7 +105,7 @@ namespace ApiServer.WebApi.Middlewares
             };
         }
 
-        private async Task LogAuditAsync(IAuditLogService auditLogService, HttpContext context,
+        private async Task LogAuditAsync(IAuditLogService auditLogService, ICurrentUser currentUser, HttpContext context,
             RequestInfo requestInfo, ResponseInfo responseInfo, long duration, Exception? exception)
         {
             try
@@ -124,8 +122,8 @@ namespace ApiServer.WebApi.Middlewares
                     action: action,
                     module: module,
                     description: description,
-                    userId: _currentUser.UserId,
-                    userName: _currentUser.UserName,
+                    userId: currentUser.UserId,
+                    userName: currentUser.UserName,
                     ipAddress: requestInfo.IpAddress,
                     userAgent: requestInfo.UserAgent,
                     requestPath: requestInfo.Path,

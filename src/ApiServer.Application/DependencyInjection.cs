@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 using ApiServer.Application.Interfaces.Services;
 using ApiServer.Application.Services;
+using ApiServer.Application.Interfaces;
 
 namespace ApiServer.Application
 {
