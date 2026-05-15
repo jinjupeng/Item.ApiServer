@@ -1,6 +1,7 @@
 using ApiServer.Application.DTOs.Menu;
 using ApiServer.Application.Interfaces;
 using ApiServer.Application.Interfaces.Services;
+using ApiServer.WebApi.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -27,6 +28,7 @@ namespace ApiServer.WebApi.Controllers
         /// <param name="query">查询参数</param>
         /// <returns>菜单树</returns>
         [HttpGet("tree")]
+        [PermissionAuthorize("system:menu:list")]
         public async Task<IActionResult> GetMenuTree([FromQuery] MenuQueryDto? query = null)
         {
             var result = await _menuService.GetMenuTreeAsync(query);
@@ -39,6 +41,7 @@ namespace ApiServer.WebApi.Controllers
         /// <param name="id">菜单ID</param>
         /// <returns>菜单详情</returns>
         [HttpGet("{id}")]
+        [PermissionAuthorize("system:menu:list")]
         public async Task<IActionResult> GetMenu(long id)
         {
             var result = await _menuService.GetMenuByIdAsync(id);
@@ -51,6 +54,7 @@ namespace ApiServer.WebApi.Controllers
         /// <param name="dto">创建菜单DTO</param>
         /// <returns>创建结果</returns>
         [HttpPost]
+        [PermissionAuthorize("system:menu:create")]
         public async Task<IActionResult> CreateMenu([FromBody] CreateMenuDto dto)
         {
             var result = await _menuService.CreateMenuAsync(dto);
@@ -64,6 +68,7 @@ namespace ApiServer.WebApi.Controllers
         /// <param name="dto">更新菜单DTO</param>
         /// <returns>更新结果</returns>
         [HttpPut("{id}")]
+        [PermissionAuthorize("system:menu:update")]
         public async Task<IActionResult> UpdateMenu(long id, [FromBody] UpdateMenuDto dto)
         {
             var result = await _menuService.UpdateMenuAsync(id, dto);
@@ -76,6 +81,7 @@ namespace ApiServer.WebApi.Controllers
         /// <param name="id">菜单ID</param>
         /// <returns>删除结果</returns>
         [HttpDelete("{id}")]
+        [PermissionAuthorize("system:menu:delete")]
         public async Task<IActionResult> DeleteMenu(long id)
         {
             var result = await _menuService.DeleteMenuAsync(id);
@@ -89,6 +95,7 @@ namespace ApiServer.WebApi.Controllers
         /// <param name="status">状态</param>
         /// <returns>更新结果</returns>
         [HttpPatch("{id}/status")]
+        [PermissionAuthorize("system:menu:update")]
         public async Task<IActionResult> UpdateMenuStatus(long id, [FromBody] bool status)
         {
             var result = await _menuService.UpdateMenuStatusAsync(id, status);
@@ -102,6 +109,7 @@ namespace ApiServer.WebApi.Controllers
         /// <param name="sort">排序值</param>
         /// <returns>更新结果</returns>
         [HttpPatch("{id}/sort")]
+        [PermissionAuthorize("system:menu:update")]
         public async Task<IActionResult> UpdateMenuSort(long id, [FromBody] int sort)
         {
             var result = await _menuService.UpdateMenuSortAsync(id, sort);

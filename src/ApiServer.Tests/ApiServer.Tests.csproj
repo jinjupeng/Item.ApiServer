@@ -20,7 +20,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\src\ApiServer.csproj" />
+    <ProjectReference Include="..\ApiServer.Application\ApiServer.Application.csproj" />
+    <ProjectReference Include="..\ApiServer.Domain\ApiServer.Domain.csproj" />
+    <ProjectReference Include="..\ApiServer.Shared\ApiServer.Shared.csproj" />
+    <ProjectReference Include="..\ApiServer.WebApi\ApiServer.WebApi.csproj" />
   </ItemGroup>
 
 </Project>

@@ -45,9 +45,9 @@
           :rules="step2Rules"
           label-width="100px"
         >
-          <el-form-item label="验证码" prop="code">
+          <el-form-item label="验证码" prop="verificationCode">
             <el-input
-              v-model="step2Form.code"
+              v-model="step2Form.verificationCode"
               placeholder="请输入验证码"
               clearable
             />
@@ -104,7 +104,7 @@
 import { ref, reactive, watch } from 'vue'
 import { ElMessage, FormInstance, FormRules } from 'element-plus'
 import { authApi } from '@/api/auth'
-import type { ResetPasswordDto } from '@/types'
+import type { ForgotPasswordDto } from '@/types'
 
 interface Props {
   modelValue: boolean
@@ -127,15 +127,15 @@ const step1Form = reactive({
   usernameOrEmail: ''
 })
 
-const step2Form = reactive<ResetPasswordDto>({
+const step2Form = reactive<ForgotPasswordDto & { confirmPassword: string }>({
   usernameOrEmail: '',
-  code: '',
+  verificationCode: '',
   newPassword: '',
   confirmPassword: ''
 })
 
 // 验证确认密码
-const validateConfirmPassword = (rule: any, value: string, callback: any) => {
+const validateConfirmPassword = (_rule: any, value: string, callback: any) => {
   if (value !== step2Form.newPassword) {
     callback(new Error('两次输入的密码不一致'))
   } else {
@@ -150,7 +150,7 @@ const step1Rules: FormRules = {
 }
 
 const step2Rules: FormRules = {
-  code: [
+  verificationCode: [
     { required: true, message: '请输入验证码', trigger: 'blur' }
   ],
   newPassword: [
@@ -182,7 +182,7 @@ const resetForm = () => {
   step1Form.usernameOrEmail = ''
   Object.assign(step2Form, {
     usernameOrEmail: '',
-    code: '',
+    verificationCode: '',
     newPassword: '',
     confirmPassword: ''
   })
@@ -208,12 +208,12 @@ const sendResetCode = async () => {
     await step1FormRef.value.validate()
     loading.value = true
     
-    await authApi.sendResetCode(step1Form.usernameOrEmail)
+    const response = await authApi.sendResetCode(step1Form.usernameOrEmail)
     
     step2Form.usernameOrEmail = step1Form.usernameOrEmail
     currentStep.value = 1
     
-    ElMessage.success('验证码已发送，请查收')
+    ElMessage.success(response.message || '验证码已发送，请查收')
   } catch (error) {
     console.error('发送验证码失败:', error)
   } finally {
@@ -229,7 +229,11 @@ const resetPassword = async () => {
     await step2FormRef.value.validate()
     loading.value = true
     
-    await authApi.resetPassword(step2Form)
+    await authApi.resetPassword({
+      usernameOrEmail: step2Form.usernameOrEmail,
+      verificationCode: step2Form.verificationCode,
+      newPassword: step2Form.newPassword
+    })
     
     currentStep.value = 2
     ElMessage.success('密码重置成功')

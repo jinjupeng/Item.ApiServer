@@ -48,7 +48,7 @@
           check-strictly
           class="menu-tree"
         >
-          <template #default="{ node, data }">
+          <template #default="{ data }">
             <div class="tree-node">
               <el-icon v-if="data.icon" class="node-icon">
                 <component :is="data.icon" />

@@ -26,6 +26,7 @@ namespace ApiServer.WebApi.Controllers
         /// <param name="query">查询参数</param>
         /// <returns>用户列表</returns>
         [HttpGet]
+        [PermissionAuthorize("system:user:list")]
         public async Task<IActionResult> GetUsers([FromQuery] UserQueryDto query)
         {
             var result = await _userService.GetPagedUsersAsync(query);
@@ -38,6 +39,7 @@ namespace ApiServer.WebApi.Controllers
         /// <param name="id">用户ID</param>
         /// <returns>用户详情</returns>
         [HttpGet("{id}")]
+        [PermissionAuthorize("system:user:list")]
         public async Task<IActionResult> GetUser(long id)
         {
             var result = await _userService.GetUserByIdAsync(id);
@@ -64,6 +66,7 @@ namespace ApiServer.WebApi.Controllers
         /// <param name="dto">更新用户DTO</param>
         /// <returns>更新结果</returns>
         [HttpPut("{id}")]
+        [PermissionAuthorize("system:user:update")]
         public async Task<IActionResult> UpdateUser(long id, [FromBody] UpdateUserDto dto)
         {
             var result = await _userService.UpdateUserAsync(id, dto);
@@ -76,6 +79,7 @@ namespace ApiServer.WebApi.Controllers
         /// <param name="id">用户ID</param>
         /// <returns>删除结果</returns>
         [HttpDelete("{id}")]
+        [PermissionAuthorize("system:user:delete")]
         public async Task<IActionResult> DeleteUser(long id)
         {
             var result = await _userService.DeleteUserAsync(id);
@@ -89,6 +93,7 @@ namespace ApiServer.WebApi.Controllers
         /// <param name="status">用户状态</param>
         /// <returns>更新结果</returns>
         [HttpPatch("{id}/status")]
+        [PermissionAuthorize("system:user:update")]
         public async Task<IActionResult> UpdateUserStatus(long id, [FromBody] UserStatus status)
         {
             var result = await _userService.UpdateUserStatusAsync(id, status);
@@ -102,6 +107,7 @@ namespace ApiServer.WebApi.Controllers
         /// <param name="resetPassword">新密码</param>
         /// <returns>重置结果</returns>
         [HttpPost("{id}/reset-password")]
+        [PermissionAuthorize("system:user:update")]
         public async Task<IActionResult> ResetPassword(long id, [FromBody] ResetPasswordDto resetPassword)
         {
             var result = await _userService.ResetPasswordAsync(id, resetPassword);

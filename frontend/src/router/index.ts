@@ -122,7 +122,7 @@ const router = createRouter({
 })
 
 // 路由守卫
-router.beforeEach(async (to, from, next) => {
+router.beforeEach(async (to, _from, next) => {
   NProgress.start()
   
   const authStore = useAuthStore()
@@ -153,7 +153,7 @@ router.beforeEach(async (to, from, next) => {
         ])
       } catch (error) {
         console.error('获取用户信息失败:', error)
-        authStore.logout()
+        await authStore.logout()
         next('/login')
         return
       }

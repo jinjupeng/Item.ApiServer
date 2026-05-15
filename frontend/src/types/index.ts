@@ -202,6 +202,12 @@ export interface ChangePasswordDto {
   confirmPassword: string
 }
 
+export interface ForgotPasswordDto {
+  usernameOrEmail: string
+  verificationCode: string
+  newPassword: string
+}
+
 export interface ResetPasswordDto {
   userNameOrEmail: string
   code: string

@@ -166,9 +166,9 @@ export const treeToFlat = <T extends Record<string, any>>(
     nodes.forEach(node => {
       const item = { ...node }
       if (parent) {
-        item.parentId = parent.id
+        ;(item as Record<string, any>).parentId = (parent as Record<string, any>).id
       }
-      delete item[childrenKey]
+      delete (item as Record<string, any>)[childrenKey]
       result.push(item)
       
       if (node[childrenKey] && node[childrenKey].length > 0) {

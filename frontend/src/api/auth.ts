@@ -4,10 +4,9 @@ import type {
   LoginResponse,
   RefreshTokenDto,
   ChangePasswordDto,
-  ResetPasswordDto,
+  ForgotPasswordDto,
   CaptchaResponse,
   User,
-  Permission,
   ApiResponse
 } from '@/types'
 
@@ -44,7 +43,7 @@ export const authApi = {
   },
 
   // 重置密码
-  resetPassword(data: ResetPasswordDto): Promise<ApiResponse<void>> {
+  resetPassword(data: ForgotPasswordDto): Promise<ApiResponse<void>> {
     return request.post('/auth/reset-password', data)
   },
 
@@ -59,7 +58,7 @@ export const authApi = {
   },
 
   // 获取用户权限
-  getUserPermissions(): Promise<ApiResponse<Permission[]>> {
+  getUserPermissions(): Promise<ApiResponse<string[]>> {
     return request.get('/auth/permissions')
   },
 

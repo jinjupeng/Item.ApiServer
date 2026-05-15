@@ -50,7 +50,7 @@
         </el-col>
         
         <el-col :span="12">
-          <el-form-item label="父级菜单" prop="parentId">
+          <el-form-item label="父级菜单" prop="menuPid">
             <el-tree-select
               v-model="form.menuPid"
               :data="parentMenuOptions"
@@ -66,7 +66,7 @@
       
       <el-row v-if="form.menuType !== MenuType.Button" :gutter="20">
         <el-col :span="12">
-          <el-form-item label="路由路径" prop="path">
+          <el-form-item label="路由路径" prop="url">
             <el-input
               v-model="form.url"
               placeholder="请输入路由路径"
@@ -188,7 +188,7 @@ const treeSelectProps = {
 }
 
 // 验证菜单编码唯一性
-const validateCode = async (rule: any, value: string, callback: any) => {
+const validateCode = async (_rule: any, value: string, callback: any) => {
   if (!value) {
     callback()
     return

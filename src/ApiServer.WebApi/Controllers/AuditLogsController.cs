@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using ApiServer.Shared.Common;
 using ApiServer.Application.Interfaces;
+using ApiServer.WebApi.Authorization;
 
 namespace ApiServer.WebApi.Controllers
 {
@@ -27,6 +28,7 @@ namespace ApiServer.WebApi.Controllers
         /// 获取审计日志分页列表
         /// </summary>
         [HttpGet]
+        [PermissionAuthorize("system:auditlog:list")]
         public async Task<IActionResult> GetAuditLogs([FromQuery] AuditLogQueryDto parameters)
         {
             var result = await _auditLogService.GetAuditLogsAsync(parameters);
@@ -37,6 +39,7 @@ namespace ApiServer.WebApi.Controllers
         /// 根据ID获取审计日志详情
         /// </summary>
         [HttpGet("{id}")]
+        [PermissionAuthorize("system:auditlog:list")]
         public async Task<IActionResult> GetAuditLogById(long id)
         {
             var result = await _auditLogService.GetAuditLogByIdAsync(id);
@@ -85,6 +88,7 @@ namespace ApiServer.WebApi.Controllers
         /// 导出审计日志
         /// </summary>
         [HttpGet("export")]
+        [PermissionAuthorize("system:auditlog:create")]
         public async Task<IActionResult> ExportAuditLogs([FromQuery] AuditLogExportDto parameters)
         {
             try
@@ -117,6 +121,7 @@ namespace ApiServer.WebApi.Controllers
         /// 获取审计日志统计信息
         /// </summary>
         [HttpGet("statistics")]
+        [PermissionAuthorize("system:auditlog:list")]
         public async Task<IActionResult> GetAuditLogStatistics([FromQuery] DateTime? startDate, [FromQuery] DateTime? endDate)
         {
             var result = await _auditLogService.GetAuditLogStatisticsAsync(startDate, endDate);
@@ -127,6 +132,7 @@ namespace ApiServer.WebApi.Controllers
         /// 清理过期审计日志
         /// </summary>
         [HttpDelete("cleanup")]
+        [PermissionAuthorize("system:auditlog:update")]
         public async Task<IActionResult> CleanupExpiredLogs([FromQuery] int retentionDays = 90)
         {
             var result = await _auditLogService.CleanupExpiredLogsAsync(retentionDays);

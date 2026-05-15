@@ -133,7 +133,7 @@ const form = reactive<CreateUserDto & UpdateUserDto>({
 })
 
 // 验证邮箱格式
-const validateEmail = (rule: any, value: string, callback: any) => {
+const validateEmail = (_rule: any, value: string, callback: any) => {
   if (value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
     callback(new Error('请输入正确的邮箱格式'))
   } else {
@@ -142,7 +142,7 @@ const validateEmail = (rule: any, value: string, callback: any) => {
 }
 
 // 验证手机号格式
-const validatePhone = (rule: any, value: string, callback: any) => {
+const validatePhone = (_rule: any, value: string, callback: any) => {
   if (value && !/^1[3-9]\d{9}$/.test(value)) {
     callback(new Error('请输入正确的手机号格式'))
   } else {

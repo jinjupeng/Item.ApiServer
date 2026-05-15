@@ -90,7 +90,7 @@
     <div class="table-toolbar">
       <div class="toolbar-left">
         <el-button
-          v-if="authStore.hasPermission('system:auditlog:export')"
+          v-if="authStore.hasPermission('system:auditlog:create')"
           type="success"
           icon="Download"
           @click="handleExport"
@@ -100,7 +100,7 @@
         </el-button>
         
         <el-button
-          v-if="authStore.hasPermission('system:auditlog:cleanup')"
+          v-if="authStore.hasPermission('system:auditlog:update')"
           type="warning"
           icon="Delete"
           @click="handleCleanup"

@@ -30,9 +30,9 @@
       <el-dropdown @command="handleCommand">
         <div class="user-info">
           <el-avatar :size="32" :src="authStore.userInfo?.avatar">
-            {{ authStore.userInfo?.realName?.charAt(0) }}
+            {{ displayName.charAt(0) }}
           </el-avatar>
-          <span class="username">{{ authStore.userInfo?.realName }}</span>
+          <span class="username">{{ displayName }}</span>
           <el-icon class="arrow-down">
             <ArrowDown />
           </el-icon>
@@ -86,6 +86,7 @@ const appStore = useAppStore()
 const authStore = useAuthStore()
 
 const showChangePasswordDialog = ref(false)
+const displayName = computed(() => authStore.userInfo?.nickName || authStore.userInfo?.userName || '')
 
 // 面包屑导航
 const breadcrumbs = computed(() => {

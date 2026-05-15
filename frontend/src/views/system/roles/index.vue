@@ -117,7 +117,7 @@
           </el-button>
           
           <el-button
-            v-if="authStore.hasPermission('system:role:permission')"
+            v-if="authStore.hasPermission('system:role:update')"
             type="warning"
             size="small"
             link

@@ -36,6 +36,11 @@ namespace ApiServer.WebApi.Middlewares
                 var requestBody = await ReadRequestBodyAsync(request);
                 if (!string.IsNullOrEmpty(requestBody))
                 {
+                    requestBody = SensitiveDataSanitizer.SanitizeRequestBody(
+                        request.Path.Value ?? string.Empty,
+                        requestBody,
+                        request.ContentType);
+
                     _logger.LogInformation(
                         "Request {RequestId} body: {RequestBody}",
                         requestId,
@@ -68,6 +73,11 @@ namespace ApiServer.WebApi.Middlewares
                     var responseBody = await ReadResponseBodyAsync(responseBodyStream);
                     if (!string.IsNullOrEmpty(responseBody))
                     {
+                        responseBody = SensitiveDataSanitizer.SanitizeResponseBody(
+                            request.Path.Value ?? string.Empty,
+                            responseBody,
+                            response.ContentType);
+
                         _logger.LogInformation(
                             "Request {RequestId} response: {ResponseBody}",
                             requestId,
@@ -88,6 +98,7 @@ namespace ApiServer.WebApi.Middlewares
             {
                 responseBodyStream.Seek(0, SeekOrigin.Begin);
                 await responseBodyStream.CopyToAsync(originalBodyStream);
+                context.Response.Body = originalBodyStream;
             }
         }
 

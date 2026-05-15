@@ -83,7 +83,10 @@ namespace ApiServer.WebApi.Middlewares
                 QueryString = request.QueryString.Value ?? "",
                 ContentType = request.ContentType ?? "",
                 ContentLength = request.ContentLength ?? 0,
-                Body = requestBody,
+                Body = SensitiveDataSanitizer.SanitizeRequestBody(
+                    request.Path.Value ?? string.Empty,
+                    requestBody,
+                    request.ContentType),
                 IpAddress = GetClientIpAddress(context),
                 UserAgent = request.Headers.UserAgent.ToString()
             };

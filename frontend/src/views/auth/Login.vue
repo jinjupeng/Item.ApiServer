@@ -131,7 +131,7 @@ const getCaptcha = async () => {
   try {
     const response = await authApi.generateCaptcha()
     const captcha = response.data
-    captchaImage.value = `data:image/png;base64,${captcha.image}`
+    captchaImage.value = captcha.image
     loginForm.captchaKey = captcha.key
     showCaptcha.value = true
   } catch (error) {

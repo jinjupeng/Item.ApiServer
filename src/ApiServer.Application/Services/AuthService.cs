@@ -23,17 +23,20 @@ namespace ApiServer.Application.Services
     {
         private readonly IUserRepository _userRepository;
         private readonly IMenuRepository _menuRepository;
+        private readonly IAuthSecurityService _authSecurityService;
         private readonly IConfiguration _configuration;
         private readonly IUnitOfWork _unitOfWork;
 
         public AuthService(
             IUserRepository userRepository,
             IMenuRepository menuRepository,
+            IAuthSecurityService authSecurityService,
             IConfiguration configuration,
             IUnitOfWork unitOfWork)
         {
             _userRepository = userRepository;
             _menuRepository = menuRepository;
+            _authSecurityService = authSecurityService;
             _configuration = configuration;
             _unitOfWork = unitOfWork;
         }
@@ -45,6 +48,19 @@ namespace ApiServer.Application.Services
         {
             try
             {
+                if (!string.IsNullOrWhiteSpace(dto.CaptchaKey) || !string.IsNullOrWhiteSpace(dto.CaptchaCode))
+                {
+                    var captchaValid = await _authSecurityService.ValidateCaptchaAsync(
+                        dto.CaptchaKey ?? string.Empty,
+                        dto.CaptchaCode ?? string.Empty,
+                        consume: true);
+
+                    if (!captchaValid)
+                    {
+                        return ApiResult<LoginResponseDto>.Failed("验证码错误或已过期");
+                    }
+                }
+
                 // 验证用户名和密码
                 var user = await _userRepository.GetByUsernameAsync(dto.Username);
                 if (user == null)
@@ -63,32 +79,10 @@ namespace ApiServer.Application.Services
 
                 // 生成JWT令牌（包含角色与权限声明）
                 var token = await GenerateJwtToken(user);
-                var refreshToken = GenerateRefreshToken();
+                var refreshToken = await _authSecurityService.IssueRefreshTokenAsync(user.Id);
 
                 // 获取用户信息
-                var userInfo = new UserInfoDto
-                {
-                    UserId = user.Id,
-                    UserName = user.Name,
-                    NickName = user.NickName ?? user.Name,
-                    Avatar = user.Portrait,
-                    Email = user.Email,
-                    Phone = user.Phone,
-                    OrgId = user.OrgId,
-                    OrgName = user.Organization?.Name
-                };
-
-                // 获取用户角色
-                var userRoles = await _userRepository.GetUserWithRolesAsync(user.Id);
-                if (userRoles != null)
-                {
-                    userInfo.Roles = userRoles.UserRoles.Select(ur => new BaseRoleDto
-                    {
-                        Id = ur.Role.Id,
-                        Name = ur.Role.Name,
-                        Code = ur.Role.Code ?? ""
-                    }).ToList();
-                }
+                var userInfo = await BuildUserInfoAsync(user.Id, user);
 
                 var response = new LoginResponseDto
                 {
@@ -113,20 +107,14 @@ namespace ApiServer.Application.Services
         {
             try
             {
-                // 这里应该验证刷新令牌的有效性
-                // 简化实现，实际项目中需要存储和验证刷新令牌
-                
-                // 从刷新令牌中获取用户信息（简化处理）
-                var handler = new JwtSecurityTokenHandler();
-                var jsonToken = handler.ReadJwtToken(dto.RefreshToken);
-                var userIdClaim = jsonToken.Claims.FirstOrDefault(x => x.Type == "UserId");
-                
-                if (userIdClaim == null || !long.TryParse(userIdClaim.Value, out var userId))
+                var userId = await _authSecurityService.RedeemRefreshTokenAsync(dto.RefreshToken);
+
+                if (!userId.HasValue)
                 {
                     return ApiResult<LoginResponseDto>.Failed("无效的刷新令牌");
                 }
 
-                var user = await _userRepository.GetByIdAsync(userId);
+                var user = await _userRepository.GetByIdAsync(userId.Value);
                 if (user == null)
                 {
                     return ApiResult<LoginResponseDto>.Failed("用户不存在");
@@ -134,13 +122,15 @@ namespace ApiServer.Application.Services
 
                 // 生成新的令牌（包含角色与权限声明）
                 var newToken = await GenerateJwtToken(user);
-                var newRefreshToken = GenerateRefreshToken();
+                var newRefreshToken = await _authSecurityService.IssueRefreshTokenAsync(user.Id);
+                var userInfo = await BuildUserInfoAsync(user.Id, user);
 
                 var response = new LoginResponseDto
                 {
                     AccessToken = newToken,
                     RefreshToken = newRefreshToken,
-                    ExpiresIn = 3600
+                    ExpiresIn = 3600,
+                    UserInfo = userInfo
                 };
 
                 return ApiResult<LoginResponseDto>.Succeed(response, "令牌刷新成功");
@@ -209,9 +199,21 @@ namespace ApiServer.Application.Services
         {
             try
             {
-                // 这里应该验证验证码
-                // 简化实现
-                
+                if (string.IsNullOrWhiteSpace(dto.VerificationCode))
+                {
+                    return ApiResult.Failed("验证码不能为空");
+                }
+
+                var codeValid = await _authSecurityService.ValidatePasswordResetCodeAsync(
+                    dto.UsernameOrEmail,
+                    dto.VerificationCode,
+                    consume: true);
+
+                if (!codeValid)
+                {
+                    return ApiResult.Failed("验证码错误或已过期");
+                }
+
                 var user = await _userRepository.GetByUsernameAsync(dto.UsernameOrEmail);
                 if (user == null && !string.IsNullOrEmpty(dto.UsernameOrEmail))
                 {
@@ -385,14 +387,12 @@ namespace ApiServer.Application.Services
         {
             try
             {
-                // 简化实现，实际项目中应该生成真实的验证码图片
-                var captcha = new CaptchaDto
+                var generated = await _authSecurityService.GenerateCaptchaAsync();
+                return ApiResult<CaptchaDto>.Succeed(new CaptchaDto
                 {
-                    Key = Guid.NewGuid().ToString(),
-                    Image = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg=="
-                };
-
-                return ApiResult<CaptchaDto>.Succeed(captcha);
+                    Key = generated.Key,
+                    Image = generated.ImageDataUrl
+                });
             }
             catch (Exception ex)
             {
@@ -407,8 +407,8 @@ namespace ApiServer.Application.Services
         {
             try
             {
-                // 简化实现，实际项目中应该验证真实的验证码
-                return ApiResult<bool>.Succeed(true);
+                var isValid = await _authSecurityService.ValidateCaptchaAsync(key, code, consume: false);
+                return ApiResult<bool>.Succeed(isValid);
             }
             catch (Exception ex)
             {
@@ -423,16 +423,34 @@ namespace ApiServer.Application.Services
         {
             try
             {
-                // 简化实现，实际项目中应该发送真实的验证码
-                return ApiResult.Succeed("验证码发送成功");
+                if (string.IsNullOrWhiteSpace(usernameOrEmail))
+                {
+                    return ApiResult.Failed("用户名或邮箱不能为空");
+                }
+
+                var user = await _userRepository.GetByUsernameAsync(usernameOrEmail);
+                if (user == null)
+                {
+                    user = await _userRepository.GetByEmailAsync(usernameOrEmail);
+                }
+
+                if (user == null)
+                {
+                    return ApiResult.Succeed("如果用户存在，验证码已发送");
+                }
+
+                var code = await _authSecurityService.GeneratePasswordResetCodeAsync(usernameOrEmail);
+                var message = _authSecurityService.IsDevelopment
+                    ? $"验证码已发送，开发环境验证码：{code}"
+                    : "验证码已发送，请查收";
+
+                return ApiResult.Succeed(message);
             }
             catch (Exception ex)
             {
                 return ApiResult.Failed($"发送验证码失败：{ex.Message}");
             }
         }
-
-        #region 私有方法
 
         /// <summary>
         /// 生成JWT令牌（包含角色与权限声明）
@@ -489,14 +507,6 @@ namespace ApiServer.Application.Services
         }
 
         /// <summary>
-        /// 生成刷新令牌
-        /// </summary>
-        private string GenerateRefreshToken()
-        {
-            return Guid.NewGuid().ToString();
-        }
-
-        /// <summary>
         /// 获取令牌验证参数
         /// </summary>
         private TokenValidationParameters GetTokenValidationParameters()
@@ -514,6 +524,35 @@ namespace ApiServer.Application.Services
                 ValidAudience = jwtSettings["Audience"],
                 ValidateLifetime = true,
                 ClockSkew = TimeSpan.Zero
+            };
+        }
+
+        private async Task<UserInfoDto> BuildUserInfoAsync(long userId, Domain.Entities.User? user = null)
+        {
+            var userWithRoles = await _userRepository.GetUserWithRolesAsync(userId);
+            var source = userWithRoles ?? user;
+
+            if (source == null)
+            {
+                return new UserInfoDto();
+            }
+
+            return new UserInfoDto
+            {
+                UserId = source.Id,
+                UserName = source.Name,
+                NickName = source.NickName ?? source.Name,
+                Avatar = source.Portrait,
+                Email = source.Email,
+                Phone = source.Phone,
+                OrgId = source.OrgId,
+                OrgName = source.Organization?.Name,
+                Roles = source.UserRoles.Select(ur => new BaseRoleDto
+                {
+                    Id = ur.Role.Id,
+                    Name = ur.Role.Name,
+                    Code = ur.Role.Code ?? string.Empty
+                }).ToList()
             };
         }
 
@@ -539,7 +578,5 @@ namespace ApiServer.Application.Services
 
             return rootMenus.OrderBy(m => m.Sort).ToList();
         }
-
-        #endregion
     }
 }

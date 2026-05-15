@@ -11,6 +11,7 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Reflection;
 using System.Text;
 using ApiServer.Application.Interfaces;
+using ApiServer.Application.Interfaces.Services;
 using ApiServer.WebApi.Services;
 using Microsoft.AspNetCore.Authorization;
 using ApiServer.WebApi.Authorization;
@@ -46,7 +47,9 @@ namespace ApiServer.WebApi.Extensions
 
             // IHttpContextAccessor & 当前用户
             services.AddHttpContextAccessor();
+            services.AddMemoryCache();
             services.AddScoped<ICurrentUser, CurrentUser>();
+            services.AddSingleton<IAuthSecurityService, InMemoryAuthSecurityService>();
 
             // 策略授权：注册处理器、策略提供者，并配置策略
             services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();

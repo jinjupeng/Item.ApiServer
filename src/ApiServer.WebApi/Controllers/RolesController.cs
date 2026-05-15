@@ -1,5 +1,6 @@
 using ApiServer.Application.DTOs.Role;
 using ApiServer.Application.Interfaces.Services;
+using ApiServer.WebApi.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -24,6 +25,7 @@ namespace ApiServer.WebApi.Controllers
         /// <param name="query">查询参数</param>
         /// <returns>角色列表</returns>
         [HttpGet]
+        [PermissionAuthorize("system:role:list")]
         public async Task<IActionResult> GetRoles([FromQuery] RoleQueryDto query)
         {
             var result = await _roleService.GetPagedRolesAsync(query);
@@ -47,6 +49,7 @@ namespace ApiServer.WebApi.Controllers
         /// <param name="id">角色ID</param>
         /// <returns>角色详情</returns>
         [HttpGet("{id}")]
+        [PermissionAuthorize("system:role:list")]
         public async Task<IActionResult> GetRole(long id)
         {
             var result = await _roleService.GetRoleByIdAsync(id);
@@ -59,6 +62,7 @@ namespace ApiServer.WebApi.Controllers
         /// <param name="dto">创建角色DTO</param>
         /// <returns>创建结果</returns>
         [HttpPost]
+        [PermissionAuthorize("system:role:create")]
         public async Task<IActionResult> CreateRole([FromBody] CreateRoleDto dto)
         {
             var result = await _roleService.CreateRoleAsync(dto);
@@ -72,6 +76,7 @@ namespace ApiServer.WebApi.Controllers
         /// <param name="dto">更新角色DTO</param>
         /// <returns>更新结果</returns>
         [HttpPut("{id}")]
+        [PermissionAuthorize("system:role:update")]
         public async Task<IActionResult> UpdateRole(long id, [FromBody] UpdateRoleDto dto)
         {
             var result = await _roleService.UpdateRoleAsync(id, dto);
@@ -84,6 +89,7 @@ namespace ApiServer.WebApi.Controllers
         /// <param name="id">角色ID</param>
         /// <returns>删除结果</returns>
         [HttpDelete("{id}")]
+        [PermissionAuthorize("system:role:delete")]
         public async Task<IActionResult> DeleteRole(long id)
         {
             var result = await _roleService.DeleteRoleAsync(id);
@@ -97,6 +103,7 @@ namespace ApiServer.WebApi.Controllers
         /// <param name="status">状态</param>
         /// <returns>更新结果</returns>
         [HttpPatch("{id}/status")]
+        [PermissionAuthorize("system:role:update")]
         public async Task<IActionResult> UpdateRoleStatus(long id, [FromBody] bool status)
         {
             var result = await _roleService.UpdateRoleStatusAsync(id, status);
@@ -134,6 +141,7 @@ namespace ApiServer.WebApi.Controllers
         /// <param name="dto">用户角色分配DTO</param>
         /// <returns>分配结果</returns>
         [HttpPost("assign")]
+        [PermissionAuthorize("system:role:update")]
         public async Task<IActionResult> AssignRolesToUser([FromBody] UserRoleAssignDto dto)
         {
             var result = await _roleService.AssignRolesToUserAsync(dto);
@@ -147,6 +155,7 @@ namespace ApiServer.WebApi.Controllers
         /// <param name="roleIds">角色ID列表</param>
         /// <returns>移除结果</returns>
         [HttpDelete("user/{userId}/roles")]
+        [PermissionAuthorize("system:role:update")]
         public async Task<IActionResult> RemoveRolesFromUser(long userId, [FromBody] List<long> roleIds)
         {
             var result = await _roleService.RemoveRolesFromUserAsync(userId, roleIds);
@@ -159,6 +168,7 @@ namespace ApiServer.WebApi.Controllers
         /// <param name="id">角色ID</param>
         /// <returns>角色权限</returns>
         [HttpGet("{id}/permissions")]
+        [PermissionAuthorize("system:role:list")]
         public async Task<IActionResult> GetRolePermissions(long id)
         {
             var result = await _roleService.GetRolePermissionsAsync(id);
@@ -171,6 +181,7 @@ namespace ApiServer.WebApi.Controllers
         /// <param name="dto">角色权限DTO</param>
         /// <returns>分配结果</returns>
         [HttpPost("permissions")]
+        [PermissionAuthorize("system:role:update")]
         public async Task<IActionResult> AssignPermissionsToRole([FromBody] RolePermissionDto dto)
         {
             var result = await _roleService.AssignPermissionsToRoleAsync(dto);

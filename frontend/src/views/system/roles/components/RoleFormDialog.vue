@@ -83,7 +83,7 @@ const form = reactive<CreateRoleDto & UpdateRoleDto>({
 })
 
 // 验证角色编码唯一性
-const validateCode = async (rule: any, value: string, callback: any) => {
+const validateCode = async (_rule: any, value: string, callback: any) => {
   if (!value) {
     callback()
     return

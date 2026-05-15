@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { authApi } from '@/api/auth'
 import { menusApi } from '@/api/menus'
-import type { User, Permission, Menu, LoginDto, LoginResponse } from '@/types'
+import type { User, Menu, LoginDto, LoginResponse } from '@/types'
 import Cookies from 'js-cookie'
 
 const TOKEN_KEY = 'access_token'
@@ -14,13 +14,13 @@ export const useAuthStore = defineStore('auth', () => {
   const token = ref<string>(Cookies.get(TOKEN_KEY) || '')
   const refreshToken = ref<string>(Cookies.get(REFRESH_TOKEN_KEY) || '')
   const userInfo = ref<User | null>(null)
-  const permissions = ref<Permission[]>([])
+  const permissions = ref<string[]>([])
   const userMenus = ref<Menu[]>([])
 
   // 计算属性
   const isLoggedIn = computed(() => !!token.value)
   const userRoles = computed(() => userInfo.value?.roles || [])
-  const permissionCodes = computed(() => permissions.value.map(p => p.code))
+  const permissionCodes = computed(() => permissions.value)
 
   // 获取用户菜单
   const fetchUserMenus = async () => {
@@ -58,27 +58,18 @@ export const useAuthStore = defineStore('auth', () => {
   // 登录
   const login = async (loginData: LoginDto): Promise<LoginResponse> => {
     try {
-      console.log('开始登录请求...')
       const response = await authApi.login(loginData)
       const loginResult = response.data
-
-      console.log('登录响应:', loginResult)
 
       // 保存token
       token.value = loginResult.accessToken
       refreshToken.value = loginResult.refreshToken
       userInfo.value = loginResult.userInfo
-      console.log('用户登录信息:', userInfo.value)
-      console.log('用户角色:', userRoles.value)
-      console.log('保存token到状态:', loginResult.accessToken)
 
       // 持久化存储
       Cookies.set(TOKEN_KEY, loginResult.accessToken, { expires: 7 })
       Cookies.set(REFRESH_TOKEN_KEY, loginResult.refreshToken, { expires: 30 })
       localStorage.setItem(USER_INFO_KEY, JSON.stringify(loginResult.userInfo))
-
-      console.log('Token已保存到Cookie和localStorage')
-      console.log('当前token状态:', token.value)
 
       // 获取用户权限和菜单
       await Promise.all([
@@ -158,10 +149,8 @@ export const useAuthStore = defineStore('auth', () => {
   // 获取用户权限
   const getUserPermissions = async () => {
     try {
-      console.log('获取用户权限，用户名:', userInfo.value?.userName)
       const response = await authApi.getUserPermissions()
       permissions.value = response.data
-      console.log('获取到的权限数据:', permissions.value)
     } catch (error) {
       console.error('获取用户权限失败:', error)
       permissions.value = []
@@ -182,17 +171,7 @@ export const useAuthStore = defineStore('auth', () => {
 
   // 检查权限
   const hasPermission = (permissionCode: string): boolean => {
-    console.log('检查权限:', permissionCode)
-    
-    // 临时解决方案：如果用户已登录，允许访问（用于开发调试）
-    if (isLoggedIn.value) {
-      console.log('用户已登录，临时允许访问 (开发模式)')
-      return true
-    }
-    
-    const hasAccess = permissionCodes.value.includes(permissionCode)
-    console.log('权限检查结果:', hasAccess)
-    return hasAccess
+    return permissionCodes.value.includes(permissionCode)
   }
 
   // 检查角色
