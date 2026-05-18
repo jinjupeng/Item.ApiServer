@@ -12,6 +12,7 @@ using System.Reflection;
 using System.Text;
 using ApiServer.Application.Interfaces;
 using ApiServer.Application.Interfaces.Services;
+using ApiServer.WebApi.Configuration;
 using ApiServer.WebApi.Services;
 using Microsoft.AspNetCore.Authorization;
 using ApiServer.WebApi.Authorization;
@@ -25,7 +26,7 @@ namespace ApiServer.WebApi.Extensions
         /// <summary>
         /// 添加Web API服务
         /// </summary>
-        public static IServiceCollection AddWebApiServices(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddWebApiServices(this IServiceCollection services, IConfiguration configuration, IHostEnvironment environment)
         {
             // 添加API版本控制
             services.AddApiVersioning(options =>
@@ -68,7 +69,8 @@ namespace ApiServer.WebApi.Extensions
             });
 
             // 添加JWT认证
-            services.AddJwtAuthentication(configuration);
+            var requireHttpsMetadata = WebApiRuntimePolicy.ShouldRequireHttpsMetadata(environment, configuration);
+            services.AddJwtAuthentication(configuration, requireHttpsMetadata);
 
             // 添加Swagger
             services.AddSwaggerDocumentation();
@@ -81,11 +83,29 @@ namespace ApiServer.WebApi.Extensions
             // 添加CORS
             services.AddCors(options =>
             {
-                options.AddPolicy("AllowAll", policy =>
+                options.AddPolicy("DefaultCors", policy =>
                 {
-                    policy.AllowAnyOrigin()
-                          .AllowAnyMethod()
-                          .AllowAnyHeader();
+                    var allowedOrigins = WebApiRuntimePolicy.GetAllowedCorsOrigins(configuration);
+
+                    if (allowedOrigins.Length > 0)
+                    {
+                        policy.WithOrigins(allowedOrigins)
+                            .AllowAnyMethod()
+                            .AllowAnyHeader();
+                        return;
+                    }
+
+                    if (environment.IsDevelopment())
+                    {
+                        policy.AllowAnyOrigin()
+                            .AllowAnyMethod()
+                            .AllowAnyHeader();
+                        return;
+                    }
+
+                    policy.SetIsOriginAllowed(_ => false)
+                        .AllowAnyMethod()
+                        .AllowAnyHeader();
                 });
             });
 
@@ -101,7 +121,10 @@ namespace ApiServer.WebApi.Extensions
         /// <summary>
         /// 添加JWT认证
         /// </summary>
-        private static IServiceCollection AddJwtAuthentication(this IServiceCollection services, IConfiguration configuration)
+        private static IServiceCollection AddJwtAuthentication(
+            this IServiceCollection services,
+            IConfiguration configuration,
+            bool requireHttpsMetadata)
         {
             var jwtSettings = configuration.GetSection("JwtSettings");
             var key = Encoding.ASCII.GetBytes(jwtSettings["SecretKey"]);
@@ -113,7 +136,7 @@ namespace ApiServer.WebApi.Extensions
             })
             .AddJwtBearer(options =>
             {
-                options.RequireHttpsMetadata = false;
+                options.RequireHttpsMetadata = requireHttpsMetadata;
                 options.SaveToken = true;
                 options.TokenValidationParameters = new TokenValidationParameters
                 {

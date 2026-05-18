@@ -23,14 +23,7 @@ namespace ApiServer.WebApi.Middlewares
         public async Task InvokeAsync(HttpContext context, IAuditLogService auditLogService, ICurrentUser currentUser)
         {
             var stopwatch = Stopwatch.StartNew();
-            var originalBodyStream = context.Response.Body;
-
-            // 记录请求信息
             var requestInfo = await CaptureRequestInfoAsync(context);
-
-            // 创建响应流来捕获响应
-            using var responseBodyStream = new MemoryStream();
-            context.Response.Body = responseBodyStream;
 
             Exception? exception = null;
             try
@@ -45,17 +38,17 @@ namespace ApiServer.WebApi.Middlewares
             finally
             {
                 stopwatch.Stop();
+                var responseInfo = CaptureResponseInfo(context);
 
-                // 记录响应信息
-                var responseInfo = await CaptureResponseInfoAsync(context, responseBodyStream);
-
-                // 记录审计日志
                 await LogAuditAsync(auditLogService, currentUser, context, requestInfo, responseInfo,
                     stopwatch.ElapsedMilliseconds, exception);
-
-                // 恢复原始响应流
-                await responseBodyStream.CopyToAsync(originalBodyStream);
-                context.Response.Body = originalBodyStream;
+                _logger.LogInformation(
+                    "Request {TraceIdentifier} completed: {Method} {Path} => {StatusCode} in {ElapsedMilliseconds}ms",
+                    context.TraceIdentifier,
+                    requestInfo.Method,
+                    requestInfo.Path,
+                    responseInfo.StatusCode,
+                    stopwatch.ElapsedMilliseconds);
             }
         }
 
@@ -92,19 +85,13 @@ namespace ApiServer.WebApi.Middlewares
             };
         }
 
-        private async Task<ResponseInfo> CaptureResponseInfoAsync(HttpContext context, MemoryStream responseBodyStream)
+        private static ResponseInfo CaptureResponseInfo(HttpContext context)
         {
-            responseBodyStream.Position = 0;
-            using var reader = new StreamReader(responseBodyStream, Encoding.UTF8, leaveOpen: true);
-            var responseBody = await reader.ReadToEndAsync();
-            responseBodyStream.Position = 0;
-
             return new ResponseInfo
             {
                 StatusCode = context.Response.StatusCode,
                 ContentType = context.Response.ContentType ?? "",
-                ContentLength = responseBody.Length,
-                Body = responseBody
+                ContentLength = context.Response.ContentLength
             };
         }
 
@@ -114,7 +101,7 @@ namespace ApiServer.WebApi.Middlewares
             try
             {
                 // 跳过静态资源和健康检查
-                if (ShouldSkipAudit(context.Request.Path))
+                if (HttpMethods.IsOptions(context.Request.Method) || ShouldSkipAudit(context.Request.Path))
                     return;
 
                 // 确定操作类型和模块
@@ -233,8 +220,7 @@ namespace ApiServer.WebApi.Middlewares
         {
             public int StatusCode { get; set; }
             public string ContentType { get; set; } = string.Empty;
-            public int ContentLength { get; set; }
-            public string Body { get; set; } = string.Empty;
+            public long? ContentLength { get; set; }
         }
     }
 }

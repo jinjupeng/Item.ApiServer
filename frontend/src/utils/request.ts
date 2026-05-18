@@ -44,22 +44,12 @@ service.interceptors.request.use(
     
     // 添加认证token
     const token = getToken()
-    console.log('请求拦截器 - 获取到的token:', token ? `${token.substring(0, 20)}...` : 'null')
     
     if (token) {
       config.headers = config.headers || {}
       config.headers.Authorization = `Bearer ${token}`
-      console.log('请求拦截器 - 已添加Authorization头')
-    } else {
-      console.log('请求拦截器 - 没有找到token')
     }
-    
-    console.log('请求配置:', {
-      url: config.url,
-      method: config.method,
-      headers: config.headers
-    })
-    
+
     return config
   },
   (error) => {

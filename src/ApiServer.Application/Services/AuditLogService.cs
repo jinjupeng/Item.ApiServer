@@ -140,7 +140,7 @@ namespace ApiServer.Application.Services
             var auditLog = await _auditLogRepository.GetByIdAsync(id);
             if (auditLog == null)
             {
-                return ApiResult<AuditLogDto>.Failed("审计日志不存在");
+                return ApiResultFactory.NotFound<AuditLogDto>("审计日志不存在");
             }
 
             var dto = auditLog.Adapt<AuditLogDto>();
@@ -178,58 +178,51 @@ namespace ApiServer.Application.Services
         /// <returns></returns>
         public async Task<ApiResult<string>> ExportAuditLogsAsync(AuditLogExportDto parameters)
         {
-            try
+            var query = _auditLogRepository.GetQueryable();
+
+            // 应用过滤条件
+            if (!string.IsNullOrEmpty(parameters.SearchTerm))
             {
-                var query = _auditLogRepository.GetQueryable();
-
-                // 应用过滤条件
-                if (!string.IsNullOrEmpty(parameters.SearchTerm))
-                {
-                    query = query.Where(a =>
-                        a.Action.Contains(parameters.SearchTerm) ||
-                        a.Module.Contains(parameters.SearchTerm) ||
-                        a.Description.Contains(parameters.SearchTerm) ||
-                        (a.UserName != null && a.UserName.Contains(parameters.SearchTerm)));
-                }
-
-                if (!string.IsNullOrEmpty(parameters.Action))
-                    query = query.Where(a => a.Action == parameters.Action);
-
-                if (!string.IsNullOrEmpty(parameters.Module))
-                    query = query.Where(a => a.Module == parameters.Module);
-
-                if (parameters.UserId != null)
-                    query = query.Where(a => a.UserId == parameters.UserId);
-
-                if (!string.IsNullOrEmpty(parameters.Result))
-                    query = query.Where(a => a.Result == parameters.Result);
-
-                if (!string.IsNullOrEmpty(parameters.IpAddress))
-                    query = query.Where(a => a.IpAddress == parameters.IpAddress);
-
-                if (!string.IsNullOrEmpty(parameters.EntityType))
-                    query = query.Where(a => a.EntityType == parameters.EntityType);
-
-                if (parameters.DateFrom.HasValue)
-                    query = query.Where(a => a.CreateTime >= parameters.DateFrom.Value);
-
-                if (parameters.DateTo.HasValue)
-                    query = query.Where(a => a.CreateTime <= parameters.DateTo.Value);
-
-                // 排序
-                query = query.OrderByDescending(a => a.CreateTime);
-
-                var auditLogs = await query.ToListAsync();
-
-                // 生成CSV数据
-                var csvData = GenerateCsvData(auditLogs);
-
-                return ApiResult<string>.Succeed(csvData);
+                query = query.Where(a =>
+                    a.Action.Contains(parameters.SearchTerm) ||
+                    a.Module.Contains(parameters.SearchTerm) ||
+                    a.Description.Contains(parameters.SearchTerm) ||
+                    (a.UserName != null && a.UserName.Contains(parameters.SearchTerm)));
             }
-            catch (Exception ex)
-            {
-                return ApiResult<string>.Failed($"导出审计日志失败: {ex.Message}");
-            }
+
+            if (!string.IsNullOrEmpty(parameters.Action))
+                query = query.Where(a => a.Action == parameters.Action);
+
+            if (!string.IsNullOrEmpty(parameters.Module))
+                query = query.Where(a => a.Module == parameters.Module);
+
+            if (parameters.UserId != null)
+                query = query.Where(a => a.UserId == parameters.UserId);
+
+            if (!string.IsNullOrEmpty(parameters.Result))
+                query = query.Where(a => a.Result == parameters.Result);
+
+            if (!string.IsNullOrEmpty(parameters.IpAddress))
+                query = query.Where(a => a.IpAddress == parameters.IpAddress);
+
+            if (!string.IsNullOrEmpty(parameters.EntityType))
+                query = query.Where(a => a.EntityType == parameters.EntityType);
+
+            if (parameters.DateFrom.HasValue)
+                query = query.Where(a => a.CreateTime >= parameters.DateFrom.Value);
+
+            if (parameters.DateTo.HasValue)
+                query = query.Where(a => a.CreateTime <= parameters.DateTo.Value);
+
+            // 排序
+            query = query.OrderByDescending(a => a.CreateTime);
+
+            var auditLogs = await query.ToListAsync();
+
+            // 生成CSV数据
+            var csvData = GenerateCsvData(auditLogs);
+
+            return ApiResult<string>.Succeed(csvData);
         }
 
         /// <summary>

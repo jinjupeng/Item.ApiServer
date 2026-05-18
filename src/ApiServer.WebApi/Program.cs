@@ -33,7 +33,7 @@ builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
 
 // 添加Web API服务
-builder.Services.AddWebApiServices(builder.Configuration);
+builder.Services.AddWebApiServices(builder.Configuration, builder.Environment);
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -48,27 +48,29 @@ if (app.Environment.IsDevelopment())
 }
 
 // 自动执行数据库迁移和数据初始化
-try
+if (ApiServer.WebApi.Configuration.WebApiRuntimePolicy.ShouldRunAutoInitialization(app.Environment, app.Configuration))
 {
-    Log.Information("程序启动时自动执行数据库迁移和初始化...");
-    await app.Services.AutoMigrateAndInitializeAsync();
-    Log.Information("数据库迁移和初始化完成，程序继续启动");
-}
-catch (Exception ex)
-{
-    Log.Fatal(ex, "数据库迁移或初始化失败，程序启动终止");
-    throw;
+    try
+    {
+        Log.Information("程序启动时自动执行数据库迁移和初始化...");
+        await app.Services.AutoMigrateAndInitializeAsync();
+        Log.Information("数据库迁移和初始化完成，程序继续启动");
+    }
+    catch (Exception ex)
+    {
+        Log.Fatal(ex, "数据库迁移或初始化失败，程序启动终止");
+        throw;
+    }
 }
 
 // 配置中间件管道
 app.UseMiddleware<GlobalExceptionMiddleware>();
-app.UseMiddleware<RequestResponseLoggingMiddleware>();
 app.UseMiddleware<AuditLogMiddleware>();
 
 app.UseHttpsRedirection();
 
 // 启用CORS
-app.UseCors("AllowAll");
+app.UseCors("DefaultCors");
 
 app.UseAuthentication();
 app.UseAuthorization();

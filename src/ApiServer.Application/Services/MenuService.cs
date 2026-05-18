@@ -35,28 +35,18 @@ namespace ApiServer.Application.Services
         /// </summary>
         public async Task<ApiResult<long>> CreateMenuAsync(CreateMenuDto dto)
         {
-            try
+            if (!string.IsNullOrEmpty(dto.MenuCode) && await _menuRepository.IsMenuCodeExistsAsync(dto.MenuCode))
             {
-                // 检查菜单编码是否已存在
-                if (!string.IsNullOrEmpty(dto.MenuCode) && await _menuRepository.IsMenuCodeExistsAsync(dto.MenuCode))
-                {
-                    return ApiResult<long>.Failed("菜单编码已存在");
-                }
-
-                var menu = dto.Adapt<Permission>();
-                
-                // 设置菜单层级和路径信息
-                await SetMenuHierarchyInfo(menu);
-
-                await _menuRepository.AddAsync(menu);
-                await _unitOfWork.SaveChangesAsync();
-
-                return ApiResult<long>.Succeed(menu.Id, "菜单创建成功");
+                return ApiResultFactory.Conflict<long>("菜单编码已存在");
             }
-            catch (Exception ex)
-            {
-                return ApiResult<long>.Failed($"创建菜单失败：{ex.Message}");
-            }
+
+            var menu = dto.Adapt<Permission>();
+            await SetMenuHierarchyInfo(menu);
+
+            await _menuRepository.AddAsync(menu);
+            await _unitOfWork.SaveChangesAsync();
+
+            return ApiResult<long>.Succeed(menu.Id, "菜单创建成功");
         }
 
         /// <summary>
@@ -64,35 +54,24 @@ namespace ApiServer.Application.Services
         /// </summary>
         public async Task<ApiResult> UpdateMenuAsync(long id, UpdateMenuDto dto)
         {
-            try
+            var menu = await _menuRepository.GetByIdAsync(id);
+            if (menu == null)
             {
-                var menu = await _menuRepository.GetByIdAsync(id);
-                if (menu == null)
-                {
-                    return ApiResult.Failed("菜单不存在");
-                }
-
-                // 检查菜单编码是否已存在（排除当前菜单）
-                if (!string.IsNullOrEmpty(dto.MenuCode) && await _menuRepository.IsMenuCodeExistsAsync(dto.MenuCode, id))
-                {
-                    return ApiResult.Failed("菜单编码已存在");
-                }
-
-                // 更新菜单信息
-                dto.Adapt(menu);
-                
-                // 重新设置菜单层级和路径信息
-                await SetMenuHierarchyInfo(menu);
-
-                await _menuRepository.UpdateAsync(menu);
-                await _unitOfWork.SaveChangesAsync();
-
-                return ApiResult.Succeed("菜单更新成功");
+                return ApiResultFactory.NotFound("菜单不存在");
             }
-            catch (Exception ex)
+
+            if (!string.IsNullOrEmpty(dto.MenuCode) && await _menuRepository.IsMenuCodeExistsAsync(dto.MenuCode, id))
             {
-                return ApiResult.Failed($"更新菜单失败：{ex.Message}");
+                return ApiResultFactory.Conflict("菜单编码已存在");
             }
+
+            dto.Adapt(menu);
+            await SetMenuHierarchyInfo(menu);
+
+            await _menuRepository.UpdateAsync(menu);
+            await _unitOfWork.SaveChangesAsync();
+
+            return ApiResult.Succeed("菜单更新成功");
         }
 
         /// <summary>
@@ -100,29 +79,21 @@ namespace ApiServer.Application.Services
         /// </summary>
         public async Task<ApiResult> DeleteMenuAsync(long id)
         {
-            try
+            var menu = await _menuRepository.GetByIdAsync(id);
+            if (menu == null)
             {
-                var menu = await _menuRepository.GetByIdAsync(id);
-                if (menu == null)
-                {
-                    return ApiResult.Failed("菜单不存在");
-                }
-
-                // 检查是否有子菜单
-                if (await _menuRepository.HasChildMenusAsync(id))
-                {
-                    return ApiResult.Failed("该菜单下还有子菜单，无法删除");
-                }
-
-                await _menuRepository.SoftDeleteAsync(id);
-                await _unitOfWork.SaveChangesAsync();
-
-                return ApiResult.Succeed("菜单删除成功");
+                return ApiResultFactory.NotFound("菜单不存在");
             }
-            catch (Exception ex)
+
+            if (await _menuRepository.HasChildMenusAsync(id))
             {
-                return ApiResult.Failed($"删除菜单失败：{ex.Message}");
+                return ApiResultFactory.Conflict("该菜单下还有子菜单，无法删除");
             }
+
+            await _menuRepository.SoftDeleteAsync(id);
+            await _unitOfWork.SaveChangesAsync();
+
+            return ApiResult.Succeed("菜单删除成功");
         }
 
         /// <summary>
@@ -130,21 +101,14 @@ namespace ApiServer.Application.Services
         /// </summary>
         public async Task<ApiResult<MenuDto>> GetMenuByIdAsync(long id)
         {
-            try
+            var menu = await _menuRepository.GetByIdAsync(id);
+            if (menu == null)
             {
-                var menu = await _menuRepository.GetByIdAsync(id);
-                if (menu == null)
-                {
-                    return ApiResult<MenuDto>.Failed("菜单不存在");
-                }
+                return ApiResultFactory.NotFound<MenuDto>("菜单不存在");
+            }
 
-                var menuDto = menu.Adapt<MenuDto>();
-                return ApiResult<MenuDto>.Succeed(menuDto);
-            }
-            catch (Exception ex)
-            {
-                return ApiResult<MenuDto>.Failed($"获取菜单失败：{ex.Message}");
-            }
+            var menuDto = menu.Adapt<MenuDto>();
+            return ApiResult<MenuDto>.Succeed(menuDto);
         }
 
         /// <summary>
@@ -152,19 +116,12 @@ namespace ApiServer.Application.Services
         /// </summary>
         public async Task<ApiResult<List<MenuTreeDto>>> GetMenuTreeAsync(MenuQueryDto? query = null)
         {
-            try
-            {
-                var menus = await _menuRepository.GetMenuTreeAsync(
-                    query?.MenuName, 
-                    query?.Status);
+            var menus = await _menuRepository.GetMenuTreeAsync(
+                query?.MenuName,
+                query?.Status);
 
-                var menuTree = BuildMenuTree(menus);
-                return ApiResult<List<MenuTreeDto>>.Succeed(menuTree);
-            }
-            catch (Exception ex)
-            {
-                return ApiResult<List<MenuTreeDto>>.Failed($"获取菜单树失败：{ex.Message}");
-            }
+            var menuTree = BuildMenuTree(menus);
+            return ApiResult<List<MenuTreeDto>>.Succeed(menuTree);
         }
 
         /// <summary>
@@ -172,25 +129,17 @@ namespace ApiServer.Application.Services
         /// </summary>
         public async Task<ApiResult<List<MenuTreeDto>>> GetUserMenuTreeAsync(long userId)
         {
-            try
-            {
-                var menus = await _menuRepository.GetMenusByUserIdAsync(userId);
+            var menus = await _menuRepository.GetMenusByUserIdAsync(userId);
 
-                // 去重并过滤：仅保留启用的目录/菜单（排除按钮权限），防止多角色造成的重复菜单
-                menus = menus
-                    .Where(m => m.Status)
-                    .Where(m => m.Type != Domain.Enums.PermissionType.Button)
-                    .GroupBy(m => m.Id)
-                    .Select(g => g.First())
-                    .ToList();
+            menus = menus
+                .Where(m => m.Status)
+                .Where(m => m.Type != Domain.Enums.PermissionType.Button)
+                .GroupBy(m => m.Id)
+                .Select(g => g.First())
+                .ToList();
 
-                var menuTree = BuildMenuTree(menus);
-                return ApiResult<List<MenuTreeDto>>.Succeed(menuTree);
-            }
-            catch (Exception ex)
-            {
-                return ApiResult<List<MenuTreeDto>>.Failed($"获取用户菜单失败：{ex.Message}");
-            }
+            var menuTree = BuildMenuTree(menus);
+            return ApiResult<List<MenuTreeDto>>.Succeed(menuTree);
         }
 
         /// <summary>
@@ -198,20 +147,13 @@ namespace ApiServer.Application.Services
         /// </summary>
         public async Task<ApiResult<List<MenuTreeDto>>> GetUserMenuTreeByUsernameAsync(string username)
         {
-            try
+            var user = await _userRepository.GetByUsernameAsync(username);
+            if (user == null)
             {
-                var user = await _userRepository.GetByUsernameAsync(username);
-                if (user == null)
-                {
-                    return ApiResult<List<MenuTreeDto>>.Failed("用户不存在");
-                }
+                return ApiResultFactory.NotFound<List<MenuTreeDto>>("用户不存在");
+            }
 
-                return await GetUserMenuTreeAsync(user.Id);
-            }
-            catch (Exception ex)
-            {
-                return ApiResult<List<MenuTreeDto>>.Failed($"获取用户菜单失败：{ex.Message}");
-            }
+            return await GetUserMenuTreeAsync(user.Id);
         }
 
         /// <summary>
@@ -219,16 +161,9 @@ namespace ApiServer.Application.Services
         /// </summary>
         public async Task<ApiResult<List<MenuDto>>> GetMenusByRoleIdAsync(long roleId)
         {
-            try
-            {
-                var menus = await _menuRepository.GetMenusByRoleIdAsync(roleId);
-                var menuDtos = menus.Adapt<List<MenuDto>>();
-                return ApiResult<List<MenuDto>>.Succeed(menuDtos);
-            }
-            catch (Exception ex)
-            {
-                return ApiResult<List<MenuDto>>.Failed($"获取角色菜单失败：{ex.Message}");
-            }
+            var menus = await _menuRepository.GetMenusByRoleIdAsync(roleId);
+            var menuDtos = menus.Adapt<List<MenuDto>>();
+            return ApiResult<List<MenuDto>>.Succeed(menuDtos);
         }
 
         /// <summary>
@@ -236,15 +171,8 @@ namespace ApiServer.Application.Services
         /// </summary>
         public async Task<ApiResult<bool>> MenuCodeExistsAsync(string menuCode, long? excludeId = null)
         {
-            try
-            {
-                var exists = await _menuRepository.IsMenuCodeExistsAsync(menuCode, excludeId);
-                return ApiResult<bool>.Succeed(exists);
-            }
-            catch (Exception ex)
-            {
-                return ApiResult<bool>.Failed($"检查菜单编码失败：{ex.Message}");
-            }
+            var exists = await _menuRepository.IsMenuCodeExistsAsync(menuCode, excludeId);
+            return ApiResult<bool>.Succeed(exists);
         }
 
         /// <summary>
@@ -252,16 +180,9 @@ namespace ApiServer.Application.Services
         /// </summary>
         public async Task<ApiResult<List<MenuDto>>> GetParentMenusAsync()
         {
-            try
-            {
-                var menus = await _menuRepository.GetParentMenusAsync();
-                var menuDtos = menus.Adapt<List<MenuDto>>();
-                return ApiResult<List<MenuDto>>.Succeed(menuDtos);
-            }
-            catch (Exception ex)
-            {
-                return ApiResult<List<MenuDto>>.Failed($"获取父菜单失败：{ex.Message}");
-            }
+            var menus = await _menuRepository.GetParentMenusAsync();
+            var menuDtos = menus.Adapt<List<MenuDto>>();
+            return ApiResult<List<MenuDto>>.Succeed(menuDtos);
         }
 
         /// <summary>
@@ -269,16 +190,9 @@ namespace ApiServer.Application.Services
         /// </summary>
         public async Task<ApiResult<List<MenuDto>>> GetChildMenusAsync(long parentId)
         {
-            try
-            {
-                var menus = await _menuRepository.GetChildMenusAsync(parentId);
-                var menuDtos = menus.Adapt<List<MenuDto>>();
-                return ApiResult<List<MenuDto>>.Succeed(menuDtos);
-            }
-            catch (Exception ex)
-            {
-                return ApiResult<List<MenuDto>>.Failed($"获取子菜单失败：{ex.Message}");
-            }
+            var menus = await _menuRepository.GetChildMenusAsync(parentId);
+            var menuDtos = menus.Adapt<List<MenuDto>>();
+            return ApiResult<List<MenuDto>>.Succeed(menuDtos);
         }
 
         /// <summary>
@@ -286,16 +200,9 @@ namespace ApiServer.Application.Services
         /// </summary>
         public async Task<ApiResult> UpdateMenuSortAsync(long menuId, int sort)
         {
-            try
-            {
-                await _menuRepository.UpdateMenuSortAsync(menuId, sort);
-                await _unitOfWork.SaveChangesAsync();
-                return ApiResult.Succeed("菜单排序更新成功");
-            }
-            catch (Exception ex)
-            {
-                return ApiResult.Failed($"更新菜单排序失败：{ex.Message}");
-            }
+            await _menuRepository.UpdateMenuSortAsync(menuId, sort);
+            await _unitOfWork.SaveChangesAsync();
+            return ApiResult.Succeed("菜单排序更新成功");
         }
 
         /// <summary>
@@ -303,24 +210,17 @@ namespace ApiServer.Application.Services
         /// </summary>
         public async Task<ApiResult> UpdateMenuStatusAsync(long id, bool status)
         {
-            try
+            var menu = await _menuRepository.GetByIdAsync(id);
+            if (menu == null)
             {
-                var menu = await _menuRepository.GetByIdAsync(id);
-                if (menu == null)
-                {
-                    return ApiResult.Failed("菜单不存在");
-                }
-
-                menu.Status = status;
-                await _menuRepository.UpdateAsync(menu);
-                await _unitOfWork.SaveChangesAsync();
-
-                return ApiResult.Succeed("菜单状态更新成功");
+                return ApiResultFactory.NotFound("菜单不存在");
             }
-            catch (Exception ex)
-            {
-                return ApiResult.Failed($"更新菜单状态失败：{ex.Message}");
-            }
+
+            menu.Status = status;
+            await _menuRepository.UpdateAsync(menu);
+            await _unitOfWork.SaveChangesAsync();
+
+            return ApiResult.Succeed("菜单状态更新成功");
         }
 
         /// <summary>
@@ -328,25 +228,17 @@ namespace ApiServer.Application.Services
         /// </summary>
         public async Task<ApiResult<List<MenuTreeDto>>> GetMenuTreeForRoleAssignAsync(long? roleId = null)
         {
-            try
-            {
-                var allMenus = await _menuRepository.GetMenuTreeAsync();
-                var menuTree = BuildMenuTree(allMenus);
+            var allMenus = await _menuRepository.GetMenuTreeAsync();
+            var menuTree = BuildMenuTree(allMenus);
 
-                // 如果指定了角色ID，标记已选中的菜单
-                if (roleId.HasValue)
-                {
-                    var roleMenus = await _menuRepository.GetMenusByRoleIdAsync(roleId.Value);
-                    var roleMenuIds = roleMenus.Select(m => m.Id).ToHashSet();
-                    MarkCheckedMenus(menuTree, roleMenuIds);
-                }
-
-                return ApiResult<List<MenuTreeDto>>.Succeed(menuTree);
-            }
-            catch (Exception ex)
+            if (roleId.HasValue)
             {
-                return ApiResult<List<MenuTreeDto>>.Failed($"获取菜单选择树失败：{ex.Message}");
+                var roleMenus = await _menuRepository.GetMenusByRoleIdAsync(roleId.Value);
+                var roleMenuIds = roleMenus.Select(m => m.Id).ToHashSet();
+                MarkCheckedMenus(menuTree, roleMenuIds);
             }
+
+            return ApiResult<List<MenuTreeDto>>.Succeed(menuTree);
         }
 
         /// <summary>
@@ -354,34 +246,25 @@ namespace ApiServer.Application.Services
         /// </summary>
         public async Task<ApiResult> SaveRoleMenuPermissionsAsync(long roleId, List<long> menuIds)
         {
-            try
+            var roleMenuRepository = _unitOfWork.GetBaseRepository<RolePermission>();
+            var existingRoleMenus = await roleMenuRepository.FindAsync(rm => rm.RoleId == roleId);
+
+            if (existingRoleMenus.Any())
             {
-                // 删除现有权限
-                var roleMenuRepository = _unitOfWork.GetBaseRepository<RolePermission>();
-                var existingRoleMenus = await roleMenuRepository.FindAsync(rm => rm.RoleId == roleId);
-
-                if (existingRoleMenus.Any())
-                {
-                    await roleMenuRepository.DeleteRangeAsync(existingRoleMenus);
-                }
-
-                // 添加新权限
-                var roleMenus = menuIds.Select(menuId => new RolePermission
-                {
-                    RoleId = roleId,
-                    PermissionId = menuId,
-                    CreateTime = DateTime.Now
-                }).ToList();
-
-                await roleMenuRepository.AddRangeAsync(roleMenus);
-                await _unitOfWork.SaveChangesAsync();
-
-                return ApiResult.Succeed("角色菜单权限保存成功");
+                await roleMenuRepository.DeleteRangeAsync(existingRoleMenus);
             }
-            catch (Exception ex)
+
+            var roleMenus = menuIds.Select(menuId => new RolePermission
             {
-                return ApiResult.Failed($"保存角色菜单权限失败：{ex.Message}");
-            }
+                RoleId = roleId,
+                PermissionId = menuId,
+                CreateTime = DateTime.Now
+            }).ToList();
+
+            await roleMenuRepository.AddRangeAsync(roleMenus);
+            await _unitOfWork.SaveChangesAsync();
+
+            return ApiResult.Succeed("角色菜单权限保存成功");
         }
 
         /// <summary>
@@ -389,16 +272,9 @@ namespace ApiServer.Application.Services
         /// </summary>
         public async Task<ApiResult<List<string>>> GetExpandedKeysAsync()
         {
-            try
-            {
-                var parentMenus = await _menuRepository.GetAllParentMenusAsync();
-                var expandedKeys = parentMenus.Select(m => m.Id.ToString()).ToList();
-                return ApiResult<List<string>>.Succeed(expandedKeys);
-            }
-            catch (Exception ex)
-            {
-                return ApiResult<List<string>>.Failed($"获取展开菜单失败：{ex.Message}");
-            }
+            var parentMenus = await _menuRepository.GetAllParentMenusAsync();
+            var expandedKeys = parentMenus.Select(m => m.Id.ToString()).ToList();
+            return ApiResult<List<string>>.Succeed(expandedKeys);
         }
 
         /// <summary>
@@ -406,16 +282,9 @@ namespace ApiServer.Application.Services
         /// </summary>
         public async Task<ApiResult<List<string>>> GetCheckedKeysByRoleIdAsync(long roleId)
         {
-            try
-            {
-                var roleMenus = await _menuRepository.GetMenusByRoleIdAsync(roleId);
-                var checkedKeys = roleMenus.Select(m => m.Id.ToString()).ToList();
-                return ApiResult<List<string>>.Succeed(checkedKeys);
-            }
-            catch (Exception ex)
-            {
-                return ApiResult<List<string>>.Failed($"获取角色菜单失败：{ex.Message}");
-            }
+            var roleMenus = await _menuRepository.GetMenusByRoleIdAsync(roleId);
+            var checkedKeys = roleMenus.Select(m => m.Id.ToString()).ToList();
+            return ApiResult<List<string>>.Succeed(checkedKeys);
         }
 
         /// <summary>
@@ -425,8 +294,9 @@ namespace ApiServer.Application.Services
         {
             if (_currentUser.UserId == null)
             {
-                return ApiResult<List<MenuTreeDto>>.Failed("无法获取当前用户信息");
+                return ApiResultFactory.Unauthorized<List<MenuTreeDto>>("无法获取当前用户信息");
             }
+
             return await GetUserMenuTreeAsync(_currentUser.UserId.Value);
         }
 
@@ -462,11 +332,11 @@ namespace ApiServer.Application.Services
         private List<MenuTreeDto> BuildMenuTree(IEnumerable<Permission> menus)
         {
             var menuDtos = menus.Adapt<List<MenuTreeDto>>();
-            // 清空由映射产生的子节点，统一由本方法重建树，避免重复
-            foreach (var m in menuDtos)
+            foreach (var menu in menuDtos)
             {
-                m.Children = new List<MenuTreeDto>();
+                menu.Children = new List<MenuTreeDto>();
             }
+
             var menuMap = menuDtos.ToDictionary(m => m.Id);
             var rootMenus = new List<MenuTreeDto>();
 
@@ -474,8 +344,7 @@ namespace ApiServer.Application.Services
             {
                 if (menu.ParentId.HasValue && menuMap.TryGetValue(menu.ParentId.Value, out var parent))
                 {
-                    // 避免重复添加相同子节点
-                    if (!parent.Children.Any(c => c.Id == menu.Id))
+                    if (!parent.Children.Any(child => child.Id == menu.Id))
                     {
                         parent.Children.Add(menu);
                     }
@@ -486,7 +355,6 @@ namespace ApiServer.Application.Services
                 }
             }
 
-            // 排序
             SortMenuTree(rootMenus);
             return rootMenus;
         }

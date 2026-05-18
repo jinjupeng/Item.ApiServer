@@ -65,7 +65,8 @@ namespace ApiServer.WebApi.Controllers
             {
                 return Ok(result);
             }
-            return BadRequest(result);
+
+            return CreateErrorResult(result.Code, result);
         }
 
         /// <summary>
@@ -80,7 +81,8 @@ namespace ApiServer.WebApi.Controllers
             {
                 return Ok(result);
             }
-            return BadRequest(result);
+
+            return CreateErrorResult(result.Code, result);
         }
 
         /// <summary>
@@ -124,6 +126,19 @@ namespace ApiServer.WebApi.Controllers
             }
 
             return ipAddress ?? "Unknown";
+        }
+
+        private IActionResult CreateErrorResult(int statusCode, object result)
+        {
+            return statusCode switch
+            {
+                400 => BadRequest(result),
+                401 => Unauthorized(result),
+                403 => StatusCode(StatusCodes.Status403Forbidden, result),
+                404 => NotFound(result),
+                409 => Conflict(result),
+                _ => StatusCode(statusCode >= 400 ? statusCode : StatusCodes.Status500InternalServerError, result)
+            };
         }
     }
 }

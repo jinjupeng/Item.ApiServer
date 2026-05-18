@@ -91,4 +91,30 @@ namespace ApiServer.Shared.Common
             };
         }
     }
+
+    /// <summary>
+    /// API结果工厂
+    /// </summary>
+    public static class ApiResultFactory
+    {
+        public static ApiResult BadRequest(string message) => ApiResult.Failed(message, 400);
+
+        public static ApiResult<T> BadRequest<T>(string message) => ApiResult<T>.Failed(message, 400);
+
+        public static ApiResult Unauthorized(string message) => ApiResult.Failed(message, 401);
+
+        public static ApiResult<T> Unauthorized<T>(string message) => ApiResult<T>.Failed(message, 401);
+
+        public static ApiResult Forbidden(string message) => ApiResult.Failed(message, 403);
+
+        public static ApiResult<T> Forbidden<T>(string message) => ApiResult<T>.Failed(message, 403);
+
+        public static ApiResult NotFound(string message) => ApiResult.Failed(message, 404);
+
+        public static ApiResult<T> NotFound<T>(string message) => ApiResult<T>.Failed(message, 404);
+
+        public static ApiResult Conflict(string message) => ApiResult.Failed(message, 409);
+
+        public static ApiResult<T> Conflict<T>(string message) => ApiResult<T>.Failed(message, 409);
+    }
 }
